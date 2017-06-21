@@ -1,4 +1,4 @@
 #!/bin/bash
-
-export FLASK_APP=drift_booklist.py
+export FLASK_APP=drift_app
+pip3 install -e .
 flask run
