@@ -30,7 +30,7 @@ def uesr_loader(username):
 @login_manager.request_loader
 def request_loader(request):
     username = request.form.get('username')
-    if username not in user:
+    if username not in users:
         return
     user = User()
     user.id = username
@@ -76,6 +76,11 @@ def register():
 @flask_login.login_required
 def start():
     return 'start as: ' + flask_login.current_user.id
+
+@app.route('/logout')
+def logout():
+    flask_login.logout_user()
+    return 'Logged out'
 
 
 @app.route('/explore')
