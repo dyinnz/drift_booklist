@@ -1,4 +1,4 @@
 #!/bin/bash
-export FLASK_APP=drift_app
-pip3 install -e .
+export FLASK_APP=drift_main
+# pip3 install -e .
 flask run
