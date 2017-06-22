@@ -1,11 +1,12 @@
+import json
+
 from flask import Flask
-from drift_app.recommand_page import recommand_bp
+
+from drift_app.db_interface import init_db
+from drift_app.login_page import init_login_manager
 from drift_app.login_page import login_bp
 from drift_app.mine_page import mine_bp
-from drift_app.login_page import init_login_manager
-from drift_app.db_model import init_db
-
-import json
+from drift_app.recommand_page import recommand_bp
 
 json_config = None
 with open('config.json') as f:
