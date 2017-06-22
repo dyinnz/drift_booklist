@@ -21,7 +21,7 @@ init_login_manager(app)
 init_db(app)
 
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:flowers@localhost/shixun'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:flowers@localhost/shixun'
 
 
 if __name__ == '__main__':
