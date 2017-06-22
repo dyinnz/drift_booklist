@@ -1,8 +1,8 @@
-import flask
-from flask import Blueprint, request
-from drift_app.db_model import authenticate
-import flask_login
 import logging
+
+import flask
+import flask_login
+from flask import Blueprint, request
 
 login_bp = Blueprint('login_page', __name__)
 
