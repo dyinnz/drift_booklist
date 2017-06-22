@@ -12,3 +12,7 @@ def recommand():
         return 'recommand page for guest'
 
 
+@recommand_bp.route('/recommand/fetch')
+def recommand_fetch():
+    return 'TODO: add some json data'
+
