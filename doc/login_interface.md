@@ -1,7 +1,6 @@
 
 # Login Form
-
-用户名：username
+用户名：account
 密码：password
 记住密码：remember
 
@@ -9,7 +8,7 @@
 
 # Register Form
 
-用户名：username
+用户名：account
 密码：password
 
 用户名已注册：{'result': 'registered'}
