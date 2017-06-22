@@ -5,7 +5,7 @@ import drift_app.db_interface.db_user as db_user
 
 from flask import Blueprint, request, jsonify
 
-login_bp = Blueprint('login_page', __name__)
+login_bp = Blueprint('login_bp', __name__)
 
 logging.basicConfig(level=logging.DEBUG)
 

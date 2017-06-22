@@ -69,8 +69,8 @@ def register_user(name, account, password, birthday, gender, introduction='No In
     :param birthday: birthday, string type.
     :param gender: gender, string type, 'male' or 'female'.
     :param introduction: introduction, string type.
-    :param pic_src:
-    :return:
+    :param pic_src: user picture source path, string type.
+    :return: True if register is success, else False.
     """
     user = DB_User(name=name, account=account, password=password, birthday=birthday, introduction=introduction,
                    gender=gender, pic_src=pic_src)
@@ -87,14 +87,16 @@ def register_user(name, account, password, birthday, gender, introduction='No In
 
 def update_user_password(account, new_password):
     """
-    
-    :param account:
-    :param new_password:
-    :return:
+    update user password.
+    :param account: account name.
+    :param new_password: password.
+    :return: True if change is done, else False.
     """
-    user = DB_User.query.filter_by(account=account)
-    user.password = new_password
     try:
+        user = DB_User.query.filter_by(account=account).first()
+        if user is None:
+            return False
+        user.password = new_password
         db.session.commit()
     except Exception as e:
         print("Exception while updating user password.")
@@ -105,10 +107,16 @@ def update_user_password(account, new_password):
 
 
 def add_user_interest(account, tag):
-    user = DB_User.query.filter_by(account=account)
-    id = user.get_id()
-    user_interest = DB_user_interest(user_id=id, tag_name=tag)
+    """
+    add user interest tag.
+    :param account: account name.
+    :param tag: tag, string type.
+    :return: True if interest is added, else False.
+    """
     try:
+        user = DB_User.query.filter_by(account=account).first()
+        id = user.id
+        user_interest = DB_user_interest(user_id=id, tag_name=tag)
         db.session.add(user_interest)
         db.session.commit()
     except Exception as e:
@@ -118,3 +126,19 @@ def add_user_interest(account, tag):
         return False
 
     return True
+
+def get_account_by_id(user_id):
+    """
+    get user account name by user id.
+    :param user_id: user id.
+    :return: account name, string type.
+    """
+    try:
+        user = DB_User.query.filter_by(id=user_id).first()
+        return user.account
+    except Exception as e:
+        print("Excepiton while getting account by user id.")
+        print(user_id)
+        print(e)
+        return None
+

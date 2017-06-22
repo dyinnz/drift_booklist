@@ -36,7 +36,7 @@ likebooklist 我关注的书单 其中每个书单包含信息：
 
 /addbooklist
 
-/bookdetail    子页面
+/bookdetail
   bookname 书名
 
   bookinfo
@@ -55,3 +55,4 @@ introduce
 /addtolist
   bookname 书籍名
   booklistname 书单名
+

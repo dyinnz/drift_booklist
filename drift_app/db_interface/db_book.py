@@ -1,4 +1,5 @@
 from drift_app.db_interface import db
+from drift_app.db_interface.db_user import get_account_by_id
 import json
 
 class DB_Book(db.Model):
@@ -30,11 +31,16 @@ class DB_book_tag(db.Model):
 
 
 def get_book(book_id):
+    """
+    get book by book_id.
+    :param book_id: book_id, int type.
+    :return: If success, return book information in json format, else None.
+    """
     try:
         book = DB_Book.query.filter_by(id=book_id).first()
         if book is None:
             return False
-        return json.dump({
+        return json.dumps({
                 'id':   book.id,
                 'name': book.name,
                 'ISBN': book.ISBN,
@@ -43,16 +49,23 @@ def get_book(book_id):
                 'introduction': book.introduction
             })
     except Exception as e:
+        print("Exception while getting book by book id.")
         print(book_id)
         print(e)
         return None
 
 
 def get_book_tags(book_id):
+    """
+    get all tags of a book.
+    :param book_id: book id.
+    :return: If success, return all tags of the book in json format(all tags in a single list), else None.
+    """
     try:
         book_tags = DB_book_tag.query.filter_by(book_id=book_id).all()
-        tags = (b_t.tag_name for b_t in book_tags)
+        tags = json.dumps([b_t.tag_name for b_t in book_tags])
     except Exception as e:
+        print("Exception while getting book tags.")
         print(book_id)
         print(e)
         return None
@@ -60,14 +73,41 @@ def get_book_tags(book_id):
     return tags
 
 def get_book_up_and_down(book_id):
+    """
+    get up and down numbers of a book.
+    :param book_id: book id.
+    :return: If success, return json format dict(keys: 'up', 'down'), else None.
+    """
     try:
-        up_num = DB_user_book.query.filter_by(book_id=book_id, up_or_down='up').first()
-        down_num = DB_user_book.query.filter_by(book_id=book_id, up_or_down='down').first()
-        return json.dump({
+        up_num = len(DB_user_book.query.filter_by(book_id=book_id, up_or_down='up').all())
+        down_num = len(DB_user_book.query.filter_by(book_id=book_id, up_or_down='down').all())
+        return json.dumps({
             'up': up_num,
             'down': down_num
         })
     except Exception as e:
+        print("Exception while getting book up and down.")
         print(book_id)
         print(e)
         return None
+
+
+def get_book_remark(book_id, page=1, per_page=10):
+    """
+    get some book remarks of one book, for example, get_book_remark(1, 20, 10) get remark20 to remark30 of book 1.
+    :param book_id: book id.
+    :param start: start index
+    :param count: remark count number.
+    :return:
+    """
+    try:
+        user_books = DB_user_book.query.filter_by(book_id=book_id).paginate(page, per_page).query
+        return json.dumps(dict(
+            [(get_account_by_id(user_book.user_id), user_book.remark) for user_book in user_books]
+        ))
+    except Exception as e:
+        print("Exception while getting book remark.")
+        print(book_id)
+        print(e)
+        return None
+
