@@ -1,5 +1,6 @@
 import flask
 from flask import Blueprint, request
+from drift_app.db_model import authenticate
 import flask_login
 
 login_bp = Blueprint('login_page', __name__)
@@ -36,9 +37,10 @@ def request_loader(request):
     user = User()
     user.id = username
 
-    user.is_authenticated = (
-            request.form['password'] == users[username]['password']
-            )
+    user.is_authenticated = authenticate(username, request.form['password'])
+    # user.is_authenticated = (
+    #         request.form['password'] == users[username]['password']
+    #         )
 
     return user
 

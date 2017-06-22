@@ -2,6 +2,7 @@ from flask import Flask
 from drift_app.recommand_page import recommand_bp
 from drift_app.login_page import login_bp
 from drift_app.login_page import init_login_manager
+from drift_app.db_model import init_db
 
 import flask_login
 
@@ -15,6 +16,10 @@ app.register_blueprint(login_bp)
 
 
 init_login_manager(app)
+init_db(app)
+
+
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql://root:flowers@localhost/shixun'
 
 
 if __name__ == '__main__':
