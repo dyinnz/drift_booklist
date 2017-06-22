@@ -4,7 +4,7 @@ import flask
 import flask_login
 from flask import Blueprint, request
 
-login_bp = Blueprint('login_page', __name__)
+login_bp = Blueprint('login_bp', __name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
