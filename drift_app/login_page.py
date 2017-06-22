@@ -58,8 +58,8 @@ def login_or_register():
         '''
 
     username = flask.request.form['username']
-    if authenticate(request.form['username'], request.form['password']):
-    # if flask.request.form['password'] == users[username]['password']:
+    # if authenticate(request.form['username'], request.form['password']):
+    if flask.request.form['password'] == users[username]['password']:
         user = User()
         user.id = username
         flask_login.login_user(user)
