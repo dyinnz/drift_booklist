@@ -1,5 +1,6 @@
 import flask
 from flask import Blueprint, request
+from drift_app.db_model import authenticate
 import flask_login
 import logging
 
@@ -13,10 +14,8 @@ users = {'xlm': {'password': '1234'}}
 
 # class
 class User(flask_login.UserMixin):
-
     def __init__(self, account):
         self.id = account
-
 
     def __str__(self):
         return 'User[' + self.id + ']'
@@ -24,13 +23,15 @@ class User(flask_login.UserMixin):
 
 # should be called by app file
 login_manager = flask_login.LoginManager()
+
+
 def init_login_manager(app):
     login_manager.init_app(app)
 
 
 # callback
 @login_manager.user_loader
-def uesr_loader(account):
+def user_loader(account):
     if account not in users:
         return
     return User(account)
@@ -106,4 +107,3 @@ def register():
 def logout():
     flask_login.logout_user()
     return flask.redirect(flask.url_for('.login'))
-
