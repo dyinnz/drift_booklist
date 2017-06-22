@@ -4,7 +4,7 @@ from drift_app.db_model import authenticate
 import flask_login
 import logging
 
-login_bp = Blueprint('login_page', __name__)
+login_bp = Blueprint('login_bp', __name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
