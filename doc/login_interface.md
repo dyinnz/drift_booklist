@@ -4,7 +4,13 @@
 密码：password
 记住密码：remember
 
-如果登录失败：返回 {'result': False}
+如果登录失败：返回 
+```json
+{
+"ok": false,
+"brief": "xxx"
+}
+```
 
 # Register Form
 
