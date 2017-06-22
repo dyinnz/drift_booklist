@@ -33,6 +33,12 @@ class DB_friend(db.Model):
     user_id2 = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
 
 def authenticate(account, password):
+    """
+    authenticate user identity.
+    :param account: account name, like xlm, not real name.
+    :param password: password.
+    :return: True if authenticate passes, else False.
+    """
     try:
         user = DB_User.query.filter_by(account=account, password=password).first()
     except Exception as e:
@@ -45,7 +51,27 @@ def authenticate(account, password):
     return user is not None
 
 
+def check_duplicate_account(account):
+    """
+    check account name is duplicate or not when someone wants to register.
+    :param account: account name, liek xlm, not real name.
+    :return: True if duplicate acccount name, else False.
+    """
+    user = DB_User.query.filter_by(account=account).first()
+    return user is not None
+
 def register_user(name, account, password, birthday, gender, introduction='No Introduction yet', pic_src='resource/pic/default.png'):
+    """
+    register user.
+    :param name: real name.
+    :param account: account name.
+    :param password: password.
+    :param birthday: birthday, string type.
+    :param gender: gender, string type, 'male' or 'female'.
+    :param introduction: introduction, string type.
+    :param pic_src:
+    :return:
+    """
     user = DB_User(name=name, account=account, password=password, birthday=birthday, introduction=introduction,
                    gender=gender, pic_src=pic_src)
     try:
@@ -55,10 +81,18 @@ def register_user(name, account, password, birthday, gender, introduction='No In
         print("Excetpion while registering user.")
         print(name, account, password, birthday, gender, introduction, pic_src)
         print(e)
+        return False
+    return True
 
 
 def update_user_password(account, new_password):
-    user = DB_User().query.filter_by(account=account)
+    """
+    
+    :param account:
+    :param new_password:
+    :return:
+    """
+    user = DB_User.query.filter_by(account=account)
     user.password = new_password
     try:
         db.session.commit()
@@ -66,9 +100,12 @@ def update_user_password(account, new_password):
         print("Exception while updating user password.")
         print(account, new_password)
         print(e)
+        return False
+    return True
+
 
 def add_user_interest(account, tag):
-    user = DB_User().query.filter_by(account=account)
+    user = DB_User.query.filter_by(account=account)
     id = user.get_id()
     user_interest = DB_user_interest(user_id=id, tag_name=tag)
     try:
@@ -78,3 +115,6 @@ def add_user_interest(account, tag):
         print("Exception while adding user interest.")
         print(account, tag)
         print(e)
+        return False
+
+    return True
