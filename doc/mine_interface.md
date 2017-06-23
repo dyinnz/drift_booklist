@@ -1,3 +1,10 @@
+包含路由 :
+/mine  /booklist_detail   /book_detail
+/add_booklist_remark   /add_book_remark
+/add_to_list   /vote_book   /vote_booklist
+/new_booklist
+
+
 /mine
 account 用户名
 user_id
@@ -8,6 +15,8 @@ booklist_info  书单详情
   booklist_cover 书单封面
   booklist_name  书单名
   create_user  '创建者
+  up_number
+  down_number
   book_number 书籍数
   follower_number  关注数
   remark_number 评论数
@@ -27,20 +36,19 @@ my_booklist 我创建的书单 其中诶各书单包含信息:
 
 follower_booklist 我关注的书单 其中每个书单包含信息：
 {
-  booklistcover 书单封面
-  booklistname  书单名
-  booknumber 书籍数
+  booklist_id
+  booklist_cover 书单封面
+  booklist_name  书单名
+  book_number 书籍数
 }
 
 /booklist_detail
-  booklist_name 书单名
+  booklist_id
 
   booklist_info 书单详情
 
-/new_booklist
-
 /book_detail
-  book_name 书名
+  book_id
 
   book_info
 {
@@ -50,6 +58,11 @@ isbn
 author
 publisher
 introduce
+follower_number
+up_number
+dowm_number
+remark [{
+}]
 }
 
 /add_booklist_remark
@@ -101,4 +114,18 @@ attitude:up/down
 {
 'OK':
 attitude:up/down/neutral
+}
+
+/new_booklist
+{
+booklist_name
+booklist_cover
+}
+{
+  my_booklist[{     我的书单列表
+  booklist_id
+  booklist_cover 书单封面
+  booklist_name  书单名
+  book_number 书籍数
+  }]
 }
