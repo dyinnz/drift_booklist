@@ -1,5 +1,4 @@
 from drift_app.db_interface import db
-from drift_app.db_interface.db_user import get_account_by_id
 import json
 import logging
 
@@ -68,7 +67,7 @@ def get_book(book_id):
             'introduction': book.introduction
         })
     except Exception as e:
-        logging.debug(book_id)
+        logging.error(book_id)
         logging.error(e)
         return None
 
@@ -92,7 +91,7 @@ def get_book_by_ISBN(ISBN):
             'introduction': book.introduction
         })
     except Exception as e:
-        logging.debug(ISBN)
+        logging.error(ISBN)
         logging.error(e)
         return None
 
@@ -107,7 +106,7 @@ def get_book_tags(book_id):
         book_tags = DB_book_tag.query.filter_by(book_id=book_id).all()
         tags = json.dumps([b_t.tag_name for b_t in book_tags])
     except Exception as e:
-        logging.debug(book_id)
+        logging.error(book_id)
         logging.error(e)
         return None
 
@@ -124,7 +123,7 @@ def get_booklist_tag(booklist_id):
         booklist_tags = DB_book_tag.query.filter_by(booklist_id=booklist_id).all()
         tags = json.dumps([b_t.tag_name for b_t in booklist_tags])
     except Exception as e:
-        logging.debug(booklist_id)
+        logging.error(booklist_id)
         logging.error(e)
         return None
 
@@ -144,8 +143,51 @@ def get_books_in_booklist(booklist_id):
             [get_book(id) for id in book_ids]
         )
     except Exception as e:
-        logging.debug(booklist_id)
+        logging.error(booklist_id)
         logging.error(e)
+
+
+def upload_book(name, ISBN, author, publisher, introduction):
+    """
+    add a new book to database.
+    :param name: book name.
+    :param ISBN: ISBN number.
+    :param author: author.
+    :param publisher: publisher.
+    :param introduction: book introduction.
+    :return: If success, return new book id, else return None.
+    """
+    try:
+        if get_book_by_ISBN(ISBN) is not None:
+            return False
+        book = DB_Book(name=name, ISBN=ISBN, author=author, publisher=publisher, introduction=introduction)
+        db.session.add(book)
+        return book.id
+    except Exception as e:
+        logging.error(','.join([str(x) for x in [name, ISBN, author, publisher, introduction]]))
+        logging.error(e)
+        db.session.rollback()
+        return None
+
+
+def add_booklist(user_id, booklist_name, introduction):
+    """
+    user create a new booklist.
+    :param user_id: user id.
+    :param booklist_name: booklist name.
+    :param introduction: introduction.
+    :return: If successs, return new booklist id, else return None.
+    """
+    try:
+        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction)
+        db.session.add(booklist)
+        db.session.commit()
+        return booklist.id
+    except Exception as e:
+        logging.error('%s,%s,%s' % (user_id, booklist_name, introduction))
+        logging.error(e)
+        db.session.rollback()
+        return None
 
 
 def add_book_to_booklist(booklist_id, book_id):
@@ -161,7 +203,7 @@ def add_book_to_booklist(booklist_id, book_id):
         db.session.commit()
         return True
     except Exception as e:
-        logging.debug('%s, %s' % (booklist_id, book_id))
+        logging.error('%s, %s' % (booklist_id, book_id))
         logging.error(e)
         db.session.rollback()
         return False
