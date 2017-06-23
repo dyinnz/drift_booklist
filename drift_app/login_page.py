@@ -22,10 +22,11 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 class User(flask_login.UserMixin):
     def __init__(self, account):
-        self.id = account
+        self.account = account
+        self.id = db_user.get_id_by_account(account)
 
     def __str__(self):
-        return 'User[' + self.id + ']'
+        return 'User[' + self.account + ']'
 
 
 # should be called by app file
@@ -102,7 +103,8 @@ def login():
     account = flask.request.form['account']
     password = flask.request.form['password']
 
-    if not db_user.authenticate(account, password):
+    auth_result, user_id = db_user.authenticate(account, password)
+    if not auth_result:
         return jsonify({"ok": False,
                         "brief": "Authenticate failed!"})
 
