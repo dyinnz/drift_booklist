@@ -1,7 +1,7 @@
 from drift_app.db_interface import db
 from .db_user import get_account_by_id
 import logging
-import json
+from flask import json
 
 
 class DB_user_book_remark(db.Model):
@@ -77,7 +77,7 @@ class DB_user_booklist_remark_opinion(db.Model):
             else "User %s didn't vote booklist remark %s" % (self.user_id, self.booklist_remark_id)
 
 
-def get_book_vote(book_id):
+def get_book_vote_num(book_id):
     """
     get vote result of a book.
     :param book_id: book id.
@@ -92,10 +92,43 @@ def get_book_vote(book_id):
             'down': down_num
         })
     except Exception as e:
-        logging.debug(book_id)
+        logging.error(book_id)
         logging.error(e)
         return None
 
+def get_user_book_opinion(user_id, book_id):
+    """
+    get user up/down and is_follow of a book.
+    :param user_id: user id.
+    :param book_id: book id.
+    :return: If success, return json list [vote, is_follow], vote is in ['up', 'down', 'neutral'] and is_follow is Boolean, else None.
+    """
+    try:
+        opinion = DB_user_book_opinion.query.filter_by(user_id=user_id, book_id=book_id).first()
+        if opinion is None:
+            return 'neutral'
+        return json.dumps([opinion.vote, opinion.is_follow])
+    except Exception as e:
+        logging.error('%s, %s' % (user_id, book_id))
+        logging.error(e)
+        return None
+
+def get_user_booklist_opinion(user_id, booklist_id):
+    """
+    get user up/down and is_follow of a booklist.
+    :param user_id: user id.
+    :param booklist_id: booklist id.
+    :return: If success, return json list [vote, is_follow], vote is in ['up', 'down', 'neutral'] and is_follow is Boolean, else None.
+    """
+    try:
+        opinion = DB_user_booklist_opinion.query.filter_by(user_id=user_id, booklist_id=booklist_id).first()
+        if opinion is None:
+            return 'neutral'
+        return json.dumps([opinion.vote, opinion.is_follow])
+    except Exception as e:
+        logging.error('%s, %s' % (user_id, booklist_id))
+        logging.error(e)
+        return None
 
 def get_booklist_vote(booklist_id):
     """
@@ -112,7 +145,7 @@ def get_booklist_vote(booklist_id):
             'down': down_num
         })
     except Exception as e:
-        logging.debug(booklist_id)
+        logging.error(booklist_id)
         logging.error(e)
         return None
 
@@ -132,7 +165,7 @@ def get_book_remark(book_id, page=1, per_page=10):
             [(get_account_by_id(user_book.user_id), user_book.remark) for user_book in user_books]
         ))
     except Exception as e:
-        logging.debug(book_id)
+        logging.error(book_id)
         logging.error(e)
         return None
 
@@ -152,7 +185,21 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
             [(get_account_by_id(user_booklist.user_id), user_booklist.remark) for user_booklist in user_booklists]
         ))
     except Exception as e:
-        logging.debug(booklist_id)
+        logging.error(booklist_id)
+        logging.error(e)
+        return None
+
+
+def get_book_follower_num(book_id):
+    """
+    return number of followers of a book.
+    :param book_id: book id.
+    :return: If success, return followers' count, else return None.
+    """
+    try:
+        return DB_user_book_opinion.query.filter_by(book_id=book_id, is_follow=1).count()
+    except Exception as e:
+        logging.error(book_id)
         logging.error(e)
         return None
 
@@ -171,7 +218,7 @@ def get_book_followers(book_id, page=1, per_page=10):
             [(get_account_by_id(user_book.user_id)) for user_book in user_books]
         ))
     except Exception as e:
-        logging.debug(book_id)
+        logging.error(book_id)
         logging.error(e)
         return None
 
@@ -191,7 +238,7 @@ def get_booklist_followers(booklist_id, page=1, per_page=10):
             [(get_account_by_id(user_booklist.user_id)) for user_booklist in user_booklists]
         ))
     except Exception as e:
-        logging.debug(booklist_id)
+        logging.error(booklist_id)
         logging.error(e)
         return None
 
@@ -217,10 +264,11 @@ def user_vote_book(book_id, user_id, attitude):
             db.session.commit()
             return True
     except Exception as e:
-        logging.debug('%s,%s,%s' % (book_id, user_id, attitude))
+        logging.error('%s,%s,%s' % (book_id, user_id, attitude))
         logging.error(e)
         db.session.rollback()
         return False
+
 
 def user_vote_booklist(booklist_id, user_id, attitude):
     """
@@ -243,10 +291,11 @@ def user_vote_booklist(booklist_id, user_id, attitude):
             db.session.commit()
             return True
     except Exception as e:
-        logging.debug('%s,%s,%s' % (booklist_id, user_id, attitude))
+        logging.error('%s,%s,%s' % (booklist_id, user_id, attitude))
         logging.error(e)
         db.session.rollback()
         return False
+
 
 def user_remark_book(book_id, user_id, remark):
     """
@@ -267,7 +316,7 @@ def user_remark_book(book_id, user_id, remark):
             db.session.add(user_book_remark)
             db.session.commit()
     except Exception as e:
-        logging.debug('%s,%s,%s' % (book_id, user_id, remark))
+        logging.error('%s,%s,%s' % (book_id, user_id, remark))
         logging.error(e)
         db.session.rollback()
         return False
@@ -292,7 +341,7 @@ def user_remark_booklist(booklist_id, user_id, remark):
             db.session.add(user_booklist_remark)
             db.session.commit()
     except Exception as e:
-        logging.debug('%s,%s,%s' % (booklist_id, user_id, remark))
+        logging.error('%s,%s,%s' % (booklist_id, user_id, remark))
         logging.error(e)
         db.session.rollback()
         return False

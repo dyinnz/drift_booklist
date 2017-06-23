@@ -1,5 +1,6 @@
 from drift_app.db_interface import db
 import logging
+from flask import json
 
 
 class DB_user(db.Model):
@@ -55,19 +56,47 @@ def get_account_by_id(user_id):
             return None
         return user.account
     except Exception as e:
-        logging.debug(user_id)
+        logging.error(user_id)
         logging.error(e)
         return None
 
 
 def get_id_by_account(account):
+    """
+    get user id by account.
+    :param account: account.
+    :return: If success, return user id, else None.
+    """
     try:
         user = DB_user.query.filter_by(account=account).first()
         if user is None:
             return None
         return user.id
     except Exception as e:
-        logging.debug(account)
+        logging.error(account)
+        logging.error(e)
+        return None
+
+
+def get_user_infos(account):
+    """
+    get user informations by account.
+    :param account: account
+    :return: If success, return user information in json format, else None.
+    """
+    try:
+        user = DB_user.query.filter_by(account=account).first_or_404()
+        if user is None:
+            return None
+        return json.dumps({
+            'name': user.name,
+            'birthday': user.birthday,
+            'introduction': user.introduction,
+            'gender': user.gender,
+            'pic_src': user.pic_src
+        })
+    except Exception as e:
+        logging.error(account)
         logging.error(e)
         return None
 
@@ -84,9 +113,9 @@ def authenticate(account, password):
         if user is None:
             return None
         logging.info(user)
-        return (user.id, user.account)
+        return user.id, user.account
     except Exception as e:
-        logging.debug('%s, %s' % (account, password))
+        logging.error('%s, %s' % (account, password))
         logging.error(e)
         return None
 
@@ -100,7 +129,7 @@ def check_duplicate_account(account):
     try:
         user = DB_user.query.filter_by(account=account).first()
     except Exception as e:
-        logging.debug(account)
+        logging.error(account)
         logging.error(e)
         return True
 
@@ -126,7 +155,7 @@ def register_user(name, account, password, birthday, gender, introduction='No In
         db.session.add(user)
         db.session.commit()
     except Exception as e:
-        logging.debug(','.join([str(x) for x in [name, account, password, birthday, gender, introduction, pic_src]]))
+        logging.error(','.join([str(x) for x in [name, account, password, birthday, gender, introduction, pic_src]]))
         logging.error(e)
         db.session.rollback()
         return False
@@ -147,7 +176,7 @@ def update_user_password(account, new_password):
         user.password = new_password
         db.session.commit()
     except Exception as e:
-        logging.debug(account, new_password)
+        logging.error(account, new_password)
         logging.error(e)
         db.session.rollback()
         return False
@@ -168,7 +197,7 @@ def add_user_interest(account, tag):
         db.session.add(user_interest)
         db.session.commit()
     except Exception as e:
-        logging.debug(account, tag)
+        logging.error(account, tag)
         logging.error(e)
         db.session.rollback()
         return False
