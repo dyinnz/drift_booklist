@@ -9,8 +9,8 @@
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
     <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
-    <link rel="stylesheet" href="assets/css/amazeui.min.css"/>
-    <link rel="stylesheet" href="assets/css/app.css">
+    <link rel="stylesheet" href="static/assets/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="static/assets/css/app.css">
     <style>
         .header {
             text-align: center;
@@ -27,7 +27,13 @@
             color: #78798d;
         }
     </style>
+    <script type="text/javascript" src="static/assets/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        $("#")
+    </script>
 </head>
+
+
 <body>
 <div class="am-g myapp-login">
     <div class="wrapper-page">
@@ -73,7 +79,7 @@
                                         type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4"
                                         required="">已同意使用条约 </label></div>
                                 <button class="myapp-login-button am-btn am-btn-secondary"
-                                        onclick="{location.href='register.html'}" type="submit">Register
+                                        onclick="moreinfo()" type="submit">Register
                                 </button>
                             </fieldset>
                         </form>
@@ -108,14 +114,14 @@
 </div>
 <!--/div-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<script src="assets/js/jquery.min.js"></script>
+<script src="static/assets/js/jquery.min.js"></script>
 <!--<![endif]-->
 <!--[if lte IE 8 ]>
 <script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
-<script src="assets/js/amazeui.ie8polyfill.min.js"></script>
+<script src="static/assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
-<script src="assets/js/amazeui.min.js"></script>
-<script src="assets/js/app.js"></script>
+<script src="static/assets/js/amazeui.min.js"></script>
+<script src="static/assets/js/app.js"></script>
 </body>
 </html>
