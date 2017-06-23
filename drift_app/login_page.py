@@ -1,16 +1,25 @@
+import os
 import logging
 import flask
 import flask_login
 import drift_app.db_interface.db_user as db_user
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
+from werkzeug.utils import secure_filename
 
 login_bp = Blueprint('login_bp', __name__)
 
 logging.basicConfig(level=logging.DEBUG)
 
+UPLOAD_FOLDER = './uploads'
 
-# class
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+
+# ------------------------------------------------------------------------------
+# utility class and function for login
+
 class User(flask_login.UserMixin):
     def __init__(self, account):
         self.id = account
@@ -23,9 +32,6 @@ class User(flask_login.UserMixin):
 login_manager = flask_login.LoginManager()
 
 
-def is_registered(account):
-    return False
-
 def init_login_manager(app):
     login_manager.init_app(app)
 
@@ -37,6 +43,41 @@ def user_loader(account):
         return
     return User(account)
 
+
+# ------------------------------------------------------------------------------
+
+def allowed_avatar_file(filename):
+    extensions = ['jpg', 'jpeg', 'png']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in extensions
+
+
+@login_bp.route('/upload/avatar', methods=['GET', 'POST'])
+def upload_avatar():
+    if request.method == 'GET':
+        return '''
+        <form method=post enctype=multipart/form-data>
+        <input type=file name=file>
+        <input type=submit value=Upload>
+        </form>
+        '''
+
+    if 'file' not in request.files:
+        return 'No file part'
+
+    file = request.files['file']
+    if file.filename == '':
+        return 'no selected file'
+
+    if file and allowed_avatar_file(file.filename):
+        filename = secure_filename(file.filename)
+        logging.info("file: %s has been saved.", filename)
+        file.save(os.path.join(UPLOAD_FOLDER, filename))
+        return 'success in uploading file'
+
+    return 'fail in uploading file'
+
+
+# ------------------------------------------------------------------------------
 
 @login_bp.route('/')
 def root():
@@ -55,13 +96,16 @@ def login():
     if request.method == 'GET':
         if not flask_login.current_user.is_anonymous:
             return flask.redirect(flask.url_for('recommand_bp.recommand'))
-        return '''
-        <form action='login' method='POST'>
-        <input type='text' name='account' id='account' placeholder='account'></input>
-        <input type='password' name='password' id='password' placeholder='password'></input>
-        <input type='submit' name='submit'></input>
-        </form>
-        '''
+
+        return flask.current_app.send_static_file('index.html')
+
+        # return '''
+        # <form action='login' method='POST'>
+        # <input type='text' name='account' id='account' placeholder='account'></input>
+        # <input type='password' name='password' id='password' placeholder='password'></input>
+        # <input type='submit' name='submit'></input>
+        # </form>
+        # '''
 
     account = flask.request.form['account']
     password = flask.request.form['password']
