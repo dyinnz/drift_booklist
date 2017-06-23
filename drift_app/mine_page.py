@@ -1,4 +1,5 @@
 import flask
+import logging
 from flask import Blueprint,jsonify,render_template
 from flask import request
 from drift_app.db_interface.db_book import get_book
@@ -14,17 +15,18 @@ with flask.current_app.test_request_context('/booklistdetail', method='POST'):
 
 @mine_bp.route('/test')
 def test():
-    return flask.current_app.send_static_file('mine_test.html')
+    return flask.current_app.send_static_file('main_test.html')
     #return flask.render_template('mine_test.html')
     #return flask.redirect(flask.url_for('.mine'))
 
-@mine_bp.route('/add')
+@mine_bp.route('/test/add')
 def add_numbers():
     """Add two numbers server side, ridiculous but well..."""
     a = request.args.get('a', 0, type=int)
     b = request.args.get('b', 0, type=int)
-    #return jsonify(result = a + b)
-    return 'add'
+    logging.debug('add succes')
+    return jsonify(result = a + b)
+    #return 'add'
 
 @mine_bp.route('/mine')
 def mine():
