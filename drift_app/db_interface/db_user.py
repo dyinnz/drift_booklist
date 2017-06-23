@@ -61,24 +61,32 @@ def get_account_by_id(user_id):
         return None
 
 
+def get_id_by_account(account):
+    try:
+        user = DB_user.query.filter_by(account=account).first()
+        if user is None:
+            return None
+        return user.account
+    except Exception as e:
+
+
 def authenticate(account, password):
     """
     authenticate user identity.
     :param account: account name, like xlm, not real name.
     :param password: password.
-    :return: If authentication passes return True, else False.
+    :return: If authentication passes return tuple (id, account), else None.
     """
     try:
         user = DB_user.query.filter_by(account=account, password=password).first()
         if user is None:
-            return False
+            return None
+        logging.info(user)
+        return (user.id, user.account)
     except Exception as e:
         logging.debug('%s, %s' % (account, password))
         logging.error(e)
-        return False
-
-    logging.info(user)
-    return True
+        return None
 
 
 def check_duplicate_account(account):
