@@ -3,6 +3,7 @@ account 用户名
 
 booklistinfo  书单详情
 {
+  booklistid
   booklistcover 书单封面
   booklistname  书单名
   createuser  '创建者
@@ -13,6 +14,7 @@ booklistinfo  书单详情
   introduce 介绍
   booklist 书单列表  其中每个书籍包含一下信息：
   {
+    bookid
     bookname 书名
     bookcover 书籍封面
     author 作者
@@ -34,13 +36,14 @@ likebooklist 我关注的书单 其中每个书单包含信息：
 
   booklistinfo 书单详情
 
-/addbooklist
+/newbooklist
 
 /bookdetail
   bookname 书名
 
   bookinfo
 {
+bookid
 bookname
 isbn
 author
