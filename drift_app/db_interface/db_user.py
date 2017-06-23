@@ -55,9 +55,8 @@ def get_account_by_id(user_id):
             return None
         return user.account
     except Exception as e:
-        print("Excepiton while getting account by user id.")
-        print(user_id)
-        print(e)
+        logging.debug(user_id)
+        logging.error(e)
         return None
 
 
@@ -66,8 +65,11 @@ def get_id_by_account(account):
         user = DB_user.query.filter_by(account=account).first()
         if user is None:
             return None
-        return user.account
+        return user.id
     except Exception as e:
+        logging.debug(account)
+        logging.error(e)
+        return None
 
 
 def authenticate(account, password):
