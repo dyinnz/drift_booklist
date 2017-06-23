@@ -1,8 +1,8 @@
-# recommand page
+# recommend page
 
-首页：/index or /recommand 两个指向同一个页面
+首页：/index or /recommend 两个指向同一个页面
 
-获取主页数据的路由：/recommand/fetch
+获取主页数据的路由：/recommend/fetch
 
 假定 booklist 长这样：
 ```json
@@ -29,7 +29,7 @@ booklist's array:
 json 数据格式
 ```json
 {
-    "recommand": "booklist's array",
+    "recommend": "booklist's array",
     
     "catalog": {
     "tech": "booklist's array",

@@ -6,7 +6,7 @@ from drift_app.db_interface import init_db
 from drift_app.login_page import init_login_manager
 from drift_app.login_page import login_bp
 from drift_app.mine_page import mine_bp
-from drift_app.recommand_page import recommand_bp
+from drift_app.recommend_page import recommend_bp
 
 json_config = None
 with open('config.json') as f:
@@ -21,7 +21,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = json_config['db_uri']
 
 
 # blueprint
-app.register_blueprint(recommand_bp)
+app.register_blueprint(recommend_bp)
 app.register_blueprint(login_bp)
 app.register_blueprint(mine_bp)
 

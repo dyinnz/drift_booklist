@@ -83,7 +83,7 @@ def upload_avatar():
 def root():
     logging.debug("%s accesses root", flask_login.current_user)
     if not flask_login.current_user.is_anonymous:
-        return flask.redirect(flask.url_for('recommand_bp.recommand'))
+        return flask.redirect(flask.url_for('recommend_bp.recommend'))
     else:
         return flask.redirect(flask.url_for('.login'))
 
@@ -95,17 +95,9 @@ def login():
 
     if request.method == 'GET':
         if not flask_login.current_user.is_anonymous:
-            return flask.redirect(flask.url_for('recommand_bp.recommand'))
+            return flask.redirect(flask.url_for('recommend_bp.recommend'))
 
-        return flask.current_app.send_static_file('index.html')
-
-        # return '''
-        # <form action='login' method='POST'>
-        # <input type='text' name='account' id='account' placeholder='account'></input>
-        # <input type='password' name='password' id='password' placeholder='password'></input>
-        # <input type='submit' name='submit'></input>
-        # </form>
-        # '''
+        return flask.current_app.send_static_file('login.html')
 
     account = flask.request.form['account']
     password = flask.request.form['password']
@@ -115,7 +107,7 @@ def login():
                         "brief": "Authenticate failed!"})
 
     flask_login.login_user(User(account))
-    return flask.redirect(flask.url_for('recommand_bp.recommand'))
+    return flask.redirect(flask.url_for('recommend_bp.recommend'))
 
 
 @login_bp.route('/start', methods=['GET', 'POST'])

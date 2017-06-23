@@ -51,6 +51,8 @@ def get_account_by_id(user_id):
     """
     try:
         user = DB_user.query.filter_by(id=user_id).first()
+        if user is None:
+            return None
         return user.account
     except Exception as e:
         print("Excepiton while getting account by user id.")
@@ -116,6 +118,7 @@ def register_user(name, account, password, birthday, gender, introduction='No In
     except Exception as e:
         logging.debug(','.join([str(x) for x in [name, account, password, birthday, gender, introduction, pic_src]]))
         logging.error(e)
+        db.session.rollback()
         return False
     return True
 
@@ -128,7 +131,7 @@ def update_user_password(account, new_password):
     :return: True if change is done, else False.
     """
     try:
-        user = DB_user.query.filter_by(account=account).first()
+        user = DB_user.query.filter_by(account=account).first_or_404()
         if user is None:
             return False
         user.password = new_password
@@ -136,6 +139,7 @@ def update_user_password(account, new_password):
     except Exception as e:
         logging.debug(account, new_password)
         logging.error(e)
+        db.session.rollback()
         return False
     return True
 
@@ -148,7 +152,7 @@ def add_user_interest(account, tag):
     :return: True if interest is added, else False.
     """
     try:
-        user = DB_user.query.filter_by(account=account).first()
+        user = DB_user.query.filter_by(account=account).first_or_404()
         id = user.id
         user_interest = DB_user_interest(user_id=id, tag_name=tag)
         db.session.add(user_interest)
@@ -156,6 +160,7 @@ def add_user_interest(account, tag):
     except Exception as e:
         logging.debug(account, tag)
         logging.error(e)
+        db.session.rollback()
         return False
 
     return True

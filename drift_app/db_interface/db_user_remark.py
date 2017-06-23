@@ -56,7 +56,7 @@ class DB_user_booklist_opinion(db.Model):
 class DB_user_book_remark_opinion(db.Model):
     __tablename__ = 'user_book_remark_opinion'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    book_remark_id = db.Column(db.Integer, db.ForeignKey('book_remark.id'), primary_key=True)
+    book_remark_id = db.Column(db.Integer, db.ForeignKey('user_book_remark.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
 
     def __repr__(self):
@@ -68,12 +68,12 @@ class DB_user_book_remark_opinion(db.Model):
 class DB_user_booklist_remark_opinion(db.Model):
     __tablename__ = 'user_booklist_remark_opinion'
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
-    booklist_remark_id = db.Column(db.Integer, db.ForeignKey('booklist_remark.id'), primary_key=True)
+    booklist_remark_id = db.Column(db.Integer, db.ForeignKey('user_booklist_remark.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
 
     def __repr__(self):
         return 'User %s %svoted booklist remark %s' % (
-        self.user_id, self.vote, self.booklist_remark_id) if self.vote in ['up', 'down'] \
+            self.user_id, self.vote, self.booklist_remark_id) if self.vote in ['up', 'down'] \
             else "User %s didn't vote booklist remark %s" % (self.user_id, self.booklist_remark_id)
 
 
@@ -93,6 +93,26 @@ def get_book_vote(book_id):
         })
     except Exception as e:
         logging.debug(book_id)
+        logging.error(e)
+        return None
+
+
+def get_booklist_vote(booklist_id):
+    """
+    get vote result of a booklist.
+    :param booklist_id: booklist id.
+    :return: If success, return json format dict(keys: 'up', 'down'), else None.
+    """
+    try:
+        up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, up_or_down='up').count()
+        down_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, up_or_down='down').count()
+
+        return json.dumps({
+            'up': up_num,
+            'down': down_num
+        })
+    except Exception as e:
+        logging.debug(booklist_id)
         logging.error(e)
         return None
 
@@ -117,6 +137,26 @@ def get_book_remark(book_id, page=1, per_page=10):
         return None
 
 
+def get_booklist_remark(booklist_id, page=1, per_page=10):
+    """
+    get remarks of one booklist, remarks are organized in pages format for display convinence.
+    for example, get_booklist_remark(1, 2, 10) returns remarks of booklist 1 in page 2, each page contains 10 remarks.
+    :param booklist_id: booklist id.
+    :param page: page number.
+    :param per_page: item number per page.
+    :return: If success, return json key-value format user-remark datas, else None.
+    """
+    try:
+        user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).paginate(page, per_page).query
+        return json.dumps(dict(
+            [(get_account_by_id(user_booklist.user_id), user_booklist.remark) for user_booklist in user_booklists]
+        ))
+    except Exception as e:
+        logging.debug(booklist_id)
+        logging.error(e)
+        return None
+
+
 def get_book_followers(book_id, page=1, per_page=10):
     """
     get all users following one book, use page again.
@@ -131,7 +171,27 @@ def get_book_followers(book_id, page=1, per_page=10):
             [(get_account_by_id(user_book.user_id)) for user_book in user_books]
         ))
     except Exception as e:
-        logging.info(book_id)
+        logging.debug(book_id)
+        logging.error(e)
+        return None
+
+
+def get_booklist_followers(booklist_id, page=1, per_page=10):
+    """
+    get all users following one booklist, use page again.
+    :param booklist_id: booklist id.
+    :param page: page number.
+    :param per_page: item number per page.
+    :return: If success, return json format users' account names, else None.
+    """
+    try:
+        user_booklists = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, is_follow=1).paginate(page,
+                                                                                                                 per_page).query
+        return json.dumps(dict(
+            [(get_account_by_id(user_booklist.user_id)) for user_booklist in user_booklists]
+        ))
+    except Exception as e:
+        logging.debug(booklist_id)
         logging.error(e)
         return None
 
@@ -157,10 +217,36 @@ def user_vote_book(book_id, user_id, attitude):
             db.session.commit()
             return True
     except Exception as e:
-        logging.info('%s,%s,%s' % (book_id, user_id, attitude))
+        logging.debug('%s,%s,%s' % (book_id, user_id, attitude))
         logging.error(e)
+        db.session.rollback()
         return False
 
+def user_vote_booklist(booklist_id, user_id, attitude):
+    """
+    user votes a booklist.
+    :param booklist_id: booklist id.
+    :param user_id: user id.
+    :param attitude: string type, 'up', 'down', or 'neutral'.
+    :return: If success, return True, else False.
+    """
+    try:
+        user_vote = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, user_id=user_id)
+        if user_vote is not None:
+            user_vote = user_vote.first()
+            user_vote.vote = attitude
+            db.session.commit()
+            return True
+        else:
+            user_vote = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, vote=attitude, is_follow=True)
+            db.session.add(user_vote)
+            db.session.commit()
+            return True
+    except Exception as e:
+        logging.debug('%s,%s,%s' % (booklist_id, user_id, attitude))
+        logging.error(e)
+        db.session.rollback()
+        return False
 
 def user_remark_book(book_id, user_id, remark):
     """
@@ -181,6 +267,32 @@ def user_remark_book(book_id, user_id, remark):
             db.session.add(user_book_remark)
             db.session.commit()
     except Exception as e:
-        logging.info('%s,%s,%s' % (book_id, user_id, remark))
+        logging.debug('%s,%s,%s' % (book_id, user_id, remark))
         logging.error(e)
+        db.session.rollback()
+        return False
+
+
+def user_remark_booklist(booklist_id, user_id, remark):
+    """
+    user remarks a booklist.
+    :param booklist_id: booklist id.
+    :param user_id: user id.
+    :param remark: remark content.
+    :return: If success, return True, else False.
+    """
+    try:
+        user_booklist_remark = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id, user_id=user_id)
+        if user_booklist_remark is not None:
+            user_booklist_remark = user_booklist_remark.first()
+            user_booklist_remark.remark = remark
+            db.session.commit()
+        else:
+            user_booklist_remark = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, remark=remark)
+            db.session.add(user_booklist_remark)
+            db.session.commit()
+    except Exception as e:
+        logging.debug('%s,%s,%s' % (booklist_id, user_id, remark))
+        logging.error(e)
+        db.session.rollback()
         return False
