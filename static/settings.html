@@ -106,7 +106,14 @@
         $.ajax({
             type: 'POST',
             url: "/settings/update",
-            data: new_settings
+            data: JSON.stringify(new_settings),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                $("#get_result").text(result)
+            },
+            error: function(xhr, status, error) {
+                $("#get_result").text(status + ": " + error)
+            }
         });
     });
 </script>

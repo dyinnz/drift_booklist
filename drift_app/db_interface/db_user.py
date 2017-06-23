@@ -101,6 +101,27 @@ def get_user_infos(account):
         return None
 
 
+def update_user_infos(account, infos):
+    try:
+        user = DB_user.query.filter_by(account=account).first_or_404()
+        if not user:
+            return None
+
+        user.name = infos['name']
+        user.introduction = infos['introduction']
+        user.birthday = infos['birthday']
+        user.gender = infos['gender']
+        db.session.commit()
+
+        return True
+
+    except Exception as e:
+        logging.error("update %s", account)
+        logging.error(e)
+        db.session.rollback()
+        return None
+
+
 def authenticate(account, password):
     """
     authenticate user identity.
