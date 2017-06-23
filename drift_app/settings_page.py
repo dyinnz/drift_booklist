@@ -24,8 +24,21 @@ def get_account_settings():
 @flask_login.login_required
 def update_account_settings():
     new_settings = request.get_json()
-    logging.debug("json data: %s\nrequest: %s", new_settings, request.data)
     if db_user.update_user_infos(current_user.account, new_settings):
         return 'Succeed!'
     else:
         return 'Failed!'
+
+
+@settings_bp.route('/settings/update_ps', methods=['POST'])
+@flask_login.login_required
+def update_account_password():
+    json_data = request.get_json()
+
+    if not db_user.authenticate(current_user.account, json_data['old_ps']):
+        return "Old password is not correct!"
+
+    if db_user.update_user_password(current_user.account, json_data['new_ps']):
+        return 'Succeed!'
+    else:
+        return 'Failed'

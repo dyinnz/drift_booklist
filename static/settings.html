@@ -55,6 +55,16 @@
 
 <p id="get_result"></p>
 
+<label>Old Password</label>
+<input type="password" id="old_ps">
+
+<label>New Password</label>
+<input type="password" id="new_ps">
+
+<label>Confirm Password</label>
+<input type="password" id="confirm">
+
+<button id="update_ps">Modify Password</button>
 
 
 <!--[if (gte IE 9)|!(IE)]><!-->
@@ -116,6 +126,32 @@
             }
         });
     });
+
+    $("#update_ps").click(function() {
+        var old_ps = $("#old_ps").val();
+        var new_ps1 = $("#new_ps").val();
+        var new_ps2 = $("#confirm").val();
+        if (new_ps1 !== new_ps2) {
+            $("#get_result").text("two passwords are different");
+            return
+        }
+
+        $.ajax({
+            type: "POST",
+            url: '/settings/update_ps',
+            data: JSON.stringify({
+                old_ps: old_ps,
+                new_ps: new_ps2
+            }),
+            contentType: 'application/json; charset=utf-8',
+            success: function (result) {
+                $("#get_result").text(result)
+            },
+            error: function (xhr, status, error) {
+                $("#get_result").text(status + ": " + error)
+            }
+        })
+    })
 </script>
 
 </html>

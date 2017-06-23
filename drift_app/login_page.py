@@ -5,16 +5,8 @@ import flask_login
 import drift_app.db_interface.db_user as db_user
 
 from flask import Blueprint, request, jsonify, current_app
-from werkzeug.utils import secure_filename
 
 login_bp = Blueprint('login_bp', __name__)
-
-logging.basicConfig(level=logging.DEBUG)
-
-UPLOAD_FOLDER = './uploads'
-
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
 
 
 # ------------------------------------------------------------------------------
@@ -51,36 +43,16 @@ def user_loader(account):
 
 # ------------------------------------------------------------------------------
 
-def allowed_avatar_file(filename):
-    extensions = ['jpg', 'jpeg', 'png']
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in extensions
 
-
-@login_bp.route('/upload/avatar', methods=['GET', 'POST'])
+@login_bp.route('/upload_avatar')
 def upload_avatar():
     if request.method == 'GET':
         return '''
-        <form method=post enctype=multipart/form-data>
+        <form action="/upload?path=avatar&prefix=hehe_" method=post enctype=multipart/form-data>
         <input type=file name=file>
         <input type=submit value=Upload>
         </form>
         '''
-
-    if 'file' not in request.files:
-        return 'No file part'
-
-    file = request.files['file']
-    if file.filename == '':
-        return 'no selected file'
-
-    if file and allowed_avatar_file(file.filename):
-        filename = secure_filename(file.filename)
-        logging.info("file: %s has been saved.", filename)
-        file.save(os.path.join(UPLOAD_FOLDER, filename))
-        return 'success in uploading file'
-
-    return 'fail in uploading file'
-
 
 # ------------------------------------------------------------------------------
 
@@ -107,7 +79,7 @@ def login():
     account = flask.request.form['account']
     password = flask.request.form['password']
 
-    auth_result, user_id = db_user.authenticate(account, password)
+    auth_result = db_user.authenticate(account, password)
     if not auth_result:
         return jsonify({"ok": False,
                         "brief": "Authenticate failed!"})
