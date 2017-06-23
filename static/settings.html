@@ -46,10 +46,14 @@
 <label>Introduction</label>
 <input type="text" id="introduction"/>
 
-<label>Gender</label>
-<input type="text" id="gender"/>
+<label>Male</label>
+<input type="radio" id="male" name="gender"/>
+<label>Female</label>
+<input type="radio" id="female" name="gender"/>
 
 <button id="update_name">Update</button>
+
+<p id="get_result"></p>
 
 
 
@@ -66,8 +70,43 @@
 
 <script>
     $(document).ready(function () {
-        $.get("/settings/get/aaa", function (data, status) {
-            alert("Data: " + data + "\nStatus: " + status);
+        $.ajax({
+            type: "GET",
+            url: "/settings/get",
+            dataType: "json",
+            success: function (old) {
+                $("#name").val(old["name"]);
+                $("#birthday").val(old["birthday"]);
+                $("#introduction").val(old["introduction"]);
+                if (old["gender"] === "male") {
+                    $("#male").attr("checked", true)
+                } else {
+                    $("#female").attr("checked", true)
+                }
+            },
+            error: function(xhr, status, error) {
+                $("#get_result").text(status + ": " + error)
+            }
+        });
+    });
+
+    $("#update_name").click(function () {
+        var gender = "female";
+        if ($("#male").attr("checked")) {
+            gender = "male"
+        }
+
+        var new_settings = {
+            name: $("#name").val(),
+            birthday: $("#birthday").val(),
+            introduction: $("#introduction").val(),
+            gender: gender
+        };
+
+        $.ajax({
+            type: 'POST',
+            url: "/settings/update",
+            data: new_settings
         });
     });
 </script>

@@ -22,11 +22,15 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 class User(flask_login.UserMixin):
     def __init__(self, account):
-        self.account = account
-        self.id = db_user.get_id_by_account(account)
+        self.id = account
+        self.db_id = db_user.get_id_by_account(account)
 
     def __str__(self):
         return 'User[' + self.account + ']'
+
+    @property
+    def account(self):
+        return self.id
 
 
 # should be called by app file
@@ -125,9 +129,9 @@ def start():
 
     tags = request.form['tags']
     for tag in tags.split(' '):
-        db_user.add_user_interest(flask_login.current_user.id, tag)
+        db_user.add_user_interest(flask_login.current_user.account, tag)
 
-    return 'start as: ' + flask_login.current_user.id
+    return 'start as: ' + flask_login.current_user.account
 
 
 @login_bp.route('/register', methods=['GET', 'POST'])
