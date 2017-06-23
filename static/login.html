@@ -10,7 +10,7 @@
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
     <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
     <link rel="stylesheet" href="static/assets/css/amazeui.min.css"/>
-    <link rel="stylesheet" href="static/assets/css/app.css">
+    <link rel="stylesheet" href="static/assets/css/login.css">
     <style>
         .header {
             text-align: center;
@@ -27,10 +27,14 @@
             color: #78798d;
         }
     </style>
-    <script type="text/javascript" src="static/assets/js/jquery.min.js"></script>
+    <!--script type="text/javascript" src="static/assets/js/jquery.min.js"></script>
     <script type="text/javascript">
-        $("#")
-    </script>
+        $(document).ready(function () {
+            $('#register_button').click(function () {
+                $('#input_username').hide();
+            });
+        });
+    </script-->
 </head>
 
 
@@ -59,19 +63,19 @@
                     <div data-tab-panel-0 class="am-tab-panel am-active">
                         <form action="" class="am-form" data-am-validator>
                             <fieldset>
-                                <div class="am-form-group">
-                                    <label for="username">User Name</label>
-                                    <input type="text" id="username" minlength="3" placeholder="请输入3位以上用户名"
+                                <div class="am-form-group" id="input_username">
+                                    <label for="username_r">User Name</label>
+                                    <input type="text" id="username_r" minlength="3" placeholder="请输入3位以上用户名"
                                            class="am-form-field" required/>
                                 </div>
                                 <div class="am-form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" id="password" minlength="5" placeholder="请输入5位以上密码"
+                                    <label for="password_r">Password</label>
+                                    <input type="password" id="password_r" minlength="5" placeholder="请输入5位以上密码"
                                            class="am-form-field" required/>
                                 </div>
                                 <div class="am-form-group">
-                                    <label for="password1">Password</label>
-                                    <input type="password" id="password1" minlength="5" placeholder="确认密码"
+                                    <label for="password_r1">Password</label>
+                                    <input type="password" id="password_r1" minlength="5" placeholder="确认密码"
                                            data-equal-to="#password" class="am-form-field" required/>
                                 </div>
                                 <div class="am-form-group myapp-login-treaty"><label
@@ -79,7 +83,7 @@
                                         type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4"
                                         required="">已同意使用条约 </label></div>
                                 <button class="myapp-login-button am-btn am-btn-secondary"
-                                        onclick="moreinfo()" type="submit">Register
+                                         type="submit" id="register_button">Register
                                 </button>
                             </fieldset>
                         </form>
@@ -89,19 +93,19 @@
                         <form action="" class="am-form">
                             <fieldset>
                                 <div class="am-form-group">
-                                    <label for="username">User Name</label>
-                                    <input type="text" id="username" minlength="3" placeholder="User ID"
+                                    <label for="username_l">User Name</label>
+                                    <input type="text" id="username_l" minlength="3" placeholder="User ID"
                                            class="am-form-field" required/>
                                 </div>
                                 <div class="am-form-group">
-                                    <label for="password">Password</label>
-                                    <input type="password" id="password" minlength="5" placeholder="User Password"
+                                    <label for="password_l">Password</label>
+                                    <input type="password" id="password_l" minlength="5" placeholder="User Password"
                                            class="am-form-field" required/>
                                 </div>
                                 <!--div class="am-form-group myapp-login-treaty"><label class="am-form-label"></label><label class="am-checkbox-inline"> <input type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4" required="">已同意使用条约 </label></div-->
                                 <br/>
-                                <button class="myapp-login-button am-btn am-btn-secondary"
-                                        onclick="{location.href='index.html'}" type="submit">SIGN IN
+                                <button class="myapp-login-button am-btn am-btn-secondary" id="login_button"
+                                         type="submit">SIGN IN
                                 </button>
                             </fieldset>
                             <legend>Forgot Password?</legend>
@@ -122,6 +126,6 @@
 <script src="static/assets/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 <script src="static/assets/js/amazeui.min.js"></script>
-<script src="static/assets/js/app.js"></script>
+<script src="static/assets/js/index.js"></script>
 </body>
 </html>

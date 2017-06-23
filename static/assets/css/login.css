@@ -13,7 +13,7 @@
 .myapp-login {
     height: 900px;
     width: 100%;
-    background: url(../i/index.jpg) center !important;
+    background: url(../i/index.jpg) center;
     background-size: cover;
 }
 
@@ -111,7 +111,7 @@
 }
 
 /*输入框*/
-.myapp-login .myapp-login-bg input#username, #password, #password1{
+.myapp-login .myapp-login-bg input#username_r, #password_r, #password_r1, #username_l, #password_l{
     background: none;
     border-radius: 30px;
     border: 1px solid #9194a7;
