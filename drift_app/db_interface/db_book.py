@@ -11,7 +11,8 @@ class DB_Book(db.Model):
     ISBN = db.Column(db.String(32))
     author = db.Column(db.String(64))
     publisher = db.Column(db.String(45))
-    introductionn = db.Column(db.String(256))
+    introduction = db.Column(db.String(256))
+    cover=db.Column(db.String(40))
 
     def __repr__(self):
         return "Book:%s\nIntroduction:%s" % (self.name, self.introductionn)
@@ -29,6 +30,7 @@ class DB_booklist(db.Model):
     name = db.Column(db.String(45))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     introduction = db.Column(db.String(256))
+    cover = db.Column(db.String(40))
 
     def __repr__(self):
         return 'Booklist %s created by user %s:%s' % (self.name, self.user_id, self.introduction)
@@ -62,6 +64,7 @@ def get_book(book_id):
         return json.dumps({
             'book_id': book.id,
             'book_name': book.name,
+            'book_cover':book.cover,
             'ISBN': book.ISBN,
             'author': book.author,
             'publisher': book.publisher,
@@ -84,8 +87,9 @@ def get_book_by_ISBN(ISBN):
         if book is None:
             return None
         return json.dumps({
-            'id': book.id,
-            'name': book.name,
+            'book_id': book.id,
+            'book_name': book.name,
+            'book_cover':book.cover,
             'ISBN': book.ISBN,
             'author': book.author,
             'publisher': book.publisher,
@@ -121,7 +125,7 @@ def get_booklist_tag(booklist_id):
     :return: If success, return all tags of the booklist in json format(all tags in a single list), else None.
     """
     try:
-        booklist_tags = DB_book_tag.query.filter_by(booklist_id=booklist_id).all()
+        booklist_tags = DB_booklist_tag.query.filter_by(booklist_id=booklist_id).all()
         tags = json.dumps([b_t.tag_name for b_t in booklist_tags])
     except Exception as e:
         logging.error(booklist_id)
@@ -169,7 +173,7 @@ def upload_book(name, ISBN, author, publisher, introduction):
         return None
 
 
-def add_booklist(user_id, booklist_name, introduction):
+def add_booklist(user_id, booklist_name, introduction,cover):
     """
     user create a new booklist.
     :param user_id: user id.
@@ -178,12 +182,12 @@ def add_booklist(user_id, booklist_name, introduction):
     :return: If successs, return new booklist id, else return None.
     """
     try:
-        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction)
+        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
         db.session.add(booklist)
         db.session.commit()
         return booklist.id
     except Exception as e:
-        logging.error('%s,%s,%s' % (user_id, booklist_name, introduction))
+        logging.error('%s,%s,%s,%s' % (user_id, booklist_name, introduction,cover))
         logging.error(e)
         db.session.rollback()
         return None
@@ -229,14 +233,15 @@ def get_booklist_by_id(booklist_id):
     :return: the infomation of booklist
     """
     try:
-        booklist=DB_booklist.query.filter_by(id=booklist_id).frist()
+        booklist=DB_booklist.query.filter_by(id=booklist_id).first()
         if booklist ==None:
             return None
         return json.dumps({
             'booklist_id':booklist.id,
             'booklist_name':booklist.name,
+            'booklist_cover':booklist.cover,
             'create_user':get_account_by_id(booklist.user_id),
-            'introduction':booklist.introductionn
+            'introduction':booklist.introduction
             })
     except Exception as e:
         logging.error("%s %s" %(booklist.id,booklist.name))

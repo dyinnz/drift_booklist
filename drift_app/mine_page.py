@@ -14,19 +14,20 @@ def get_booklist_detail(booklist_id):
     jsondata=json.loads(booklistinfo)
 
     books = json.loads(db_book.get_books_in_booklist(booklist_id))  # 书单id 列表
-    booklist = []
-    for book in books:  # 获取书单中书籍简要信息
-        bookinfo = db_book.get_book(book)
-        bookinfo_to_list = {
-            'book_id': bookinfo['id'],
-            'book_name': bookinfo['name'],
-            #'ISBN':bookinfo['ISBN'],
-            'book_cover': bookinfo['cover'],
-            'author': bookinfo['author'],
-            'publisher': bookinfo['publisher'],
-            #'introduction':bookinfo['introduction']
-        }
-        booklist.append(bookinfo_to_list)
+    if books!=None:
+        booklist = []
+        for book in books:  # 获取书单中书籍简要信息
+            bookinfo = json.loads(db_book.get_book(book))
+            bookinfo_to_list = {
+                'book_id': bookinfo['book_id'],
+                'book_name': bookinfo['book_name'],
+                #'ISBN':bookinfo['ISBN'],
+                'book_cover': bookinfo['book_cover'],
+                'author': bookinfo['author'],
+                'publisher': bookinfo['publisher'],
+                #'introduction':bookinfo['introduction']
+            }
+            booklist.append(bookinfo_to_list)
 
     vote_number = json.loads(db_user_remark.get_booklist_vote(booklist_id))
     jsondata['up_number'] = vote_number['up']
@@ -36,7 +37,8 @@ def get_booklist_detail(booklist_id):
     jsondata['remark_number']=db_user_remark.get_booklist_remark_num(booklist_id)
     jsondata['remarks'] = json.loads(db_user_remark.get_booklist_remark(booklist_id, 1, 10))
     jsondata['booklist'] = booklist
-    jsondata['tags'] = json.loads(db_user_remark.get_booklist_tag(booklist_id))
+    jsondata['tags'] = json.loads(db_book.get_booklist_tag(booklist_id))
+
 
     return jsondata  #返回字典
 
@@ -54,7 +56,7 @@ def get_booklists_by_ids(booklist_ids):
     return my_booklists
 
 def get_my_booklists():
-    booklist_ids=json.loads(db_book.get_user_created_booklist(flask_login.db_id) )
+    booklist_ids=json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id) )
     return get_booklists_by_ids(booklist_ids)
 
 def get_booklists_followed():
@@ -76,11 +78,9 @@ def mine():
 
 @mine_bp.route('/get_mydata',methods=['POST','GET'])
 def get_mydata():
-    '''
-    user_id=flask_login.current_user.db_id
-    jsondata=get_booklist_detail('my followerd book')
+    jsondata=get_booklist_detail(1)
     jsondata['my_booklists']=get_my_booklists()
-    jsondata['followed_booklists']=get_booklist_followed()
+    jsondata['followed_booklists']=get_booklists_followed()
     '''
     jsondata={
         'booklist_id':'id',
@@ -106,7 +106,8 @@ def get_mydata():
 
         }],
         'follower_booklist':[]
-    }
+    }'''
+
     return   jsonify(jsondata)
 
 @mine_bp.route('/new_booklist',methods=['POST','GET'])

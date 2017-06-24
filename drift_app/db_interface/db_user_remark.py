@@ -137,8 +137,8 @@ def get_booklist_vote(booklist_id):
     :return: If success, return json format dict(keys: 'up', 'down'), else None.
     """
     try:
-        up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, up_or_down='up').count()
-        down_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, up_or_down='down').count()
+        up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, vote='up').count()
+        down_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, vote='down').count()
 
         return json.dumps({
             'up': up_num,
