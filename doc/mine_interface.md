@@ -21,6 +21,7 @@ booklist_info  书单详情
   follower_number  关注数
   remark_number 评论数
   tags 标签   列表
+  remarks 评论 列表 一页 每页10条
   introduce 介绍
   booklist 书单列表  其中每个书籍包含一下信息：
   {
@@ -61,7 +62,7 @@ introduce
 follower_number
 up_number
 dowm_number
-remark [{
+remarks [{
 }]
 }
 
@@ -87,6 +88,7 @@ remarks :[r1,r2,r3]
 }
 
 /add_to_list
+my_booklist
 {
  book_id
  booklist_id
@@ -98,7 +100,7 @@ remarks :[r1,r2,r3]
 
 /vote_book
 {
-bookid
+book_id
 attitude:up/down
 }
 {
@@ -108,7 +110,7 @@ attitude:up/down/neutral
 
 /vote_booklist
 {
-booklistid
+booklist_id
 attitude:up/down
 }
 {
@@ -123,6 +125,7 @@ booklist_cover
 booklist_introduce
 }
 {
+  new_booklist_info
   my_booklist[{     我的书单列表
   booklist_id
   booklist_cover 书单封面

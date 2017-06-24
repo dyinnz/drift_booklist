@@ -96,6 +96,10 @@
         $.ajax({
             type:'POST',
             url:'/booklist_detail',
+            data:{
+              'booklist_id':'booklist'
+            },
+            contentType:'json',
             success:function (data) {
                 alert("success")
             },
