@@ -120,6 +120,7 @@ attitude:up/down/neutral
 {
 booklist_name
 booklist_cover
+booklist_introduce
 }
 {
   my_booklist[{     我的书单列表
