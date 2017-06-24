@@ -11,12 +11,15 @@ from drift_app.recommend_page import recommend_bp
 from drift_app.settings_page import settings_bp
 from drift_app.utility import utility_bp
 
+
+
 json_config = None
 with open('config.json') as f:
     json_config = json.load(f)
 
 # setup app
 app = Flask(__name__)
+
 app.secret_key = \
     b'\x12\x89C\xda\xab\xcbD\xd4\x91@\x9b\xde\xbf?Y\x13\xe8Y\xcf\xbc\xaa\x9c"\x93'
 

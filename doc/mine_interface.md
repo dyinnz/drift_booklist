@@ -1,61 +1,131 @@
+包含路由 :
+/mine  /booklist_detail   /book_detail
+/add_booklist_remark   /add_book_remark
+/add_to_list   /vote_book   /vote_booklist
+/new_booklist
+
+
 /mine
 account 用户名
+user_id
 
-booklistinfo  书单详情
+booklist_info  书单详情
 {
-  booklistid
-  booklistcover 书单封面
-  booklistname  书单名
-  createuser  '创建者
-  booknumber 书籍数
-  likenumber  关注数
-  remarknumber 评论数
-  label 标签
+  booklist_id
+  booklist_cover 书单封面
+  booklist_name  书单名
+  create_user  '创建者
+  up_number
+  down_number
+  book_number 书籍数
+  follower_number  关注数
+  remark_number 评论数
+  tags 标签   列表
   introduce 介绍
   booklist 书单列表  其中每个书籍包含一下信息：
   {
-    bookid
-    bookname 书名
-    bookcover 书籍封面
+    book_id
+    book_name 书名
+    book_cover 书籍封面
     author 作者
     publisher 出版社
    }
 }
 
-mybooklist 我创建的书单 其中诶各书单包含信息:
+my_booklist 我创建的书单 其中诶各书单包含信息:
 
-likebooklist 我关注的书单 其中每个书单包含信息：
+follower_booklist 我关注的书单 其中每个书单包含信息：
 {
-  booklistcover 书单封面
-  booklistname  书单名
-  booknumber 书籍数
+  booklist_id
+  booklist_cover 书单封面
+  booklist_name  书单名
+  book_number 书籍数
 }
 
-/booklistdetail
-  booklistname 书单名
+/booklist_detail
+  booklist_id
 
-  booklistinfo 书单详情
+  booklist_info 书单详情
 
-/newbooklist
+/book_detail
+  book_id
 
-/bookdetail
-  bookname 书名
-
-  bookinfo
+  book_info
 {
-bookid
-bookname
+book_id
+book_name
 isbn
 author
 publisher
 introduce
+follower_number
+up_number
+dowm_number
+remark [{
+}]
 }
 
-/addbooklistremark
-/addbookremark
-  content 评论内容
+/add_booklist_remark
+{
+remark 评论
+booklist_id
+}
 
-/addtolist
-  bookname 书籍名
-  booklistname 书单名
+json{
+'OK':true/false
+remarks :[r1,r2,r3]
+}
 
+/add_book_remark
+remark 评论
+booklist_id
+}
+
+json{
+'OK':true/false
+remarks :[r1,r2,r3]
+}
+
+/add_to_list
+{
+ book_id
+ booklist_id
+ }
+
+ {
+'OK':True/False
+}
+
+/vote_book
+{
+bookid
+attitude:up/down
+}
+{
+'OK':
+attitude:up/down/neutral
+}
+
+/vote_booklist
+{
+booklistid
+attitude:up/down
+}
+{
+'OK':
+attitude:up/down/neutral
+}
+
+/new_booklist
+{
+booklist_name
+booklist_cover
+}
+{
+  my_booklist[{     我的书单列表
+  booklist_id
+  booklist_cover 书单封面
+  booklist_name  书单名
+  book_number 书籍数
+  }]
+}
