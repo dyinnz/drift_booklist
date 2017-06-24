@@ -74,7 +74,7 @@ def mine():
     if flask_login.current_user.is_anonymous:
         return flask.redirect(flask.url_for('login_bp.login'))
     else:
-        return flask.current_app.send_static_file('mine.html')
+        return flask.current_app.send_static_file('react/mine.html')
 
 @mine_bp.route('/get_mydata',methods=['POST','GET'])
 def get_mydata():
