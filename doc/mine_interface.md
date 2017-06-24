@@ -22,7 +22,7 @@ booklist_info  书单详情
   remark_number 评论数
   tags 标签   列表
   remarks 评论 列表 一页 每页10条
-  introduce 介绍
+  introduction 介绍
   booklist 书单列表  其中每个书籍包含一下信息：
   {
     book_id
@@ -33,9 +33,9 @@ booklist_info  书单详情
    }
 }
 
-my_booklist 我创建的书单 其中诶各书单包含信息:
+my_booklists 我创建的书单 其中诶各书单包含信息:
 
-follower_booklist 我关注的书单 其中每个书单包含信息：
+followed_booklists 我关注的书单 其中每个书单包含信息：
 {
   booklist_id
   booklist_cover 书单封面
@@ -55,10 +55,10 @@ follower_booklist 我关注的书单 其中每个书单包含信息：
 {
 book_id
 book_name
-isbn
+ISBN
 author
 publisher
-introduce
+introduction
 follower_number
 up_number
 dowm_number
