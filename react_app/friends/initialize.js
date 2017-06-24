@@ -4,6 +4,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import RaisedButton from 'material-ui/RaisedButton'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import {List, ListItem} from 'material-ui/List';
 
 injectTapEventPlugin();
 
@@ -17,9 +18,18 @@ const App = () => (
     </MuiThemeProvider>
 );
 
+const BookList = () => (
+    <List>
+      <ListItem primaryText="All mail" />
+      <ListItem primaryText="Trash" />
+      <ListItem primaryText="Spam" />
+      <ListItem primaryText="Follow up" />
+    </List>
+)
+
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
-        <App/>,
+        <BookList/>,
         document.getElementById('root')
     );
 });
