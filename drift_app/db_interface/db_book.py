@@ -1,4 +1,5 @@
 from drift_app.db_interface import db
+from .db_user import get_account_by_id
 import json
 import logging
 
@@ -59,8 +60,8 @@ def get_book(book_id):
         if book is None:
             return None
         return json.dumps({
-            'id': book.id,
-            'name': book.name,
+            'book_id': book.id,
+            'book_name': book.name,
             'ISBN': book.ISBN,
             'author': book.author,
             'publisher': book.publisher,
@@ -139,9 +140,7 @@ def get_books_in_booklist(booklist_id):
     try:
         booklist_books = DB_booklist_book.query.filter_by(booklist_id=booklist_id).all()
         book_ids = [item.book_id for item in booklist_books]
-        return json.dumps(
-            [get_book(id) for id in book_ids]
-        )
+        return json.dumps(book_ids)
     except Exception as e:
         logging.error(booklist_id)
         logging.error(e)
@@ -207,3 +206,39 @@ def add_book_to_booklist(booklist_id, book_id):
         logging.error(e)
         db.session.rollback()
         return False
+
+def get_user_created_booklist(user_id):
+    """
+    get my booklist
+    :param user_id:
+    :return: list of booklist_id
+    """
+    try:
+        booklists=DB_booklist.query.filter_by(user_id=user_id).all()
+        booklist_ids=[item.id for item in booklists]
+        return json.dumps(booklist_ids)
+    except Exception as e:
+        logging.error('get booklist created by %s' %(user_id))
+        logging.error(e)
+        return None
+
+def get_booklist_by_id(booklist_id):
+    """
+    get booklist by id
+    :param booklist_id:
+    :return: the infomation of booklist
+    """
+    try:
+        booklist=DB_booklist.query.filter_by(id=booklist_id).frist()
+        if booklist ==None:
+            return None
+        return json.dumps({
+            'booklist_id':booklist.id,
+            'booklist_name':booklist.name,
+            'create_user':get_account_by_id(booklist.user_id),
+            'introduction':booklist.introductionn
+            })
+    except Exception as e:
+        logging.error("%s %s" %(booklist.id,booklist.name))
+        logging.error(e)
+        return None
