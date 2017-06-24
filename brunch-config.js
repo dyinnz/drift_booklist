@@ -4,12 +4,15 @@ exports.files = {
     joinTo: {
       'js/vendor.js': /^node_modules/,
       'js/index.js': /^react_app\/index/,
-      'js/friends.js': /^react_app\/friends/
+      'js/friends.js': /^react_app\/friends/,
+      'js/mine.js': /^react_app\/mine/
     }
   },
   stylesheets: {
     joinTo: {
-      'css/index.css': /^react_app\/index/
+      'css/index.css': /^react_app\/index/,
+      'css/friends.css': /^react_app\/friends/,
+      'css/mine.css': /^react_app\/mine/
     }
   }
 };
