@@ -9,8 +9,8 @@ from drift_app.login_page import login_bp
 from drift_app.mine_page import mine_bp
 from drift_app.recommend_page import recommend_bp
 from drift_app.settings_page import settings_bp
+from drift_app.friends_page import friends_bp
 from drift_app.utility import utility_bp
-
 
 
 json_config = None
@@ -31,6 +31,7 @@ app.register_blueprint(login_bp)
 app.register_blueprint(mine_bp)
 app.register_blueprint(settings_bp)
 app.register_blueprint(utility_bp)
+app.register_blueprint(friends_bp)
 
 logging.basicConfig(level=logging.DEBUG)
 
