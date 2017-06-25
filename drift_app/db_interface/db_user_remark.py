@@ -84,8 +84,8 @@ def get_book_vote_num(book_id):
     :return: If success, return json format dict(keys: 'up', 'down'), else None.
     """
     try:
-        up_num = DB_user_book_opinion.query.filter_by(book_id=book_id, up_or_down='up').count()
-        down_num = DB_user_book_opinion.query.filter_by(book_id=book_id, up_or_down='down').count()
+        up_num = DB_user_book_opinion.query.filter_by(book_id=book_id, vote='up').count()
+        down_num = DB_user_book_opinion.query.filter_by(book_id=book_id, vote='down').count()
 
         return json.dumps({
             'up': up_num,
@@ -381,6 +381,20 @@ def get_booklist_user_followed(user_id):
         booklists=DB_user_booklist_opinion.query.filter_by(user_id=user_id, is_follow=1).all()
         booklist_ids=[item.booklist_id for item in booklists]
         return json.dumps(booklist_ids)
+    except Exception as e:
+        logging.error('%s' % (user_id))
+        logging.error(e)
+        return None
+
+def get_books_user_followed(user_id):
+    """
+
+    :param user_id:
+    :return:
+    """
+    try:
+        book_ids=DB_user_book_opinion.query.filter_by(user_id=user_id,is_follow=1).all()
+        return json.dumps([item.book_id for item in book_ids])
     except Exception as e:
         logging.error('%s' % (user_id))
         logging.error(e)
