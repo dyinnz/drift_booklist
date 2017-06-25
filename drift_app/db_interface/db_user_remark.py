@@ -84,8 +84,8 @@ def get_book_vote_num(book_id):
     :return: If success, return json format dict(keys: 'up', 'down'), else None.
     """
     try:
-        up_num = DB_user_book_opinion.query.filter_by(book_id=book_id, up_or_down='up').count()
-        down_num = DB_user_book_opinion.query.filter_by(book_id=book_id, up_or_down='down').count()
+        up_num = DB_user_book_opinion.query.filter_by(book_id=book_id, vote='up').count()
+        down_num = DB_user_book_opinion.query.filter_by(book_id=book_id, vote='down').count()
 
         return json.dumps({
             'up': up_num,
@@ -160,10 +160,10 @@ def get_book_remark(book_id, page=1, per_page=10):
     :return: If success, return json key-value format user-remark datas, else None.
     """
     try:
-        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).paginate(page, per_page).query
-        return json.dumps(dict(
-            [(get_account_by_id(user_book.user_id), user_book.remark) for user_book in user_books]
-        ))
+        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page, per_page).query
+        return json.dumps(
+            [{'account':get_account_by_id(user_book.user_id), 'remark':user_book.remark,'remark_time':user_book.remark_time} for user_book in user_books]
+        )
     except Exception as e:
         logging.error(book_id)
         logging.error(e)
@@ -180,10 +180,10 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
     :return: If success, return json key-value format user-remark datas, else None.
     """
     try:
-        user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).paginate(page, per_page).query
-        return json.dumps(dict(
-            [(get_account_by_id(user_booklist.user_id), user_booklist.remark) for user_booklist in user_booklists]
-        ))
+        user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).order_by('-remark_time').paginate(page, per_page).query
+        return json.dumps(
+            [{'account':get_account_by_id(user_booklist.user_id), 'remark':user_booklist.remark,'remark_time':user_booklist.remark_time} for user_booklist in user_booklists]
+        )
     except Exception as e:
         logging.error(booklist_id)
         logging.error(e)
@@ -381,6 +381,20 @@ def get_booklist_user_followed(user_id):
         booklists=DB_user_booklist_opinion.query.filter_by(user_id=user_id, is_follow=1).all()
         booklist_ids=[item.booklist_id for item in booklists]
         return json.dumps(booklist_ids)
+    except Exception as e:
+        logging.error('%s' % (user_id))
+        logging.error(e)
+        return None
+
+def get_books_user_followed(user_id):
+    """
+
+    :param user_id:
+    :return:
+    """
+    try:
+        book_ids=DB_user_book_opinion.query.filter_by(user_id=user_id,is_follow=1).all()
+        return json.dumps([item.book_id for item in book_ids])
     except Exception as e:
         logging.error('%s' % (user_id))
         logging.error(e)
