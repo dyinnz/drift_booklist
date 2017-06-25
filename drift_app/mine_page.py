@@ -56,7 +56,7 @@ def get_booklists_by_ids(booklist_ids):
     return my_booklists
 
 def get_my_booklists():
-    booklist_ids=json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id) )
+    booklist_ids=json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id))
     return get_booklists_by_ids(booklist_ids)
 
 def get_booklists_followed():
