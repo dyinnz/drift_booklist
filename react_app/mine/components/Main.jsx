@@ -6,42 +6,24 @@ import {List, ListItem} from 'material-ui/List'
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card'
 import {GridList, GridTile} from 'material-ui/GridList'
 import Avatar from 'material-ui/Avatar'
+import AppBar from 'material-ui/AppBar'
+import Chip from 'material-ui/Chip'
+import Badge from 'material-ui/Badge'
+import ActionThumbUp from 'material-ui/svg-icons/action/thumb-up'
+import ActionThumbDown from 'material-ui/svg-icons/action/thumb-down'
 
-const styles = {
-    left_pane: {
-        width: 200,
-        margin: 20,
-        float: "left",
-    },
-
-    right_pane: {
-        width: 800,
-        margin: 20,
-        float: "left",
-    },
-
-    card_elem: {
-        float: "left"
-    },
-
-    grid_div: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-    },
-
-    grid_list: {
-        width: 600,
-        overflowY: 'auto',
-    },
-
-    static_style: {
-        position: "static",
-        float: "none",
-    }
-};
+function fetchPostJson(url, data) {
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+}
 
 class ListContainer extends React.Component {
+
     renderListItem(item) {
         return <ListItem
             key = {item.booklist_id}
@@ -52,8 +34,8 @@ class ListContainer extends React.Component {
                 <b>{item.book_number}</b>
             </span>}
 
-        >
-        </ListItem>
+            onTouchTap={event => this.props.handleTouch(item.booklist_id)}
+        />
     }
 
     render() {
@@ -83,24 +65,44 @@ class ShowContainer extends React.Component {
     }
 
     render() {
+        console.log("show: ", this.props.details.booklist_name)
         return (
-            <div><Card style={styles.card_elem}>
-                <div style={styles.card_elem}>
-
-                    <CardMedia style={styles.card_elem}>
+            <Card>
+                <Subheader> DETAILS </Subheader>
+                <div className="clearfix">
+                    <CardMedia className="card_media">
                         <img src="/static/react/default.png"/>
                     </CardMedia>
 
-                    <div style={styles.card_elem}>
+                    <div className="card_rhs">
                         <CardHeader
-                            title="BookList: ZZZ"
-                            subtitle="Author: XXX"
+                            title={this.props.details.booklist_name}
+                            subtitle={this.props.details.create_user}
                         />
 
-                        <CardText> Detail description here </CardText>
+                        <CardText>{this.props.details.introduction}</CardText>
+
+                        <Badge
+                            badgeContent={1}
+                            secondary={true}
+                        >
+                            <ActionThumbUp/>
+                        </Badge>
+
+                        <Badge
+                            badgeContent={999}
+                            primary={true}
+                        >
+                            <ActionThumbDown/>
+                        </Badge>
+
+                        <div className="tags_wrapper">
+                            <Chip>Tag1</Chip>
+                            <Chip>Tag2</Chip>
+                        </div>
                     </div>
                 </div>
-            </Card></div>
+            </Card>
         )
     }
 }
@@ -115,11 +117,9 @@ const tilesData = [
 class BookGrid extends React.Component {
     render() {
         return (
-            <div>
-                <GridList
-                    cols={4}
-                    style={styles.grid_list}
-                >
+            <div className="grid_list"><Paper>
+                <Subheader> BOOKS </Subheader>
+                <GridList cols={4} className="grid_wrapper">
                     {tilesData.map((tile) => (
                         <GridTile
                             key={tile.img}
@@ -129,27 +129,30 @@ class BookGrid extends React.Component {
                         </GridTile>
                     ))}
                 </GridList>
-            </div>
+            </Paper> </div>
         )
     }
 }
 
+const cardStyle = {
+    zIndex : 0,
+}
 
 class Comment extends React.Component {
     render() {
         return (
-            <div><Card style={styles.card_elem}>
-                <CardText style={styles.card_elem}>
-                    Comments Here
-                </CardText>
-
+            <div className="clearfix">
                 <CardHeader
+                    className="comment_who"
                     title="Someone"
                     subtitle="brief"
                     avatar="/static/react/zen.jpg"
-                    style={styles.card_elem}
                 />
-            </Card></div>
+
+                <CardText className="comment_content">
+                    Comments Here
+                </CardText>
+            </div>
         )
     }
 }
@@ -157,10 +160,11 @@ class Comment extends React.Component {
 class CommentList extends React.Component {
     render() {
         return (
-            <div style={styles.static_style}>
+            <div><Paper>
+                <Subheader> COMMENTS </Subheader>
                 <Comment/>
                 <Comment/>
-            </div>
+            </Paper></div>
         )
     }
 }
@@ -174,6 +178,7 @@ class Main extends React.Component {
         this.state = {
             myBooklist: [],
             followerBooklist: [],
+            showBooklist: {},
         }
     }
 
@@ -181,10 +186,12 @@ class Main extends React.Component {
         fetch('/get_mydata', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
-                console.log(data)
+                console.log("main data: ", data)
+                console.log("init state: ", this.state)
                 this.setState({
                     myBooklist: data.my_booklists,
                     followerBooklist: data.followed_booklists,
+                    showBooklist: this.state.showBooklist,
                 })
             })
     }
@@ -192,27 +199,48 @@ class Main extends React.Component {
 
     componentWillMount() {
         this.fetchData()
+        this.touchBooklist(0)
     }
 
     renderLeftPane() {
         return (
-            <div style={styles.left_pane}>
+            <div className="left_pane">
                 <ListContainer
                     listName="MY BOOKLIST"
                     items={this.state.myBooklist}
+                    handleTouch={this.touchBooklist.bind(this)}
                 />
                 <ListContainer
                     listName="INTERESTED BOOKLIST"
                     items={this.state.followerBooklist}
+                    handleTouch={this.touchBooklist.bind(this)}
                 />
             </div>
         )
     }
 
+    touchBooklist(booklist_id) {
+        console.log("booklist_id: ", booklist_id);
+
+        var data = JSON.stringify({booklist_id: booklist_id})
+
+        fetchPostJson("/booklist_detail", {
+            booklist_id: booklist_id
+        })
+            .then(resp => resp.json())
+            .then((data) => {
+                this.setState({
+                    myBooklist: this.state.myBooklist,
+                    followerBooklist: this.state.followerBooklist,
+                    showBooklist: data,
+                })
+            })
+    }
+
     renderRightPane() {
         return (
-            <div style={styles.right_pane}>
-                <ShowContainer/>
+            <div className="right_pane">
+                <ShowContainer details={this.state.showBooklist}/>
                 <BookGrid/>
                 <CommentList/>
             </div>
@@ -221,7 +249,7 @@ class Main extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id="main">
                 {this.renderLeftPane()}
                 {this.renderRightPane()}
             </div>

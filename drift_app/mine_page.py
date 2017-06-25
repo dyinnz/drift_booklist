@@ -111,6 +111,7 @@ def new_booklist():
 def booklistdetail():
     if request.method=='POST':
         data=request.get_json()
+        print("json: ", data)
         jsondata=get_booklist_detail(data['booklist_id'])
         logging.debug(jsondata)
         return jsonify(jsondata)
