@@ -26,7 +26,7 @@ class DB_book_tag(db.Model):
 
 class DB_booklist(db.Model):
     __tablename__ = 'booklist'
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
     name = db.Column(db.String(45))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     introduction = db.Column(db.String(256))
@@ -182,7 +182,7 @@ def add_booklist(user_id, booklist_name, introduction,cover):
     :return: If successs, return new booklist id, else return None.
     """
     try:
-        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
+        booklist = DB_booklist(id=DB_booklist.query.count(),user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
         db.session.add(booklist)
         db.session.commit()
         return booklist.id
@@ -192,6 +192,24 @@ def add_booklist(user_id, booklist_name, introduction,cover):
         db.session.rollback()
         return None
 
+def add_my_favorite_booklist(booklist_id,user_id, booklist_name, introduction,cover):
+    """
+    user create a new booklist.
+    :param user_id: user id.
+    :param booklist_name: booklist name.
+    :param introduction: introduction.
+    :return: If successs, return new booklist id, else return None.
+    """
+    try:
+        booklist = DB_booklist(id=booklist_id,user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
+        db.session.add(booklist)
+        db.session.commit()
+        return booklist.id
+    except Exception as e:
+        logging.error('%s,%s,%s,%s' % (user_id, booklist_name, introduction,cover))
+        logging.error(e)
+        db.session.rollback()
+        return None
 
 def add_book_to_booklist(booklist_id, book_id):
     """

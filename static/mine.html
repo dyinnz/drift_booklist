@@ -52,7 +52,8 @@
 <span id=create_user>...</span>
 
 <br>
-
+<span id=data>...</span>
+<br>
 <button id="update_name">Update</button>
 
 
@@ -95,13 +96,16 @@
     $('#update_name').click(function () {
         $.ajax({
             type:'POST',
-            url:'/booklist_detail',
-            data:{
-              'booklist_id':'booklist'
-            },
-            contentType:'json',
+            url:'/add_to_list',
+            data:JSON.stringify({
+              'booklist_id':2,
+                'book_id':2,
+            }),
+            contentType:'application/json; charset=UTF-8',
+            dataType: 'json',
             success:function (data) {
                 alert("success")
+                $('#data').html(JSON.stringify(data))
             },
             error:function (xhr,type) {
                 alert(type);
