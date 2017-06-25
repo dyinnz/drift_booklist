@@ -19,7 +19,7 @@ const styles = {
         float: "left",
     },
 
-    card_elem : {
+    card_elem: {
         float: "left"
     },
 
@@ -36,7 +36,7 @@ const styles = {
 
     static_style: {
         position: "static",
-        float : "none",
+        float: "none",
     }
 };
 
@@ -44,16 +44,26 @@ class ListContainer extends React.Component {
     constructor(props) {
         super(props);
         this.listName = props.listName;
+        this.state = {items: props.items}
+
+        console.log(props.items)
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState({items: props.items})
+
+        console.log(props.items)
     }
 
     render() {
         return (
             <Paper><List>
                 <Subheader>{this.listName}</Subheader>
-                <ListItem primaryText="All mail"/>
-                <ListItem primaryText="Trash"/>
-                <ListItem primaryText="Spam"/>
-                <ListItem primaryText="Follow up"/>
+                {this.state.items.map((item) => {
+                    return <ListItem
+                        key={item}
+                        primaryText={item}/>
+                })}
             </List></Paper>
         )
     }
@@ -63,26 +73,6 @@ const tilesData = [
     {
         img: "/static/react/default.png",
         title: 'hehe'
-    },
-
-    {
-        img: "/static/react/default.png",
-        title: 'haha'
-    },
-
-    {
-        img: "/static/react/default.png",
-        title: 'haha'
-    },
-
-    {
-        img: "/static/react/default.png",
-        title: 'haha'
-    },
-
-    {
-        img: "/static/react/default.png",
-        title: 'haha'
     },
 ];
 // <div>
@@ -98,7 +88,8 @@ class BookGrid extends React.Component {
                 >
                     {tilesData.map((tile) => (
                         <GridTile
-                            title = {tile.title}
+                            key = {tile.img}
+                            title={tile.title}
                         >
                             <img src={tile.img}/>
                         </GridTile>
@@ -112,7 +103,7 @@ class BookGrid extends React.Component {
 class ShowContainer extends React.Component {
     render() {
         return (
-            <div> <Card style={styles.card_elem}>
+            <div><Card style={styles.card_elem}>
                 <div style={styles.card_elem}>
                     <CardMedia style={styles.card_elem}>
                         <img src="/static/react/default.png"/>
@@ -125,7 +116,7 @@ class ShowContainer extends React.Component {
                         <CardText> Detail description here </CardText>
                     </div>
                 </div>
-            </Card> </div>
+            </Card></div>
         )
     }
 }
@@ -133,7 +124,7 @@ class ShowContainer extends React.Component {
 class Comment extends React.Component {
     render() {
         return (
-            <div> <Card style={styles.card_elem}>
+            <div><Card style={styles.card_elem}>
                 <CardText style={styles.card_elem}>
                     Comments Here
                 </CardText>
@@ -144,7 +135,7 @@ class Comment extends React.Component {
                     avatar="/static/react/zen.jpg"
                     style={styles.card_elem}
                 />
-            </Card> </div>
+            </Card></div>
         )
     }
 }
@@ -163,12 +154,43 @@ class CommentList extends React.Component {
 // <CommentList/>
 
 class Main extends React.Component {
+    constructor(props) {
+        super(props);
+        this.jsonData = undefined
+        this.state = {
+            myBooklist: [],
+            followerBooklist: [],
+        }
+    }
+
+    fetchData() {
+        fetch('/get_mydata')
+            .then(resp => resp.json())
+            .then((data) => {
+                console.log("hello: ", data)
+                this.setState({
+                    myBooklist: data.my_booklist,
+                    followerBooklist: data.follower_booklist,
+                });
+            })
+    }
+
+    componentDidMount() {
+        this.fetchData()
+    }
+
     render() {
         return (
             <div>
                 <div style={styles.left_pane}>
-                    <ListContainer listName="MY BOOKLIST"/>
-                    <ListContainer listName="INTERESTED BOOKLIST"/>
+                    <ListContainer
+                        listName="MY BOOKLIST"
+                        items = {this.state.myBooklist}
+                    />
+                    <ListContainer
+                        listName="INTERESTED BOOKLIST"
+                        items = {this.state.followerBooklist}
+                    />
                 </div>
                 <div style={styles.right_pane}>
                     <ShowContainer/>
