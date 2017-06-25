@@ -236,7 +236,7 @@ def get_user_created_booklist(user_id):
     :return: list of booklist_id
     """
     try:
-        booklists=DB_booklist.query.filter_by(user_id=user_id).all()
+        booklists=DB_booklist.query.filter_by(user_id=user_id).order_by('id').all()
         booklist_ids=[item.id for item in booklists]
         return json.dumps(booklist_ids)
     except Exception as e:
