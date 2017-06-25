@@ -137,8 +137,8 @@ def get_booklist_vote(booklist_id):
     :return: If success, return json format dict(keys: 'up', 'down'), else None.
     """
     try:
-        up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, up_or_down='up').count()
-        down_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, up_or_down='down').count()
+        up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, vote='up').count()
+        down_num = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, vote='down').count()
 
         return json.dumps({
             'up': up_num,
@@ -189,6 +189,18 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
         logging.error(e)
         return None
 
+def get_booklist_remark_num(booklist_id):
+    """
+    get the number of remarks of booklist
+    :param booklist_id:
+    :return: number
+    """
+    try:
+        return DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).count()
+    except Exception as e:
+        logging.error(booklist_id)
+        logging.error(e)
+        return None
 
 def get_book_follower_num(book_id):
     """
@@ -200,6 +212,19 @@ def get_book_follower_num(book_id):
         return DB_user_book_opinion.query.filter_by(book_id=book_id, is_follow=1).count()
     except Exception as e:
         logging.error(book_id)
+        logging.error(e)
+        return None
+
+def get_booklist_follower_num(booklist_id):
+    """
+    return number of followers of a booklist
+    :param booklist_id:
+    :return:
+    """
+    try:
+        return DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id,is_follow=1).count()
+    except Exception as e:
+        logging.error(booklist_id)
         logging.error(e)
         return None
 
@@ -345,3 +370,18 @@ def user_remark_booklist(booklist_id, user_id, remark):
         logging.error(e)
         db.session.rollback()
         return False
+
+def get_booklist_user_followed(user_id):
+    """
+    get booklist user followed
+    :param user_id:
+    :return: list of booklist_id
+    """
+    try:
+        booklists=DB_user_booklist_opinion.query.filter_by(user_id=user_id, is_follow=1).all()
+        booklist_ids=[item.booklist_id for item in booklists]
+        return json.dumps(booklist_ids)
+    except Exception as e:
+        logging.error('%s' % (user_id))
+        logging.error(e)
+        return None
