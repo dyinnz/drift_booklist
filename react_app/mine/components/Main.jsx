@@ -45,14 +45,10 @@ class ListContainer extends React.Component {
         super(props);
         this.listName = props.listName;
         this.state = {items: props.items}
-
-        console.log(props.items)
     }
 
     componentWillReceiveProps(props) {
         this.setState({items: props.items})
-
-        console.log(props.items)
     }
 
     render() {
@@ -61,8 +57,8 @@ class ListContainer extends React.Component {
                 <Subheader>{this.listName}</Subheader>
                 {this.state.items.map((item) => {
                     return <ListItem
-                        key={item}
-                        primaryText={item}/>
+                        key={item.booklist_name}
+                        primaryText={item.booklist_name}/>
                 })}
             </List></Paper>
         )
@@ -88,7 +84,7 @@ class BookGrid extends React.Component {
                 >
                     {tilesData.map((tile) => (
                         <GridTile
-                            key = {tile.img}
+                            key={tile.img}
                             title={tile.title}
                         >
                             <img src={tile.img}/>
@@ -164,18 +160,19 @@ class Main extends React.Component {
     }
 
     fetchData() {
-        fetch('/get_mydata')
+        fetch('/get_mydata', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
-                console.log("hello: ", data)
+                console.log(data)
                 this.setState({
-                    myBooklist: data.my_booklist,
-                    followerBooklist: data.follower_booklist,
-                });
+                    myBooklist: data.my_booklists,
+                    followerBooklist: data.followed_booklists,
+                })
             })
     }
 
-    componentDidMount() {
+
+    componentWillMount() {
         this.fetchData()
     }
 
@@ -185,11 +182,11 @@ class Main extends React.Component {
                 <div style={styles.left_pane}>
                     <ListContainer
                         listName="MY BOOKLIST"
-                        items = {this.state.myBooklist}
+                        items={this.state.myBooklist}
                     />
                     <ListContainer
                         listName="INTERESTED BOOKLIST"
-                        items = {this.state.followerBooklist}
+                        items={this.state.followerBooklist}
                     />
                 </div>
                 <div style={styles.right_pane}>
