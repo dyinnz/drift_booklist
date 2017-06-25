@@ -5,6 +5,7 @@ import Subheader from 'material-ui/Subheader'
 import {List, ListItem} from 'material-ui/List'
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card'
 import {GridList, GridTile} from 'material-ui/GridList'
+import Avatar from 'material-ui/Avatar'
 
 const styles = {
     left_pane: {
@@ -41,26 +42,65 @@ const styles = {
 };
 
 class ListContainer extends React.Component {
-    constructor(props) {
-        super(props);
-        this.listName = props.listName;
-        this.state = {items: props.items}
-    }
+    renderListItem(item) {
+        return <ListItem
+            key = {item.booklist_id}
+            leftAvatar={<Avatar src="/static/small_avatar.jpg"/>}
 
-    componentWillReceiveProps(props) {
-        this.setState({items: props.items})
+            primaryText= {<span>
+                {item.booklist_name} &nbsp;&nbsp;
+                <b>{item.book_number}</b>
+            </span>}
+
+        >
+        </ListItem>
     }
 
     render() {
         return (
             <Paper><List>
-                <Subheader>{this.listName}</Subheader>
-                {this.state.items.map((item) => {
-                    return <ListItem
-                        key={item.booklist_name}
-                        primaryText={item.booklist_name}/>
+                <Subheader>{this.props.listName}</Subheader>
+                {this.props.items.map((item) => {
+                    return this.renderListItem(item)
                 })}
             </List></Paper>
+        )
+    }
+}
+
+class ShowContainer extends React.Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            coverPath: "",
+            bookName: "",
+            author: "",
+            tags: {},
+            upNumber: 0,
+            downNumber: 0,
+        }
+    }
+
+    render() {
+        return (
+            <div><Card style={styles.card_elem}>
+                <div style={styles.card_elem}>
+
+                    <CardMedia style={styles.card_elem}>
+                        <img src="/static/react/default.png"/>
+                    </CardMedia>
+
+                    <div style={styles.card_elem}>
+                        <CardHeader
+                            title="BookList: ZZZ"
+                            subtitle="Author: XXX"
+                        />
+
+                        <CardText> Detail description here </CardText>
+                    </div>
+                </div>
+            </Card></div>
         )
     }
 }
@@ -71,8 +111,6 @@ const tilesData = [
         title: 'hehe'
     },
 ];
-// <div>
-// <div style={styles.root}>
 
 class BookGrid extends React.Component {
     render() {
@@ -96,26 +134,6 @@ class BookGrid extends React.Component {
     }
 }
 
-class ShowContainer extends React.Component {
-    render() {
-        return (
-            <div><Card style={styles.card_elem}>
-                <div style={styles.card_elem}>
-                    <CardMedia style={styles.card_elem}>
-                        <img src="/static/react/default.png"/>
-                    </CardMedia>
-                    <div style={styles.card_elem}>
-                        <CardHeader
-                            title="BookList: ZZZ"
-                            subtitle="Author: XXX"
-                        />
-                        <CardText> Detail description here </CardText>
-                    </div>
-                </div>
-            </Card></div>
-        )
-    }
-}
 
 class Comment extends React.Component {
     render() {
@@ -176,24 +194,36 @@ class Main extends React.Component {
         this.fetchData()
     }
 
+    renderLeftPane() {
+        return (
+            <div style={styles.left_pane}>
+                <ListContainer
+                    listName="MY BOOKLIST"
+                    items={this.state.myBooklist}
+                />
+                <ListContainer
+                    listName="INTERESTED BOOKLIST"
+                    items={this.state.followerBooklist}
+                />
+            </div>
+        )
+    }
+
+    renderRightPane() {
+        return (
+            <div style={styles.right_pane}>
+                <ShowContainer/>
+                <BookGrid/>
+                <CommentList/>
+            </div>
+        )
+    }
+
     render() {
         return (
             <div>
-                <div style={styles.left_pane}>
-                    <ListContainer
-                        listName="MY BOOKLIST"
-                        items={this.state.myBooklist}
-                    />
-                    <ListContainer
-                        listName="INTERESTED BOOKLIST"
-                        items={this.state.followerBooklist}
-                    />
-                </div>
-                <div style={styles.right_pane}>
-                    <ShowContainer/>
-                    <BookGrid/>
-                    <CommentList/>
-                </div>
+                {this.renderLeftPane()}
+                {this.renderRightPane()}
             </div>
         )
     }
