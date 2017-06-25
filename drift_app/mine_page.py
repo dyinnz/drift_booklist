@@ -85,10 +85,10 @@ def mine():
 
 @mine_bp.route('/get_mydata',methods=['POST','GET'])
 def get_mydata():
-    my_booklists=get_my_booklists()
-    jsondata=get_booklist_detail(0)
-    jsondata['my_booklists']=my_booklists
-    jsondata['followed_booklists']=get_booklists_followed()
+    jsondata={
+    'my_booklists':get_my_booklists(),
+    'followed_booklists':get_booklists_followed()
+    }
 
     return   jsonify(jsondata)
 
