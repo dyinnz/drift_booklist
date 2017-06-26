@@ -11,6 +11,8 @@ import Chip from 'material-ui/Chip'
 import Badge from 'material-ui/Badge'
 import ActionThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import ActionThumbDown from 'material-ui/svg-icons/action/thumb-down'
+import ActionStars from 'material-ui/svg-icons/action/stars'
+import IconButton from 'material-ui/IconButton'
 
 function fetchPostJson(url, data) {
     return fetch(url, {
@@ -51,21 +53,11 @@ class ListContainer extends React.Component {
 }
 
 class ShowContainer extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            coverPath: "",
-            bookName: "",
-            author: "",
-            tags: {},
-            upNumber: 0,
-            downNumber: 0,
-        }
-    }
-
     render() {
-        console.log("show: ", this.props.details.booklist_name)
+        if (!("booklist_name" in this.props.details)) {
+            return (<p>Empty Content!</p>)
+        }
+        console.log("show: ", this.props.details)
         return (
             <Card>
                 <Subheader> DETAILS </Subheader>
@@ -82,23 +74,22 @@ class ShowContainer extends React.Component {
 
                         <CardText>{this.props.details.introduction}</CardText>
 
-                        <Badge
-                            badgeContent={1}
-                            secondary={true}
-                        >
+                        <Badge badgeContent={this.props.details.up_number} > <IconButton tooltip="Up">
                             <ActionThumbUp/>
-                        </Badge>
+                        </IconButton> </Badge>
 
-                        <Badge
-                            badgeContent={999}
-                            primary={true}
-                        >
+                        <Badge badgeContent={this.props.details.down_number} > <IconButton tooltip="Down">
                             <ActionThumbDown/>
-                        </Badge>
+                        </IconButton> </Badge>
+
+                        <Badge badgeContent={this.props.details.follower_number} > <IconButton tooltip="Star">
+                            <ActionStars/>
+                        </IconButton></Badge>
 
                         <div className="tags_wrapper">
-                            <Chip>Tag1</Chip>
-                            <Chip>Tag2</Chip>
+                            {this.props.details.tags.map((tag) => {
+                                return <Chip key={tag}>{tag}</Chip>
+                            })}
                         </div>
                     </div>
                 </div>
@@ -116,16 +107,19 @@ const tilesData = [
 
 class BookGrid extends React.Component {
     render() {
+        if ("undefined" === typeof(this.props.items)) {
+            return <p>No Content</p>
+        }
+        console.log("books grid: ", this.props.items)
         return (
             <div className="grid_list"><Paper>
                 <Subheader> BOOKS </Subheader>
                 <GridList cols={4} className="grid_wrapper">
-                    {tilesData.map((tile) => (
+                    {this.props.items.map((book) => (
                         <GridTile
-                            key={tile.img}
-                            title={tile.title}
+                            key={book.book_name}
+                            title={book.book_name}
                         >
-                            <img src={tile.img}/>
                         </GridTile>
                     ))}
                 </GridList>
@@ -229,6 +223,7 @@ class Main extends React.Component {
         })
             .then(resp => resp.json())
             .then((data) => {
+            console.log("booklist_detail: ", data)
                 this.setState({
                     myBooklist: this.state.myBooklist,
                     followerBooklist: this.state.followerBooklist,
@@ -241,7 +236,7 @@ class Main extends React.Component {
         return (
             <div className="right_pane">
                 <ShowContainer details={this.state.showBooklist}/>
-                <BookGrid/>
+                <BookGrid items={this.state.showBooklist.books}/>
                 <CommentList/>
             </div>
         )
