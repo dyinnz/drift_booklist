@@ -1,11 +1,10 @@
 import numpy as np
 
-
 class FM_Recommender():
     """
     Recommender based on Factorize Matrix method.
     """
-    def __init__(self, n_components, eta=0.01, alpha=0.01, beta=0.01, max_iter=-1, epsilon=1.0):
+    def __init__(self, n_components, eta=0.01, alpha=0.01, beta=0.01, max_iter=-1, epsilon=0.1):
         """
         init the model.
         :param n_components: components(latent factor) count.
@@ -30,14 +29,19 @@ class FM_Recommender():
         :param n_book: book number.
         :return: self
         """
-        self.U = np.random.normal(0, 1, (n_user, self.n_components))
-        self.M = np.random.normal(0, 1, (n_book, self.n_components))
-        self.bu = np.random.normal(0, 1, (n_user))
-        self.bm = np.random.normal(0, 1, (n_book))
-        self.overall_mean = np.random.normal(0, 1)
+        self.U = np.random.random((n_user, self.n_components)) / np.sqrt(self.n_components)
+        self.M = np.random.random((n_book, self.n_components)) / np.sqrt(self.n_components)
+        self.bu = 0.01 * np.random.random((n_user))
+        self.bm = 0.01 * np.random.random((n_book))
+        self.overall_mean = 0.1 * np.random.random()
         return self
 
-    def fit(self, X, y=None):
+    def fit(self, X):
+        """
+        train model on data X.
+        :param X: np.ndarray, shape:(n_user, n_book), user-book rating matrix, whose value from 0 to 1
+        :return: self
+        """
         self.n_user, self.n_book = X.shape
         if not hasattr(self, 'U') or not hasattr(self, 'M') or not hasattr(self, 'bu') or \
                 not hasattr(self, 'bm') or not hasattr(self, 'overall_mean'):
@@ -48,22 +52,31 @@ class FM_Recommender():
 
         it = 0
         is_converg = False
-        while not is_converg and (self.max_iter > 0 and it < self.max_iter):
-            delta_E = X - self.U.dot(self.M.T) - self.bu - self.bm - self.overall_mean
+        while not is_converg:
+            if self.max_iter > 0 and it > self.max_iter:
+                break
+            delta_E = X - self.U.dot(self.M.T) - self.bu.reshape(-1, 1) - self.overall_mean - self.bm
             delta_U = (mask * delta_E).dot(self.M) - self.alpha * self.U
-            delta_M = (mask * delta_E).T.dot(self.U)
+            delta_M = (mask * delta_E).T.dot(self.U) - self.beta * self.M
             delta_bu = np.sum(mask * delta_E, axis=1) - self.alpha * self.bu
             delta_bm = np.sum(mask * delta_E, axis=0) - self.beta * self.bm
+            if it % 1000 == 0:
+                print('Iter %d:' % it, np.sum(mask * delta_E))
+            if abs(np.sum(mask * delta_E)) > 10000:
+                print('Iter %d:boom!' % it, np.sum(mask * delta_E))
+                break
 
-            self.U = self.U - self.eta * delta_U
-            self.M = self.M - self.eta * delta_M
-            self.bu = self.bu - self.eta * delta_bu
-            self.bm = self.bm - self.eta * delta_bm
+            self.U = self.U + self.eta * delta_U
+            self.M = self.M + self.eta * delta_M
+            self.bu = self.bu + self.eta * delta_bu
+            self.bm = self.bm + self.eta * delta_bm
 
             it += 1
-            is_converg = delta_E < self.epsilon
+            is_converg = abs(np.sum(mask * delta_E)) < self.epsilon
+            if is_converg:
+                print('Iter %d:Converge! DeltaE: %f' % (it, np.sum(mask * delta_E)))
 
-        self.V = self.U.dot(self.M.T)
+        self.V = self.U.dot(self.M.T) + self.bu.reshape(-1, 1) + self.overall_mean + self.bm
         return self
 
 
@@ -71,12 +84,22 @@ class FM_Recommender():
         if not hasattr(self, 'V'):
             print("The model hasn't been trained yet.")
             return
-        return self.V[id_user].argmax()[:-(k+1):-1]
+        return self.V[id_user].argsort()[:-(k+1):-1]
 
 
 class Content_Based_Recommender():
-    def __index__(self, book_tags):
+    def __init__(self, book_tags):
         self.book_tags = book_tags
 
     def predict(self, user_tags, k):
         return self.book_tags.dot(user_tags).argsort()[:-(k+1):-1]
+
+
+class Item_CF_Recommender():
+
+    def __init__(self):
+        pass
+
+
+    def fit(self, X):
+        pass
