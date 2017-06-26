@@ -29,7 +29,7 @@ class ListContainer extends React.Component {
     renderListItem(item) {
         return <ListItem
             key = {item.booklist_id}
-            leftAvatar={<Avatar src="/static/small_avatar.jpg"/>}
+            leftAvatar={<Avatar src="/static/react/small_avatar.jpg"/>}
 
             primaryText= {<span>
                 {item.booklist_name} &nbsp;&nbsp;
@@ -60,7 +60,7 @@ class ShowContainer extends React.Component {
         console.log("show: ", this.props.details)
         return (
             <Card>
-                <Subheader> DETAILS </Subheader>
+                <Subheader> BOOKLIST DETAILS </Subheader>
                 <div className="clearfix">
                     <CardMedia className="card_media">
                         <img src="/static/react/default.png"/>
@@ -117,9 +117,10 @@ class BookGrid extends React.Component {
                 <GridList cols={4} className="grid_wrapper">
                     {this.props.items.map((book) => (
                         <GridTile
-                            key={book.book_name}
+                            key={book.book_id}
                             title={book.book_name}
                         >
+                            <img src={book.book_cover}/>
                         </GridTile>
                     ))}
                 </GridList>
@@ -134,17 +135,17 @@ const cardStyle = {
 
 class Comment extends React.Component {
     render() {
+        console.log("comment: ", this.props.details)
         return (
             <div className="clearfix">
                 <CardHeader
                     className="comment_who"
-                    title="Someone"
-                    subtitle="brief"
+                    title={this.props.details.account}
                     avatar="/static/react/zen.jpg"
                 />
 
                 <CardText className="comment_content">
-                    Comments Here
+                    {this.props.details.remark}
                 </CardText>
             </div>
         )
@@ -153,11 +154,20 @@ class Comment extends React.Component {
 
 class CommentList extends React.Component {
     render() {
+        if ("undefined" === typeof(this.props.items)) {
+            return <p>No comments</p>
+        }
+
+        console.log("commentlist: ", this.props.items)
+
         return (
             <div><Paper>
                 <Subheader> COMMENTS </Subheader>
-                <Comment/>
-                <Comment/>
+                {this.props.items.map((item) => {
+                    return <Comment
+                        key={item.remark_time}
+                        details={item}/>
+                })}
             </Paper></div>
         )
     }
@@ -237,7 +247,7 @@ class Main extends React.Component {
             <div className="right_pane">
                 <ShowContainer details={this.state.showBooklist}/>
                 <BookGrid items={this.state.showBooklist.books}/>
-                <CommentList/>
+                <CommentList items={this.state.showBooklist.remarks}/>
             </div>
         )
     }
