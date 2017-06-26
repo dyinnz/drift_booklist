@@ -38,17 +38,17 @@ class FM_Recommender():
         self.overall_mean = 0.1 * np.random.random()
         return self
 
-
     def updata_shape(self, n_user, n_book):
         old_n_user = self.U.shape[0]
         old_n_book = self.M.shape[0]
         if old_n_user < n_user:
             self.U = np.row_stack((self.U, np.random.random(self.n_components)))
         else:
-            self.
+            self.U = self.U[np.random.choice(range(old_n_user), n_user, replace=False), :]
         if old_n_book < n_book:
             self.M = np.row_stack((self.M, np.random.random(self.n_components)))
-
+        else:
+            self.M = self.M[np.random.choice(range(old_n_book), n_book, replace=False), :]
 
     def fit(self, X):
         """
@@ -100,11 +100,26 @@ class FM_Recommender():
         return self.V[id_user].argsort()[:-(k + 1):-1]
 
 
-class Content_Based_Recommender():
+class Tag_Based_Recommender():
+    """
+    Recommender based on tag system.
+    Useful for cool boot, assume user has selected several tags he's interested in,
+    then tag based recommender can recommend some books fit the tags.
+    """
     def __init__(self, book_tags):
+        """
+        initialize the recommender.
+        :param book_tags: book_tags matrix M, M[i, j] = 1 if book i has tag j, otherwise 0.
+        """
         self.book_tags = book_tags
 
-    def predict(self, user_tags, k):
+    def topK(self, user_tags, k):
+        """
+        get top K books for user.
+        :param user_tags: user_tag vector v, v[j] = 1 if user is interested in tag j, otherwise 0.
+        :param k: number of books.
+        :return: K-size list containing k book id.
+        """
         return self.book_tags.dot(user_tags).argsort()[:-(k + 1):-1]
 
 
