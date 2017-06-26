@@ -8,9 +8,12 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script src="/static/react/js/vendor.js"></script>
+    <script src="/static/react/js/login.js"></script>
+    <script>require('login/initialize');</script>
     <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
-    <link rel="stylesheet" href="static/assets/css/amazeui.min.css"/>
-    <link rel="stylesheet" href="static/assets/css/login.css">
+    <link rel="stylesheet" href="/static/react/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/static/react/css/login.css">
     <style>
         .header {
             text-align: center;
@@ -62,8 +65,9 @@
                 <div class="am-tabs-bd">
                     <div data-tab-panel-0 class="am-tab-panel am-active" id="panel0">
                         <form action="" class="am-form" data-am-validator id="rp1">
-                            <fieldset>
-                                <div class="am-form-group" id="input_username">
+                            <fieldset id="">
+                                <div id="root"></div>
+                                <!--div class="am-form-group" id="input_username">
                                     <label for="username_r">User Name</label>
                                     <input type="text" id="username_r" minlength="3" placeholder="请输入3位以上用户名"
                                            class="am-form-field" required/>
@@ -81,10 +85,10 @@
                                 <div class="am-form-group myapp-login-treaty"><label
                                         class="am-form-label"></label><label class="am-checkbox-inline"> <input
                                         type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4"
-                                        required="">已同意使用条约 </label></div>
+                                        required=""/>已同意使用条约 </label></div>
                                 <button class="myapp-login-button am-btn am-btn-secondary"
                                          id="register_button" type="button">Register
-                                </button>
+                                </button-->
                             </fieldset>
                         </form>
                     </div>
@@ -141,14 +145,13 @@
 </div>
 <!--/div-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<script src="static/assets/js/jquery.min.js"></script>
+<script src="/static/react/js/jquery.min.js"></script>
 <!--<![endif]-->
 <!--[if lte IE 8 ]>
 <script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
 <script src="http://cdn.staticfile.org/modernizr/2.8.3/modernizr.js"></script>
-<script src="static/assets/js/amazeui.ie8polyfill.min.js"></script>
+<script src="/static/react/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
-<script src="static/assets/js/amazeui.min.js"></script>
-<script src="static/assets/js/login.js"></script>
+<script src="/static/react/js/amazeui.min.js"></script>
 </body>
 </html>

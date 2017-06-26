@@ -70,7 +70,7 @@ class ListContainer extends React.Component {
 
 class ShowContainer extends React.Component {
     constructor(props) {
-        super(props)
+        super(props);
 
         this.state = {
             coverPath: "",
