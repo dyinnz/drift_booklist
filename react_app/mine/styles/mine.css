@@ -1,0 +1,56 @@
+.clearfix::after {
+   content: " ";
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+#main {
+    // width: 70%;
+    // margin: 0 auto;
+}
+
+.left_pane {
+    width: 250px;
+    margin: 20px;
+    float: left;
+}
+
+.right_pane {
+    width: 650px;
+    margin: 20px;
+    float: left;
+}
+
+.card_media {
+    width: 200px;
+    height: 300px;
+    margin: 10px;
+    float: left;
+}
+
+.card_rhs {
+    // width: 350px;
+    margin: 10px;
+    height: 300px;
+    float: left;
+}
+
+.grid_wrapper {
+    padding: 20px;
+}
+
+.comment_content {
+    width: 400px;
+    float: left;
+}
+
+.comment_who {
+    width: 150px;
+    float: left;
+}
+
+.tags_wrapper {
+    display: flex;
+    flexWrap: wrap;
+}

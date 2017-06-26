@@ -96,10 +96,10 @@
     $('#update_name').click(function () {
         $.ajax({
             type:'POST',
-            url:'/add_to_list',
+            url:'/vote_book',
             data:JSON.stringify({
-              'booklist_id':2,
-                'book_id':2,
+              'book_id':2,
+                'attitude':'up'
             }),
             contentType:'application/json; charset=UTF-8',
             dataType: 'json',

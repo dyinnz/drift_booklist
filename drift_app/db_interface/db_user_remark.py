@@ -106,7 +106,7 @@ def get_user_book_opinion(user_id, book_id):
     try:
         opinion = DB_user_book_opinion.query.filter_by(user_id=user_id, book_id=book_id).first()
         if opinion is None:
-            return 'neutral'
+            return json.dumps(['neutral',False])
         return json.dumps([opinion.vote, opinion.is_follow])
     except Exception as e:
         logging.error('%s, %s' % (user_id, book_id))
@@ -123,10 +123,10 @@ def get_user_booklist_opinion(user_id, booklist_id):
     try:
         opinion = DB_user_booklist_opinion.query.filter_by(user_id=user_id, booklist_id=booklist_id).first()
         if opinion is None:
-            return 'neutral'
+            return json.dumps(['neutral',False])
         return json.dumps([opinion.vote, opinion.is_follow])
     except Exception as e:
-        logging.error('%s, %s' % (user_id, booklist_id))
+        logging.error('get booklist opinion %s, %s' % (user_id, booklist_id))
         logging.error(e)
         return None
 
@@ -273,7 +273,7 @@ def user_vote_book(book_id, user_id, attitude):
     user votes a book.
     :param book_id: book id.
     :param user_id: user id.
-    :param attitude: string type, 'up', 'down', or 'neutral'.
+    :param attitude: string type, 'up', 'down', or 'netural'.
     :return: If success, return True, else False.
     """
     try:
@@ -284,7 +284,7 @@ def user_vote_book(book_id, user_id, attitude):
             db.session.commit()
             return True
         else:
-            user_vote = DB_user_book_remark(user_id=user_id, book_id=book_id, vote=attitude, is_follow=True)
+            user_vote = DB_user_book_remark(user_id=user_id, book_id=book_id, vote=attitude, is_follow=False)
             db.session.add(user_vote)
             db.session.commit()
             return True
@@ -300,7 +300,7 @@ def user_vote_booklist(booklist_id, user_id, attitude):
     user votes a booklist.
     :param booklist_id: booklist id.
     :param user_id: user id.
-    :param attitude: string type, 'up', 'down', or 'neutral'.
+    :param attitude: string type, 'up', 'down', or 'netural'.
     :return: If success, return True, else False.
     """
     try:
@@ -311,7 +311,7 @@ def user_vote_booklist(booklist_id, user_id, attitude):
             db.session.commit()
             return True
         else:
-            user_vote = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, vote=attitude, is_follow=True)
+            user_vote = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, vote=attitude, is_follow=False)
             db.session.add(user_vote)
             db.session.commit()
             return True
@@ -340,6 +340,7 @@ def user_remark_book(book_id, user_id, remark):
             user_book_remark = DB_user_book_remark(user_id=user_id, book_id=book_id, remark=remark)
             db.session.add(user_book_remark)
             db.session.commit()
+        return True
     except Exception as e:
         logging.error('%s,%s,%s' % (book_id, user_id, remark))
         logging.error(e)
@@ -365,6 +366,7 @@ def user_remark_booklist(booklist_id, user_id, remark):
             user_booklist_remark = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, remark=remark)
             db.session.add(user_booklist_remark)
             db.session.commit()
+        return True
     except Exception as e:
         logging.error('%s,%s,%s' % (booklist_id, user_id, remark))
         logging.error(e)
@@ -397,5 +399,45 @@ def get_books_user_followed(user_id):
         return json.dumps([item.book_id for item in book_ids])
     except Exception as e:
         logging.error('%s' % (user_id))
+        logging.error(e)
+        return None
+
+def set_booklist_follow(user_id,booklist_id,is_follow):
+    """
+
+    :return:
+    """
+    try:
+        user_vote = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, user_id=user_id).first()
+        if user_vote is  None:
+            user_booklist_follow = DB_user_booklist_opinion(user_id=user_id, booklist_id=booklist_id,is_follow=is_follow)
+            db.session.add(user_booklist_follow)
+            db.session.commit()
+        else:
+            user_vote.is_follow = is_follow
+            db.session.commit()
+        return True
+    except Exception as e:
+        logging.error('set follow %s' % (booklist_id))
+        logging.error(e)
+        return None
+
+def set_book_follow(user_id,book_id,is_follow):
+    """
+
+    :return:
+    """
+    try:
+        user_vote = DB_user_book_opinion.query.filter_by(book_id=book_id, user_id=user_id).first()
+        if user_vote is  None:
+            user_book_follow = DB_user_book_opinion(user_id=user_id, book_id=book_id,is_follow=is_follow)
+            db.session.add(user_book_follow)
+            db.session.commit()
+        else:
+            user_vote.is_follow = is_follow
+            db.session.commit()
+        return True
+    except Exception as e:
+        logging.error('set follow %s' % (book_id))
         logging.error(e)
         return None

@@ -6,42 +6,26 @@ import {List, ListItem} from 'material-ui/List'
 import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card'
 import {GridList, GridTile} from 'material-ui/GridList'
 import Avatar from 'material-ui/Avatar'
+import AppBar from 'material-ui/AppBar'
+import Chip from 'material-ui/Chip'
+import Badge from 'material-ui/Badge'
+import ActionThumbUp from 'material-ui/svg-icons/action/thumb-up'
+import ActionThumbDown from 'material-ui/svg-icons/action/thumb-down'
+import ActionStars from 'material-ui/svg-icons/action/stars'
+import IconButton from 'material-ui/IconButton'
 
-const styles = {
-    left_pane: {
-        width: 200,
-        margin: 20,
-        float: "left",
-    },
-
-    right_pane: {
-        width: 800,
-        margin: 20,
-        float: "left",
-    },
-
-    card_elem: {
-        float: "left"
-    },
-
-    grid_div: {
-        display: 'flex',
-        flexWrap: 'wrap',
-        justifyContent: 'space-around',
-    },
-
-    grid_list: {
-        width: 600,
-        overflowY: 'auto',
-    },
-
-    static_style: {
-        position: "static",
-        float: "none",
-    }
-};
+function fetchPostJson(url, data) {
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+    })
+}
 
 class ListContainer extends React.Component {
+
     renderListItem(item) {
         return <ListItem
             key = {item.booklist_id}
@@ -52,8 +36,8 @@ class ListContainer extends React.Component {
                 <b>{item.book_number}</b>
             </span>}
 
-        >
-        </ListItem>
+            onTouchTap={event => this.props.handleTouch(item.booklist_id)}
+        />
     }
 
     render() {
@@ -69,38 +53,47 @@ class ListContainer extends React.Component {
 }
 
 class ShowContainer extends React.Component {
-    constructor(props) {
-        super(props)
-
-        this.state = {
-            coverPath: "",
-            bookName: "",
-            author: "",
-            tags: {},
-            upNumber: 0,
-            downNumber: 0,
-        }
-    }
-
     render() {
+        if (!("booklist_name" in this.props.details)) {
+            return (<p>Empty Content!</p>)
+        }
+        console.log("show: ", this.props.details)
         return (
-            <div><Card style={styles.card_elem}>
-                <div style={styles.card_elem}>
-
-                    <CardMedia style={styles.card_elem}>
+            <Card>
+                <Subheader> DETAILS </Subheader>
+                <div className="clearfix">
+                    <CardMedia className="card_media">
                         <img src="/static/react/default.png"/>
                     </CardMedia>
 
-                    <div style={styles.card_elem}>
+                    <div className="card_rhs">
                         <CardHeader
-                            title="BookList: ZZZ"
-                            subtitle="Author: XXX"
+                            title={this.props.details.booklist_name}
+                            subtitle={this.props.details.create_user}
                         />
 
-                        <CardText> Detail description here </CardText>
+                        <CardText>{this.props.details.introduction}</CardText>
+
+                        <Badge badgeContent={this.props.details.up_number} > <IconButton tooltip="Up">
+                            <ActionThumbUp/>
+                        </IconButton> </Badge>
+
+                        <Badge badgeContent={this.props.details.down_number} > <IconButton tooltip="Down">
+                            <ActionThumbDown/>
+                        </IconButton> </Badge>
+
+                        <Badge badgeContent={this.props.details.follower_number} > <IconButton tooltip="Star">
+                            <ActionStars/>
+                        </IconButton></Badge>
+
+                        <div className="tags_wrapper">
+                            {this.props.details.tags.map((tag) => {
+                                return <Chip key={tag}>{tag}</Chip>
+                            })}
+                        </div>
                     </div>
                 </div>
-            </Card></div>
+            </Card>
         )
     }
 }
@@ -114,42 +107,46 @@ const tilesData = [
 
 class BookGrid extends React.Component {
     render() {
+        if ("undefined" === typeof(this.props.items)) {
+            return <p>No Content</p>
+        }
+        console.log("books grid: ", this.props.items)
         return (
-            <div>
-                <GridList
-                    cols={4}
-                    style={styles.grid_list}
-                >
-                    {tilesData.map((tile) => (
+            <div className="grid_list"><Paper>
+                <Subheader> BOOKS </Subheader>
+                <GridList cols={4} className="grid_wrapper">
+                    {this.props.items.map((book) => (
                         <GridTile
-                            key={tile.img}
-                            title={tile.title}
+                            key={book.book_name}
+                            title={book.book_name}
                         >
-                            <img src={tile.img}/>
                         </GridTile>
                     ))}
                 </GridList>
-            </div>
+            </Paper> </div>
         )
     }
 }
 
+const cardStyle = {
+    zIndex : 0,
+}
 
 class Comment extends React.Component {
     render() {
         return (
-            <div><Card style={styles.card_elem}>
-                <CardText style={styles.card_elem}>
-                    Comments Here
-                </CardText>
-
+            <div className="clearfix">
                 <CardHeader
+                    className="comment_who"
                     title="Someone"
                     subtitle="brief"
                     avatar="/static/react/zen.jpg"
-                    style={styles.card_elem}
                 />
-            </Card></div>
+
+                <CardText className="comment_content">
+                    Comments Here
+                </CardText>
+            </div>
         )
     }
 }
@@ -157,10 +154,11 @@ class Comment extends React.Component {
 class CommentList extends React.Component {
     render() {
         return (
-            <div style={styles.static_style}>
+            <div><Paper>
+                <Subheader> COMMENTS </Subheader>
                 <Comment/>
                 <Comment/>
-            </div>
+            </Paper></div>
         )
     }
 }
@@ -174,6 +172,7 @@ class Main extends React.Component {
         this.state = {
             myBooklist: [],
             followerBooklist: [],
+            showBooklist: {},
         }
     }
 
@@ -181,10 +180,12 @@ class Main extends React.Component {
         fetch('/get_mydata', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
-                console.log(data)
+                console.log("main data: ", data)
+                console.log("init state: ", this.state)
                 this.setState({
                     myBooklist: data.my_booklists,
                     followerBooklist: data.followed_booklists,
+                    showBooklist: this.state.showBooklist,
                 })
             })
     }
@@ -192,28 +193,50 @@ class Main extends React.Component {
 
     componentWillMount() {
         this.fetchData()
+        this.touchBooklist(0)
     }
 
     renderLeftPane() {
         return (
-            <div style={styles.left_pane}>
+            <div className="left_pane">
                 <ListContainer
                     listName="MY BOOKLIST"
                     items={this.state.myBooklist}
+                    handleTouch={this.touchBooklist.bind(this)}
                 />
                 <ListContainer
                     listName="INTERESTED BOOKLIST"
                     items={this.state.followerBooklist}
+                    handleTouch={this.touchBooklist.bind(this)}
                 />
             </div>
         )
     }
 
+    touchBooklist(booklist_id) {
+        console.log("booklist_id: ", booklist_id);
+
+        var data = JSON.stringify({booklist_id: booklist_id})
+
+        fetchPostJson("/booklist_detail", {
+            booklist_id: booklist_id
+        })
+            .then(resp => resp.json())
+            .then((data) => {
+            console.log("booklist_detail: ", data)
+                this.setState({
+                    myBooklist: this.state.myBooklist,
+                    followerBooklist: this.state.followerBooklist,
+                    showBooklist: data,
+                })
+            })
+    }
+
     renderRightPane() {
         return (
-            <div style={styles.right_pane}>
-                <ShowContainer/>
-                <BookGrid/>
+            <div className="right_pane">
+                <ShowContainer details={this.state.showBooklist}/>
+                <BookGrid items={this.state.showBooklist.books}/>
                 <CommentList/>
             </div>
         )
@@ -221,7 +244,7 @@ class Main extends React.Component {
 
     render() {
         return (
-            <div>
+            <div id="main">
                 {this.renderLeftPane()}
                 {this.renderRightPane()}
             </div>
