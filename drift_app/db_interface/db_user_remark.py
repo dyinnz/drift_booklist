@@ -1,5 +1,5 @@
 from drift_app.db_interface import db
-from .db_user import get_account_by_id
+from .db_user import get_account_by_id,get_user_infos
 import logging
 from flask import json
 
@@ -162,7 +162,7 @@ def get_book_remark(book_id, page=1, per_page=10):
     try:
         user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page, per_page).query
         return json.dumps(
-            [{'account':get_account_by_id(user_book.user_id), 'remark':user_book.remark,'remark_time':user_book.remark_time} for user_book in user_books]
+            [{'id':user_book.id,'avatar':json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],'account':get_account_by_id(user_book.user_id), 'remark':user_book.remark,'remark_time':user_book.remark_time} for user_book in user_books]
         )
     except Exception as e:
         logging.error(book_id)
@@ -182,7 +182,7 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
     try:
         user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).order_by('-remark_time').paginate(page, per_page).query
         return json.dumps(
-            [{'account':get_account_by_id(user_booklist.user_id), 'remark':user_booklist.remark,'remark_time':user_booklist.remark_time} for user_booklist in user_booklists]
+            [{'id':user_booklist.id,'avatar':json.loads(get_user_infos(get_account_by_id(user_booklist.user_id)))['pic_src'],'account':get_account_by_id(user_booklist.user_id), 'remark':user_booklist.remark,'remark_time':user_booklist.remark_time} for user_booklist in user_booklists]
         )
     except Exception as e:
         logging.error(booklist_id)
@@ -439,5 +439,99 @@ def set_book_follow(user_id,book_id,is_follow):
         return True
     except Exception as e:
         logging.error('set follow %s' % (book_id))
+        logging.error(e)
+        return None
+
+def get_book_remark_vote_num(book_remark_id):
+    """
+
+    :param book_remark_id:
+    :return:
+    """
+    try:
+        return json.dumps({
+            'up':DB_user_book_remark_opinion.query.filter_by(book_remark_id=book_remark_id,vote='up').count(),
+            'down':DB_user_book_remark_opinion.query.filter_by(book_remark_id=book_remark_id,vote='down').count()
+        })
+    except Exception as e:
+        logging.error("get vote num false at %s"%(book_remark_id))
+        logging.error(e)
+        return None
+
+def get_booklist_remark_vote_num(booklist_remark_id):
+    """
+
+    :return:
+    """
+    try:
+        return json.dumps({
+            'up':DB_user_booklist_remark_opinion.query.filter_by(booklist_remark_id=booklist_remark_id,vote='up').count(),
+            'down':DB_user_booklist_remark_opinion.query.filter_by(booklist_remark_id=booklist_remark_id,vote='down').count()
+        })
+    except Exception as e:
+        logging.error("get vote num false at %s"%(booklist_remark_id))
+        logging.error(e)
+        return None
+
+def get_user_book_remark_opinion(user_id,book_remark_id):
+    """"""
+    try:
+        user_book_remark_opinion=DB_user_book_remark_opinion.query.filter_by(user_id=user_id,book_remark_id=book_remark_id).first()
+        if user_book_remark_opinion is None:
+            return 'netural'
+        else:
+            return  user_book_remark_opinion.vote
+    except Exception as e:
+        logging.error("get opinion false at %s"%(book_remark_id))
+        logging.error(e)
+        return None
+
+def get_user_booklist_remark_opinion(user_id,booklist_remark_id):
+    """"""
+    try:
+        user_booklist_remark_opinion=DB_user_booklist_remark_opinion.query.filter_by(user_id=user_id,booklist_remark_id=booklist_remark_id).first();
+        if user_booklist_remark_opinion is None:
+            return 'netural'
+        else:
+            return  user_booklist_remark_opinion.vote
+    except Exception as e:
+        logging.error("get opinion false at %s"%(booklist_remark_id))
+        logging.error(e)
+        return None
+
+def user_vote_book_remark(user_id,book_remark_id,attitude):
+    """"""
+    try:
+        user_book_remark_vote=DB_user_book_remark_opinion.query.filter_by(user_id=user_id,book_remark_id=book_remark_id).first()
+        if user_book_remark_vote is None:
+            user_book_remark_vote=DB_user_book_remark_opinion(user_id=user_id,book_remark_id=book_remark_id,vote=attitude)
+            db.session.add(user_book_remark_vote)
+            db.session.commit()
+            return True
+        else:
+            user_book_remark_vote.vote=attitude
+            db.session.commit()
+            return True
+    except Exception as e:
+        logging.error("vote book remark fasle at %s"%(book_remark_id))
+        logging.error(e)
+        return None
+
+
+def user_vote_booklist_remark(user_id,booklist_remark_id,attitude):
+    """"""
+    try:
+        user_booklist_remark_vote=DB_user_booklist_remark_opinion.query.filter_by(user_id=user_id,booklist_remark_id=booklist_remark_id).first()
+        if user_booklist_remark_vote is None:
+            user_booklist_remark_vote=DB_user_booklist_remark_opinion(user_id=user_id,booklist_remark_id=booklist_remark_id,vote=attitude)
+            db.session.add(user_booklist_remark_vote)
+            db.session.commit()
+            return True
+        else:
+            user_booklist_remark_vote.vote=attitude
+            db.session.commit()
+            return True
+    except Exception as e:
+        logging.error("vote book remark fasle at %s"%(booklist_remark_id))
         logging.error(e)
         return None
