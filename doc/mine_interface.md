@@ -83,8 +83,9 @@ remarks :[r1,r2,r3]
 }
 
 /add_book_remark
+
 remark 评论
-booklist_id
+book_id
 }
 
 json{
@@ -137,4 +138,19 @@ booklist_introduction
   booklist_name  书单名
   book_number 书籍数
   }]
+}
+
+/follow_booklist/book
+book/list_id
+
+{
+'OK':
+'is_follow'
+}
+
+/change_booklist
+booklist_id
+
+{
+'OK':
 }
