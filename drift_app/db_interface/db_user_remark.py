@@ -1,6 +1,7 @@
 from drift_app.db_interface import db
-from .db_user import get_account_by_id,get_user_infos
+from .db_user import get_account_by_id, get_user_infos
 import logging
+import datetime.datetime as datetime
 from flask import json
 
 
@@ -22,6 +23,8 @@ class DB_user_book_opinion(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
     is_follow = db.Column(db.Boolean, default=False)
+    last_vote_time = db.Column(db.DateTime)
+    last_follow_time = db.Column(db.DateTime)
 
     def __repr__(self):
         return 'User %s %svoted book %s' % (self.user_id, self.vote, self.book_id) if self.vote in ['up', 'down'] \
@@ -46,6 +49,8 @@ class DB_user_booklist_opinion(db.Model):
     booklist_id = db.Column(db.Integer, db.ForeignKey('booklist.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
     is_follow = db.Column(db.Boolean, default=False)
+    last_vote_time = db.Column(db.DateTime)
+    last_follow_time = db.Column(db.DateTime)
 
     def __repr__(self):
         return 'User %s %svoted booklist %s' % (self.user_id, self.vote, self.booklist_id) if self.vote in ['up',
@@ -58,6 +63,7 @@ class DB_user_book_remark_opinion(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     book_remark_id = db.Column(db.Integer, db.ForeignKey('user_book_remark.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
+    last_vote_time = db.Column(db.DateTime)
 
     def __repr__(self):
         return 'User %s %svoted book remark %s' % (self.user_id, self.vote, self.book_remark_id) if self.vote in ['up',
@@ -70,6 +76,7 @@ class DB_user_booklist_remark_opinion(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
     booklist_remark_id = db.Column(db.Integer, db.ForeignKey('user_booklist_remark.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
+    last_vote_time = db.Column(db.DateTime)
 
     def __repr__(self):
         return 'User %s %svoted booklist remark %s' % (
@@ -96,6 +103,7 @@ def get_book_vote_num(book_id):
         logging.error(e)
         return None
 
+
 def get_user_book_opinion(user_id, book_id):
     """
     get user up/down and is_follow of a book.
@@ -106,12 +114,13 @@ def get_user_book_opinion(user_id, book_id):
     try:
         opinion = DB_user_book_opinion.query.filter_by(user_id=user_id, book_id=book_id).first()
         if opinion is None:
-            return json.dumps(['neutral',False])
+            return json.dumps(['neutral', False])
         return json.dumps([opinion.vote, opinion.is_follow])
     except Exception as e:
         logging.error('%s, %s' % (user_id, book_id))
         logging.error(e)
         return None
+
 
 def get_user_booklist_opinion(user_id, booklist_id):
     """
@@ -123,12 +132,13 @@ def get_user_booklist_opinion(user_id, booklist_id):
     try:
         opinion = DB_user_booklist_opinion.query.filter_by(user_id=user_id, booklist_id=booklist_id).first()
         if opinion is None:
-            return json.dumps(['neutral',False])
+            return json.dumps(['neutral', False])
         return json.dumps([opinion.vote, opinion.is_follow])
     except Exception as e:
         logging.error('get booklist opinion %s, %s' % (user_id, booklist_id))
         logging.error(e)
         return None
+
 
 def get_booklist_vote(booklist_id):
     """
@@ -160,9 +170,12 @@ def get_book_remark(book_id, page=1, per_page=10):
     :return: If success, return json key-value format user-remark datas, else None.
     """
     try:
-        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page, per_page).query
+        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page,
+                                                                                                            per_page).query
         return json.dumps(
-            [{'id':user_book.id,'avatar':json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],'account':get_account_by_id(user_book.user_id), 'remark':user_book.remark,'remark_time':user_book.remark_time} for user_book in user_books]
+            [{'id': user_book.id, 'avatar': json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],
+              'account': get_account_by_id(user_book.user_id), 'remark': user_book.remark,
+              'remark_time': user_book.remark_time} for user_book in user_books]
         )
     except Exception as e:
         logging.error(book_id)
@@ -180,14 +193,19 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
     :return: If success, return json key-value format user-remark datas, else None.
     """
     try:
-        user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).order_by('-remark_time').paginate(page, per_page).query
+        user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).order_by(
+            '-remark_time').paginate(page, per_page).query
         return json.dumps(
-            [{'id':user_booklist.id,'avatar':json.loads(get_user_infos(get_account_by_id(user_booklist.user_id)))['pic_src'],'account':get_account_by_id(user_booklist.user_id), 'remark':user_booklist.remark,'remark_time':user_booklist.remark_time} for user_booklist in user_booklists]
+            [{'id': user_booklist.id,
+              'avatar': json.loads(get_user_infos(get_account_by_id(user_booklist.user_id)))['pic_src'],
+              'account': get_account_by_id(user_booklist.user_id), 'remark': user_booklist.remark,
+              'remark_time': user_booklist.remark_time} for user_booklist in user_booklists]
         )
     except Exception as e:
         logging.error(booklist_id)
         logging.error(e)
         return None
+
 
 def get_booklist_remark_num(booklist_id):
     """
@@ -202,6 +220,7 @@ def get_booklist_remark_num(booklist_id):
         logging.error(e)
         return None
 
+
 def get_book_follower_num(book_id):
     """
     return number of followers of a book.
@@ -215,6 +234,7 @@ def get_book_follower_num(book_id):
         logging.error(e)
         return None
 
+
 def get_booklist_follower_num(booklist_id):
     """
     return number of followers of a booklist
@@ -222,7 +242,7 @@ def get_booklist_follower_num(booklist_id):
     :return:
     """
     try:
-        return DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id,is_follow=1).count()
+        return DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, is_follow=1).count()
     except Exception as e:
         logging.error(booklist_id)
         logging.error(e)
@@ -281,10 +301,13 @@ def user_vote_book(book_id, user_id, attitude):
         if user_vote is not None:
             user_vote = user_vote.first()
             user_vote.vote = attitude
+            user_vote.last_vote_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
             return True
         else:
-            user_vote = DB_user_book_remark(user_id=user_id, book_id=book_id, vote=attitude, is_follow=False)
+            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+            user_vote = DB_user_book_opinion(user_id=user_id, book_id=book_id, vote=attitude, is_follow=False,
+                                             last_vote_time=current_time)
             db.session.add(user_vote)
             db.session.commit()
             return True
@@ -308,10 +331,13 @@ def user_vote_booklist(booklist_id, user_id, attitude):
         if user_vote is not None:
             user_vote = user_vote.first()
             user_vote.vote = attitude
+            user_vote.last_vote_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
             return True
         else:
-            user_vote = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, vote=attitude, is_follow=False)
+            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+            user_vote = DB_user_booklist_opinion(user_id=user_id, booklist_id=booklist_id, vote=attitude,
+                                                 is_follow=False, last_vote_time=current_time)
             db.session.add(user_vote)
             db.session.commit()
             return True
@@ -335,9 +361,12 @@ def user_remark_book(book_id, user_id, remark):
         if user_book_remark is not None:
             user_book_remark = user_book_remark.first()
             user_book_remark.remark = remark
+            user_book_remark.remark_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
         else:
-            user_book_remark = DB_user_book_remark(user_id=user_id, book_id=book_id, remark=remark)
+            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+            user_book_remark = DB_user_book_remark(user_id=user_id, book_id=book_id, remark=remark,
+                                                   remark_time=current_time)
             db.session.add(user_book_remark)
             db.session.commit()
         return True
@@ -361,9 +390,12 @@ def user_remark_booklist(booklist_id, user_id, remark):
         if user_booklist_remark is not None:
             user_booklist_remark = user_booklist_remark.first()
             user_booklist_remark.remark = remark
+            user_booklist_remark.remark_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
         else:
-            user_booklist_remark = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, remark=remark)
+            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+            user_booklist_remark = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, remark=remark,
+                                                           remark_time=current_time)
             db.session.add(user_booklist_remark)
             db.session.commit()
         return True
@@ -373,6 +405,7 @@ def user_remark_booklist(booklist_id, user_id, remark):
         db.session.rollback()
         return False
 
+
 def get_booklist_user_followed(user_id):
     """
     get booklist user followed
@@ -380,13 +413,14 @@ def get_booklist_user_followed(user_id):
     :return: list of booklist_id
     """
     try:
-        booklists=DB_user_booklist_opinion.query.filter_by(user_id=user_id, is_follow=1).all()
-        booklist_ids=[item.booklist_id for item in booklists]
+        booklists = DB_user_booklist_opinion.query.filter_by(user_id=user_id, is_follow=1).all()
+        booklist_ids = [item.booklist_id for item in booklists]
         return json.dumps(booklist_ids)
     except Exception as e:
         logging.error('%s' % (user_id))
         logging.error(e)
         return None
+
 
 def get_books_user_followed(user_id):
     """
@@ -395,26 +429,30 @@ def get_books_user_followed(user_id):
     :return:
     """
     try:
-        book_ids=DB_user_book_opinion.query.filter_by(user_id=user_id,is_follow=1).all()
+        book_ids = DB_user_book_opinion.query.filter_by(user_id=user_id, is_follow=1).all()
         return json.dumps([item.book_id for item in book_ids])
     except Exception as e:
         logging.error('%s' % (user_id))
         logging.error(e)
         return None
 
-def set_booklist_follow(user_id,booklist_id,is_follow):
+
+def set_booklist_follow(user_id, booklist_id, is_follow):
     """
 
     :return:
     """
     try:
         user_vote = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, user_id=user_id).first()
-        if user_vote is  None:
-            user_booklist_follow = DB_user_booklist_opinion(user_id=user_id, booklist_id=booklist_id,is_follow=is_follow)
+        if user_vote is None:
+            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+            user_booklist_follow = DB_user_booklist_opinion(user_id=user_id, booklist_id=booklist_id,
+                                                            is_follow=is_follow, last_follow_time=current_time)
             db.session.add(user_booklist_follow)
             db.session.commit()
         else:
             user_vote.is_follow = is_follow
+            user_vote.last_follow_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
         return True
     except Exception as e:
@@ -422,25 +460,30 @@ def set_booklist_follow(user_id,booklist_id,is_follow):
         logging.error(e)
         return None
 
-def set_book_follow(user_id,book_id,is_follow):
+
+def set_book_follow(user_id, book_id, is_follow):
     """
 
     :return:
     """
     try:
         user_vote = DB_user_book_opinion.query.filter_by(book_id=book_id, user_id=user_id).first()
-        if user_vote is  None:
-            user_book_follow = DB_user_book_opinion(user_id=user_id, book_id=book_id,is_follow=is_follow)
+        if user_vote is None:
+            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+            user_book_follow = DB_user_book_opinion(user_id=user_id, book_id=book_id, is_follow=is_follow,
+                                                    last_follow_time=current_time)
             db.session.add(user_book_follow)
             db.session.commit()
         else:
             user_vote.is_follow = is_follow
+            user_vote.last_follow_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
         return True
     except Exception as e:
         logging.error('set follow %s' % (book_id))
         logging.error(e)
         return None
+
 
 def get_book_remark_vote_num(book_remark_id):
     """
@@ -450,13 +493,14 @@ def get_book_remark_vote_num(book_remark_id):
     """
     try:
         return json.dumps({
-            'up':DB_user_book_remark_opinion.query.filter_by(book_remark_id=book_remark_id,vote='up').count(),
-            'down':DB_user_book_remark_opinion.query.filter_by(book_remark_id=book_remark_id,vote='down').count()
+            'up': DB_user_book_remark_opinion.query.filter_by(book_remark_id=book_remark_id, vote='up').count(),
+            'down': DB_user_book_remark_opinion.query.filter_by(book_remark_id=book_remark_id, vote='down').count()
         })
     except Exception as e:
-        logging.error("get vote num false at %s"%(book_remark_id))
+        logging.error("get vote num false at %s" % (book_remark_id))
         logging.error(e)
         return None
+
 
 def get_booklist_remark_vote_num(booklist_remark_id):
     """
@@ -465,73 +509,93 @@ def get_booklist_remark_vote_num(booklist_remark_id):
     """
     try:
         return json.dumps({
-            'up':DB_user_booklist_remark_opinion.query.filter_by(booklist_remark_id=booklist_remark_id,vote='up').count(),
-            'down':DB_user_booklist_remark_opinion.query.filter_by(booklist_remark_id=booklist_remark_id,vote='down').count()
+            'up': DB_user_booklist_remark_opinion.query.filter_by(booklist_remark_id=booklist_remark_id,
+                                                                  vote='up').count(),
+            'down': DB_user_booklist_remark_opinion.query.filter_by(booklist_remark_id=booklist_remark_id,
+                                                                    vote='down').count()
         })
     except Exception as e:
-        logging.error("get vote num false at %s"%(booklist_remark_id))
+        logging.error("get vote num false at %s" % (booklist_remark_id))
         logging.error(e)
         return None
 
-def get_user_book_remark_opinion(user_id,book_remark_id):
+
+def get_user_book_remark_opinion(user_id, book_remark_id):
     """"""
     try:
-        user_book_remark_opinion=DB_user_book_remark_opinion.query.filter_by(user_id=user_id,book_remark_id=book_remark_id).first()
+        user_book_remark_opinion = DB_user_book_remark_opinion.query.filter_by(user_id=user_id,
+                                                                               book_remark_id=book_remark_id).first()
         if user_book_remark_opinion is None:
             return 'netural'
         else:
-            return  user_book_remark_opinion.vote
+            return user_book_remark_opinion.vote
     except Exception as e:
-        logging.error("get opinion false at %s"%(book_remark_id))
+        logging.error("get opinion false at %s" % (book_remark_id))
         logging.error(e)
         return None
 
-def get_user_booklist_remark_opinion(user_id,booklist_remark_id):
+
+def get_user_booklist_remark_opinion(user_id, booklist_remark_id):
     """"""
     try:
-        user_booklist_remark_opinion=DB_user_booklist_remark_opinion.query.filter_by(user_id=user_id,booklist_remark_id=booklist_remark_id).first();
+        user_booklist_remark_opinion = DB_user_booklist_remark_opinion.query.filter_by(user_id=user_id,
+                                                                                       booklist_remark_id=booklist_remark_id).first();
         if user_booklist_remark_opinion is None:
             return 'netural'
         else:
-            return  user_booklist_remark_opinion.vote
+            return user_booklist_remark_opinion.vote
     except Exception as e:
-        logging.error("get opinion false at %s"%(booklist_remark_id))
+        logging.error("get opinion false at %s" % (booklist_remark_id))
         logging.error(e)
         return None
 
-def user_vote_book_remark(user_id,book_remark_id,attitude):
+
+def user_vote_book_remark(user_id, book_remark_id, attitude):
     """"""
     try:
-        user_book_remark_vote=DB_user_book_remark_opinion.query.filter_by(user_id=user_id,book_remark_id=book_remark_id).first()
+        user_book_remark_vote = DB_user_book_remark_opinion.query.filter_by(user_id=user_id,
+                                                                            book_remark_id=book_remark_id).first()
+        current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
         if user_book_remark_vote is None:
-            user_book_remark_vote=DB_user_book_remark_opinion(user_id=user_id,book_remark_id=book_remark_id,vote=attitude)
+            user_book_remark_vote = DB_user_book_remark_opinion(user_id=user_id, book_remark_id=book_remark_id,
+                                                                vote=attitude, last_vote_time=current_time)
+            user_book_remark_vote.last_vote_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.add(user_book_remark_vote)
             db.session.commit()
             return True
         else:
-            user_book_remark_vote.vote=attitude
+            user_book_remark_vote.vote = attitude
+            user_book_remark_vote.last_vote_time = current_time
             db.session.commit()
             return True
     except Exception as e:
-        logging.error("vote book remark fasle at %s"%(book_remark_id))
+        logging.error("vote book remark false at %s" % (book_remark_id))
         logging.error(e)
+        db.session.rollback()
         return None
 
 
-def user_vote_booklist_remark(user_id,booklist_remark_id,attitude):
+def user_vote_booklist_remark(user_id, booklist_remark_id, attitude):
     """"""
     try:
-        user_booklist_remark_vote=DB_user_booklist_remark_opinion.query.filter_by(user_id=user_id,booklist_remark_id=booklist_remark_id).first()
+        user_booklist_remark_vote = DB_user_booklist_remark_opinion.query.filter_by(user_id=user_id,
+                                                                                    booklist_remark_id=booklist_remark_id).first()
+        current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
         if user_booklist_remark_vote is None:
-            user_booklist_remark_vote=DB_user_booklist_remark_opinion(user_id=user_id,booklist_remark_id=booklist_remark_id,vote=attitude)
+            user_booklist_remark_vote = DB_user_booklist_remark_opinion(user_id=user_id,
+                                                                        booklist_remark_id=booklist_remark_id,
+                                                                        vote=attitude, last_vote_time=current_time)
             db.session.add(user_booklist_remark_vote)
             db.session.commit()
             return True
         else:
-            user_booklist_remark_vote.vote=attitude
+            user_booklist_remark_vote.vote = attitude
+            user_booklist_remark_vote.last_vote_time = current_time
             db.session.commit()
             return True
     except Exception as e:
-        logging.error("vote book remark fasle at %s"%(booklist_remark_id))
+        logging.error("vote book remark false at %s" % (booklist_remark_id))
         logging.error(e)
+        db.session.rollback()
         return None
+

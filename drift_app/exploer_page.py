@@ -11,3 +11,8 @@ explore_bp = Blueprint('explore_bp', __name__)
 @explore_bp.route('/explore')
 def friends():
     return current_app.send_static_file('react/explore.html')
+
+
+@explore_bp.route('/test_explore')
+def test_explore():
+    return current_app.send_static_file('explore.html')
