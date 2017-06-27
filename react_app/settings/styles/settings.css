@@ -1,0 +1,44 @@
+.clearfix::after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
+}
+
+.base_info {
+    margin: 20px;
+    width: 400px;
+}
+
+.update_info {
+    display: flex;
+}
+
+.avatar_div {
+    margin: 20px;
+}
+
+.avatar_pic {
+    height: 160px;
+    width: 160px;
+    margin-left: 20px;
+}
+
+.upload_input {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+}
+
+.radio_group {
+    margin: 10px;
+}
+
+.ps_div {
+    padding: 20px;
+}

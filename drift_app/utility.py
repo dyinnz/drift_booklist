@@ -7,7 +7,7 @@ from flask_login import current_user
 from flask import Blueprint, current_app, jsonify, request
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = './uploads'
+UPLOAD_FOLDER = './static/uploads'
 
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
@@ -21,16 +21,26 @@ def allowed_file(filename):
 
 
 @utility_bp.route('/upload', methods=['POST'])
+@flask_login.login_required
 def upload_file():
-    path = request.args.get("path")
-    prefix = request.args.get("prefix")
+    path = ''
+    prefix = ''
+    # path = request.args.get("path")
+    # prefix = request.args.get("prefix")
+    logging.info("files: %s", request.files)
 
     if 'file' not in request.files:
-        return 'No file part'
+        return jsonify({
+            'result': 'No file part',
+            'path:': ''
+        })
 
     file = request.files['file']
     if file.filename == '':
-        return 'no selected file'
+        return jsonify({
+            'result': 'no selected file',
+            'path:': ''
+        })
 
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -40,8 +50,15 @@ def upload_file():
         if not os.path.exists(dir):
             os.makedirs(dir)
 
-        file.save(os.path.join(dir, prefix + filename))
-        return 'success in uploading file'
+        final_path = os.path.join(dir, prefix + filename)
+        file.save(final_path)
+        return jsonify({
+            'result': 'success in uploading file',
+            'path': final_path[1:]
+        })
 
-    return 'fail in uploading file'
+    return jsonify({
+        'result': 'failed in uploading file',
+        'path:': ''
+    })
 
