@@ -118,7 +118,7 @@ def booklistdetail():
         data=request.get_json()
         print("json: ", data)
         jsondata=get_booklist_detail(data['booklist_id'])
-        logging.debug(jsondata)
+        #logging.debug(jsondata)
         return jsonify(jsondata)
     else:
         return 'need post request'
@@ -257,11 +257,23 @@ def follow_book():
     current_vate=db_user_remark.get_user_book_opinion(user_id,data['book_id'])
     true=False
 
-    if current_vate is None or json.loads(current_vate)[1]==False:
+    if current_vate is None or json.loads(current_vate)[1]==False:#关注
         true = db_user_remark.set_book_follow(user_id, data['book_id'], True)
-    else:
-        true = db_user_remark.set_book_follow(user_id, data['book_id'], False)
+        my_favorite_booklist=json.loads(db_book.get_user_created_booklist(user_id))[0]
+        if my_favorite_booklist is None:
+            my_favorite_booklist = db_book.add_my_favorite_booklist(booklist_id=0, user_id=flask_login.current_user.db_id,
+                                                               booklist_name='my_favorite',
+                                                               introduction='this is my favorite books',
+                                                               cover='default.png')
 
+        db_book.add_book_to_booklist(my_favorite_booklist,data['book_id'])
+    else:#取消关注
+        true = db_user_remark.set_book_follow(user_id, data['book_id'], False)
+        my_favorite_booklist=json.loads(db_book.get_user_created_booklist(user_id))[0]
+        if my_favorite_booklist is None:
+            true= False
+        else:
+            db_book.move_book_from_booklist(my_favorite_booklist,data['book_id'])
     return jsonify({'OK': true,
                     'is_follow': json.loads(db_user_remark.get_user_book_opinion(user_id, data['book_id']))[1]
                     })

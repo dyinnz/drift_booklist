@@ -228,6 +228,24 @@ def add_book_to_booklist(booklist_id, book_id):
         logging.error(e)
         db.session.rollback()
         return False
+def move_book_from_booklist(booklist_id,book_id):
+    """
+
+    :param booklist_id:
+    :param book_id:
+    :return:
+    """
+    try:
+        booklist_book=DB_booklist_book.query.filter_by(booklist_id=booklist_id,book_id=book_id).first()
+        if booklist_book is None:
+            return False
+        db.session.delete(booklist_book)
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error("move book false at %s %s "%(booklist_id,book_id))
+        logging.error(e)
+        return None
 
 def get_user_created_booklist(user_id):
     """
