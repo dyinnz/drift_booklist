@@ -26,8 +26,38 @@ function fetchPostJson(url, data) {
 }
 
 class UpdatePassword extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            result: ""
+        }
+    }
+
     onUpdate() {
-        // old_ps =
+        let old_ps = $("#old_ps").val();
+        let new_ps = $("#new_ps").val();
+        let confirm = $("#confirm").val();
+
+        if ('' === old_ps || '' === new_ps || '' === confirm) {
+            this.setState({
+                result: "Password could not be empty"
+            })
+        } else if (new_ps !== confirm) {
+            this.setState({
+                result: "Confirm password is different"
+            });
+
+        } else {
+            fetchPostJson('/settings/update_ps', {
+                old_ps: old_ps,
+                new_ps: new_ps,
+            }).then(resp => resp.text()
+            ).then((data) => {
+                this.setState({
+                    result: data
+                })
+            })
+        }
     }
 
     render() {
@@ -58,6 +88,8 @@ class UpdatePassword extends React.Component {
                 <br/>
 
                 <FlatButton label="Update Password" secondary={true} onClick={() => this.onUpdate()}/>
+                <br/>
+                <p>{this.state.result}</p>
             </Paper>
         )
     }
