@@ -111,7 +111,7 @@
 }
 
 /*输入框*/
-.myapp-login .myapp-login-bg input#username_r, #password_r, #password_r1, #account, #password_l{
+.myapp-login .myapp-login-bg input#account, #password, #password_r1, #birthday, #password_l{
     background: none;
     border-radius: 30px;
     border: 1px solid #9194a7;

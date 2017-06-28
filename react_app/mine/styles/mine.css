@@ -40,6 +40,10 @@
     padding: 20px;
 }
 
+.comment_head {
+    display: flex;
+}
+
 .comment_content {
     width: 400px;
     float: left;
@@ -53,4 +57,18 @@
 .tags_wrapper {
     display: flex;
     flexWrap: wrap;
+}
+
+.no_comment {
+    padding: 20px;
+}
+
+.reply_wrapper {
+    margin-left: 20px;
+    margin-right: 20px;
+    padding-bottom: 20px;
+}
+
+.comment_label {
+    color: green;
 }
