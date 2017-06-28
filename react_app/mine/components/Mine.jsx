@@ -13,6 +13,9 @@ import ActionThumbUp from 'material-ui/svg-icons/action/thumb-up'
 import ActionThumbDown from 'material-ui/svg-icons/action/thumb-down'
 import ActionStars from 'material-ui/svg-icons/action/stars'
 import IconButton from 'material-ui/IconButton'
+import FlatButton from 'material-ui/FlatButton'
+import TextField from 'material-ui/TextField'
+import {blue500} from 'material-ui/styles/colors'
 
 function fetchPostJson(url, data) {
     return fetch(url, {
@@ -20,6 +23,7 @@ function fetchPostJson(url, data) {
         headers: {
             'Content-Type': 'application/json'
         },
+        credentials: 'same-origin',
         body: JSON.stringify(data)
     })
 }
@@ -129,10 +133,6 @@ class BookGrid extends React.Component {
     }
 }
 
-const cardStyle = {
-    zIndex : 0,
-}
-
 class Comment extends React.Component {
     render() {
         console.log("comment: ", this.props.details)
@@ -153,6 +153,26 @@ class Comment extends React.Component {
 }
 
 class CommentList extends React.Component {
+    renderComments() {
+        if (0 === this.props.items.length) {
+            return (
+                <div className="no_comment">
+                    <p>No comment here yet</p>
+                </div>
+            )
+        } else {
+            return (
+                <div>
+                    {this.props.items.map((item) => {
+                        return <Comment
+                            key={item.remark_time}
+                            details={item}/>
+                    })}
+                </div>
+            )
+        }
+    }
+
     render() {
         if ("undefined" === typeof(this.props.items)) {
             return <p>No comments</p>
@@ -162,13 +182,60 @@ class CommentList extends React.Component {
 
         return (
             <div><Paper>
-                <Subheader> COMMENTS </Subheader>
-                {this.props.items.map((item) => {
-                    return <Comment
-                        key={item.remark_time}
-                        details={item}/>
-                })}
+                <div className="comment_head">
+                    <Subheader> COMMENTS </Subheader>
+                    <FlatButton
+                        label = "New"
+                        primary={true}
+                        onClick={() => document.getElementById("comment_box").focus()}
+                    />
+                </div>
+                {this.renderComments()}
             </Paper></div>
+        )
+    }
+}
+
+const labelStyle = {
+    color: blue500
+};
+
+class CommentBox extends React.Component {
+    onReply () {
+        console.log(document.getElementById("comment_box").value)
+
+        fetchPostJson("/add_booklist_remark", {
+            booklist_id: this.props.booklist_id,
+            remark: document.getElementById("comment_box").value
+        }).then(
+            resp => resp.text()
+        ).then( (data) => {
+            console.log(data)
+        })
+    }
+
+    render() {
+        return (
+            <Paper>
+                <div className="reply_wrapper">
+                    <TextField
+                        floatingLabelText="Add new comment here"
+                        floatingLabelStyle={labelStyle}
+                        multiLine={true}
+                        rows={2}
+                        rowsMax={5}
+                        fullWidth={true}
+                        id="comment_box"
+                    />
+                    <FlatButton
+                        label = "reply"
+                        onClick={() => this.onReply()}
+                    />
+                    <FlatButton
+                        label = "cancel"
+                    />
+                </div>
+            </Paper>
         )
     }
 }
@@ -248,6 +315,7 @@ class Mine extends React.Component {
                 <ShowContainer details={this.state.showBooklist}/>
                 <BookGrid items={this.state.showBooklist.books}/>
                 <CommentList items={this.state.showBooklist.remarks}/>
+                <CommentBox booklist_id={this.state.booklist_id}/>
             </div>
         )
     }
