@@ -360,18 +360,18 @@ def user_remark_book(book_id, user_id, remark):
     :return: If success, return True, else False.
     """
     try:
-        user_book_remark = DB_user_book_remark.query.filter_by(book_id=book_id, user_id=user_id)
+        """user_book_remark = DB_user_book_remark.query.filter_by(book_id=book_id, user_id=user_id)
         if user_book_remark is not None:
             user_book_remark = user_book_remark.first()
             user_book_remark.remark = remark
             user_book_remark.remark_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
-        else:
-            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
-            user_book_remark = DB_user_book_remark(user_id=user_id, book_id=book_id, remark=remark,
-                                                   remark_time=current_time)
-            db.session.add(user_book_remark)
-            db.session.commit()
+        else:"""
+        current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+        user_book_remark = DB_user_book_remark(user_id=user_id, book_id=book_id, remark=remark,
+                                           remark_time=current_time)
+        db.session.add(user_book_remark)
+        db.session.commit()
         return True
     except Exception as e:
         logging.error('%s,%s,%s' % (book_id, user_id, remark))
@@ -389,19 +389,20 @@ def user_remark_booklist(booklist_id, user_id, remark):
     :return: If success, return True, else False.
     """
     try:
-        user_booklist_remark = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id, user_id=user_id)
+        """user_booklist_remark = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id, user_id=user_id)
         if user_booklist_remark is not None:
             user_booklist_remark = user_booklist_remark.first()
             user_booklist_remark.remark = remark
             user_booklist_remark.remark_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
-        else:
-            current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
-            user_booklist_remark = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, remark=remark,
-                                                           remark_time=current_time)
-            db.session.add(user_booklist_remark)
-            db.session.commit()
+        else:"""
+        current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
+        user_booklist_remark = DB_user_booklist_remark(user_id=user_id, booklist_id=booklist_id, remark=remark,
+                                                       remark_time=current_time)
+        db.session.add(user_booklist_remark)
+        db.session.commit()
         return True
+
     except Exception as e:
         logging.error('%s,%s,%s' % (booklist_id, user_id, remark))
         logging.error(e)
@@ -601,4 +602,3 @@ def user_vote_booklist_remark(user_id, booklist_remark_id, attitude):
         logging.error(e)
         db.session.rollback()
         return None
-
