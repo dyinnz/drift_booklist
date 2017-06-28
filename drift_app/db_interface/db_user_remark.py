@@ -577,7 +577,7 @@ def get_user_booklist_remark_opinion(user_id, booklist_remark_id):
     """"""
     try:
         user_booklist_remark_opinion = DB_user_booklist_remark_opinion.query.filter_by(user_id=user_id,
-                                                                                       booklist_remark_id=booklist_remark_id).first();
+                                                                                       booklist_remark_id=booklist_remark_id).first()
         if user_booklist_remark_opinion is None:
             return 'netural'
         else:
