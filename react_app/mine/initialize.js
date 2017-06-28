@@ -3,13 +3,13 @@ import React from 'react';
 import injectTapEventPlugin from 'react-tap-event-plugin'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
-import Main from 'mine/components/Main'
+import Mine from 'mine/components/Mine'
 
 injectTapEventPlugin();
 
 const App = () => (
     <MuiThemeProvider>
-        <Main/>
+        <Mine/>
     </MuiThemeProvider>
 );
 
