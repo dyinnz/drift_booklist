@@ -111,13 +111,14 @@ def update_user_infos(account, infos):
         user.introduction = infos['introduction']
         user.birthday = infos['birthday']
         user.gender = infos['gender']
+        user.pic_src = infos['pic_src']
+        print(infos['pic_src'])
         db.session.commit()
 
         return True
 
     except Exception as e:
-        logging.error("update %s", account)
-        logging.error(e)
+        logging.error("update %s error: %s", account, e)
         db.session.rollback()
         return None
 

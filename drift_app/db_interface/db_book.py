@@ -228,6 +228,24 @@ def add_book_to_booklist(booklist_id, book_id):
         logging.error(e)
         db.session.rollback()
         return False
+def move_book_from_booklist(booklist_id,book_id):
+    """
+
+    :param booklist_id:
+    :param book_id:
+    :return:
+    """
+    try:
+        booklist_book=DB_booklist_book.query.filter_by(booklist_id=booklist_id,book_id=book_id).first()
+        if booklist_book is None:
+            return False
+        db.session.delete(booklist_book)
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error("move book false at %s %s "%(booklist_id,book_id))
+        logging.error(e)
+        return None
 
 def get_user_created_booklist(user_id):
     """
@@ -263,5 +281,62 @@ def get_booklist_by_id(booklist_id):
             })
     except Exception as e:
         logging.error("%s %s" %(booklist.id,booklist.name))
+        logging.error(e)
+        return None
+
+def delete_booklist(booklist_id):
+    """
+    delete booklist by booklist_id
+    :param booklist_id: booklist_id
+    :return: if success return true else return false
+    """
+    try:
+        booklist=DB_booklist.query.filter_by(id=booklist_id).first()
+        if booklist is None:
+            return False
+        db.session.delete(booklist)
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error(e)
+        return None
+
+def change_booklist(booklist_id,booklist_name,booklist_cover,introduction):
+    """
+    uppdate the info of booklist
+    :param booklist_id:
+    :param booklist_name:
+    :param booklist_cover:
+    :param introduction:
+    :return: if success return true else return false
+    """
+    try:
+        booklist=DB_booklist.query.filter_by(id=booklist_id).first()
+        if booklist is None:
+            return False
+
+        booklist.cover=booklist_cover
+        booklist.introduction=introduction
+        booklist.name=booklist_name
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error("change booklist info false at %s" %(booklist_id))
+        logging.error(e)
+        return None
+
+def change_booklist_tags(booklist_id,tags):
+    """
+
+    :return:
+    """
+    try:
+        for tag in tags:
+            booklist_tag=DB_booklist_tag(booklist_id=booklist_id,tag_name=tag)
+            db.session.add(booklist_tag)
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error("change tags false at %s"%(booklist_id))
         logging.error(e)
         return None

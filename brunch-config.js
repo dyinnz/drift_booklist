@@ -6,7 +6,8 @@ exports.files = {
       'js/index.js': /^react_app\/index/,
       'js/friends.js': /^react_app\/friends/,
       'js/mine.js': /^react_app\/mine/,
-        'js/login.js': /^react_app\/login/
+        'js/login.js': /^react_app\/login/,
+      'js/settings.js': /^react_app\/settings/
     }
   },
   stylesheets: {
@@ -14,7 +15,8 @@ exports.files = {
       'css/index.css': /^react_app\/index/,
       'css/friends.css': /^react_app\/friends/,
       'css/mine.css': /^react_app\/mine/,
-        'css/login.css':/^react_app\/login/
+        'css/login.css':/^react_app\/login/,
+      'css/settings.css': /^react_app\/settings/
     }
   }
 };

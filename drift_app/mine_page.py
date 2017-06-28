@@ -36,7 +36,12 @@ def get_booklist_detail(booklist_id):
     jsondata['book_number'] = len(book_ids)
     jsondata['follower_number']=db_user_remark.get_booklist_follower_num(booklist_id)
     jsondata['remark_number']=db_user_remark.get_booklist_remark_num(booklist_id)
-    jsondata['remarks'] = json.loads(db_user_remark.get_booklist_remark(booklist_id, 1, 10))
+    remarks=json.loads(db_user_remark.get_booklist_remark(booklist_id, 1, 10))
+    for remark in remarks:
+        remark_vote_number=json.loads(db_user_remark.get_booklist_remark_vote_num(remark['id']))
+        remark['up_number']=remark_vote_number['up']
+        remark['down_number']=remark_vote_number['down']
+    jsondata['remarks']=remarks
     jsondata['books'] = books
     jsondata['tags'] = json.loads(db_book.get_booklist_tag(booklist_id))
 
@@ -111,8 +116,9 @@ def new_booklist():
 def booklistdetail():
     if request.method=='POST':
         data=request.get_json()
+        print("json: ", data)
         jsondata=get_booklist_detail(data['booklist_id'])
-        logging.debug(jsondata)
+        #logging.debug(jsondata)
         return jsonify(jsondata)
     else:
         return 'need post request'
@@ -128,7 +134,12 @@ def bookdetail():
     vote_number=json.loads(db_user_remark.get_book_vote_num(data['book_id']))
     jsondata['up_number']=vote_number['up']
     jsondata['down_number']=vote_number['down']
-    jsondata['remarks']=json.loads(db_user_remark.get_book_remark(data['book_id'],1,10))
+    remarks = json.loads(db_user_remark.get_book_remark(data['book_id'], 1, 10))
+    for remark in remarks:
+        remark_vote_number = json.loads(db_user_remark.get_book_remark_vote_num(remark['id']))
+        remark['up_number'] = remark_vote_number['up']
+        remark['down_number'] = remark_vote_number['down']
+    jsondata['remarks'] = remarks
 
     return jsonify(jsondata)
 
@@ -206,7 +217,7 @@ def vote_book():
         true=db_user_remark.user_vote_book(data['book_id'],user_id,data['attitude'])
     jsondata={
         'OK':true,
-        'vote':json.loads(db_user_remark.get_user_book_opinion(user_id,data['book_id']))[0]
+        'attitude':json.loads(db_user_remark.get_user_book_opinion(user_id,data['book_id']))[0]
     }
     return jsonify(jsondata)
 
@@ -229,7 +240,7 @@ def vote_booklist():
         true=db_user_remark.user_vote_booklist(data['booklist_id'],user_id,data['attitude'])
     jsondata={
         'OK':true,
-        'vote':json.loads(db_user_remark.get_user_booklist_opinion(user_id,data['booklist_id']))[0]
+        'attitude':json.loads(db_user_remark.get_user_booklist_opinion(user_id,data['booklist_id']))[0]
     }
     return jsonify(jsondata)
 
@@ -246,11 +257,23 @@ def follow_book():
     current_vate=db_user_remark.get_user_book_opinion(user_id,data['book_id'])
     true=False
 
-    if current_vate is None or json.loads(current_vate)[1]==False:
+    if current_vate is None or json.loads(current_vate)[1]==False:#关注
         true = db_user_remark.set_book_follow(user_id, data['book_id'], True)
-    else:
-        true = db_user_remark.set_book_follow(user_id, data['book_id'], False)
+        my_favorite_booklist=json.loads(db_book.get_user_created_booklist(user_id))[0]
+        if my_favorite_booklist is None:
+            my_favorite_booklist = db_book.add_my_favorite_booklist(booklist_id=0, user_id=flask_login.current_user.db_id,
+                                                               booklist_name='my_favorite',
+                                                               introduction='this is my favorite books',
+                                                               cover='default.png')
 
+        db_book.add_book_to_booklist(my_favorite_booklist,data['book_id'])
+    else:#取消关注
+        true = db_user_remark.set_book_follow(user_id, data['book_id'], False)
+        my_favorite_booklist=json.loads(db_book.get_user_created_booklist(user_id))[0]
+        if my_favorite_booklist is None:
+            true= False
+        else:
+            db_book.move_book_from_booklist(my_favorite_booklist,data['book_id'])
     return jsonify({'OK': true,
                     'is_follow': json.loads(db_user_remark.get_user_book_opinion(user_id, data['book_id']))[1]
                     })
@@ -276,3 +299,72 @@ def follow_booklist():
     return jsonify({'OK':true,
                     'is_follow':json.loads(db_user_remark.get_user_booklist_opinion(user_id,data['booklist_id']))[1]
                     })
+
+@mine_bp.route('/change_booklist/commit',methods=['POST','GET'])
+def change_booklist_commit():
+    if request.method!='POST':
+        return 'need POST'
+
+    data=request.get_json()
+    true=db_book.change_booklist(data['booklist_id'], data['booklist_name'], data['booklist_cover'], data['introduction'])
+    if true:
+        true=db_book.change_booklist_tags(data['booklist_id'],data['tags'])
+    return jsonify({
+        'OK':true,
+        'tags':db_book.get_booklist_tag(data['booklist_id'])
+    })
+
+@mine_bp.route('/change_booklist',methods=['POST','GET'])
+def change_booklist():
+    if request.method!='POST':
+        return 'need POST'
+    else:
+        if flask_login.current_user.is_anonymous:
+            return flask.redirect(flask.url_for('login_bp.login'))
+
+    data=request.get_json()
+    jsondata=json.loads(db_book.get_booklist_by_id(data['booklist_id']))
+    jsondata['tags']=db_book.get_booklist_tag(data['booklist_id'])
+    return jsonify(jsondata)
+
+@mine_bp.route('/delete_booklist',methods=['POST','GET'])
+def delete_booklist():
+    if request.method!='POST':
+        return 'need POST'
+    else:
+        if flask_login.current_user.is_anonymous:
+            return flask.redirect(flask.url_for('login_bp.login'))
+
+    data=request.get_json()
+    return jsonify({
+        'OK':db_book.delete_booklist(data['booklist_id'])
+    })
+@mine_bp.route('/vote_remark',methods=['POST','GET'])
+def vote_remark():
+    if request.method!='POST':
+        return 'need POST'
+    else:
+        if flask_login.current_user.is_anonymous:
+            return flask.redirect(flask.url_for('login_bp.login'))
+        else:
+            user_id = flask_login.current_user.db_id
+
+    data=request.get_json()
+    if 'book_remark_id' in data:
+        if db_user_remark.get_user_book_remark_opinion(user_id,data['book_remark_id'])==data['attitude']:
+            true=db_user_remark.user_vote_book_remark(user_id,data['book_remark_id'],'netural')
+        else:
+            true = db_user_remark.user_vote_book_remark(user_id, data['book_remark_id'], data['attitude'])
+        return jsonify({
+            'OK':true,
+            'attitude':db_user_remark.get_user_book_remark_opinion(user_id,data['book_remark_id'])
+        })
+    else:
+        if db_user_remark.get_user_booklist_remark_opinion(user_id,data['booklist_remark_id'])==data['attitude']:
+            true=db_user_remark.user_vote_booklist_remark(user_id,data['booklist_remark_id'],'netural')
+        else:
+            true = db_user_remark.user_vote_booklist_remark(user_id, data['booklist_remark_id'], data['attitude'])
+        return jsonify({
+            'OK':true,
+            'attitude':db_user_remark.get_user_booklist_remark_opinion(user_id,data['booklist_remark_id'])
+        })
