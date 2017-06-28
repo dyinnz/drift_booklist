@@ -10,8 +10,11 @@ explore_bp = Blueprint('explore_bp', __name__)
 
 
 @explore_bp.route('/explore')
-def friends():
-    return current_app.send_static_file('explore.html')
+def explore():
+    if flask_login.current_user.is_anonymous:
+        return flask.redirect(flask.url_for('login_bp.login'))
+    else:
+        return flask.current_app.send_static_file('react/explore.html')
 
 
 @explore_bp.route('/test_explore')
@@ -19,8 +22,8 @@ def test_explore():
     return current_app.send_static_file('explore.html')
 
 
-@explore_bp.route('/test_moment', methods=['GET', 'POST'])
-def test_friend():
+@explore_bp.route('/get_moment', methods=['GET', 'POST'])
+def get_moment():
     if request.method == 'POST':
         data = request.get_json()
         print("json: ", data)
