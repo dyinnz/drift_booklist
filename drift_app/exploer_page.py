@@ -29,4 +29,3 @@ def test_friend():
         return jsonify(jsondata)
     else:
         return 'need post request'
-
