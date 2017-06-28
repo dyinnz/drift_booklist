@@ -175,7 +175,7 @@ class CommentList extends React.Component {
 
 // <CommentList/>
 
-class Main extends React.Component {
+class Mine extends React.Component {
     constructor(props) {
         super(props);
         this.jsonData = undefined
@@ -262,4 +262,4 @@ class Main extends React.Component {
     }
 }
 
-export default Main;
+export default Mine;
