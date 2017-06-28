@@ -74,7 +74,7 @@ def login():
         if not flask_login.current_user.is_anonymous:
             return flask.redirect(flask.url_for('recommend_bp.recommend'))
 
-        return flask.current_app.send_static_file('login.html')
+        return flask.current_app.send_static_file('react/login.html')
 
     account = flask.request.form['account']
     password = flask.request.form['password']
