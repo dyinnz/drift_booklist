@@ -205,7 +205,7 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
               'remark_time': user_booklist.remark_time} for user_booklist in user_booklists]
         )
     except Exception as e:
-        logging.error(booklist_id)
+        logging.error("get_booklist_remark(): %s", booklist_id)
         logging.error(e)
         return None
 

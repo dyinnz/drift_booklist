@@ -102,13 +102,6 @@ class ShowContainer extends React.Component {
     }
 }
 
-const tilesData = [
-    {
-        img: "/static/react/default.png",
-        title: 'hehe'
-    },
-];
-
 class BookGrid extends React.Component {
     render() {
         if ("undefined" === typeof(this.props.items)) {
@@ -202,7 +195,8 @@ const labelStyle = {
 
 class CommentBox extends React.Component {
     onReply () {
-        console.log(document.getElementById("comment_box").value)
+        console.log("booklist_id in box:", this.props.booklist_id)
+        console.log("content in box:", document.getElementById("comment_box").value)
 
         fetchPostJson("/add_booklist_remark", {
             booklist_id: this.props.booklist_id,
@@ -215,28 +209,33 @@ class CommentBox extends React.Component {
     }
 
     render() {
-        return (
-            <Paper>
-                <div className="reply_wrapper">
-                    <TextField
-                        floatingLabelText="Add new comment here"
-                        floatingLabelStyle={labelStyle}
-                        multiLine={true}
-                        rows={2}
-                        rowsMax={5}
-                        fullWidth={true}
-                        id="comment_box"
-                    />
-                    <FlatButton
-                        label = "reply"
-                        onClick={() => this.onReply()}
-                    />
-                    <FlatButton
-                        label = "cancel"
-                    />
-                </div>
-            </Paper>
-        )
+        console.log("booklist_id in box render:", this.props.booklist_id)
+        if ("undefined" === typeof(this.props.booklist_id)) {
+            return (<div></div>)
+        } else {
+            return (
+                <Paper>
+                    <div className="reply_wrapper">
+                        <TextField
+                            floatingLabelText="Add new comment here"
+                            floatingLabelStyle={labelStyle}
+                            multiLine={true}
+                            rows={2}
+                            rowsMax={5}
+                            fullWidth={true}
+                            id="comment_box"
+                        />
+                        <FlatButton
+                            label = "reply"
+                            onClick={() => this.onReply()}
+                        />
+                        <FlatButton
+                            label = "cancel"
+                        />
+                    </div>
+                </Paper>
+            )
+        }
     }
 }
 
@@ -297,19 +296,21 @@ class Mine extends React.Component {
 
         fetchPostJson("/booklist_detail", {
             booklist_id: booklist_id
-        })
-            .then(resp => resp.json())
-            .then((data) => {
+        }).then(
+            resp => resp.json()
+        ).then((data) => {
             console.log("booklist_detail: ", data)
-                this.setState({
-                    myBooklist: this.state.myBooklist,
-                    followerBooklist: this.state.followerBooklist,
-                    showBooklist: data,
-                })
+            this.setState({
+                myBooklist: this.state.myBooklist,
+                followerBooklist: this.state.followerBooklist,
+                showBooklist: data,
+                booklist_id: booklist_id,
             })
+        })
     }
 
     renderRightPane() {
+        console.log("mine : ", this.state.booklist_id)
         return (
             <div className="right_pane">
                 <ShowContainer details={this.state.showBooklist}/>
