@@ -8,6 +8,7 @@ import FlatButton from 'material-ui/FlatButton'
 import CircularProgress from 'material-ui/CircularProgress'
 import Paper from 'material-ui/Paper'
 import Subheader from 'material-ui/Subheader'
+import DatePicker from 'material-ui/DatePicker'
 
 import update from 'immutability-helper'
 
@@ -23,6 +24,10 @@ function fetchPostJson(url, data) {
         credentials: 'same-origin',
         body: JSON.stringify(data),
     })
+}
+
+function dateToString(date) {
+    return date.toISOString().substr(0, 10)
 }
 
 class UpdatePassword extends React.Component {
@@ -213,15 +218,17 @@ class Settings extends React.Component {
                         defaultValue={this.state.name}
                     />
                     <br/>
-                    <TextField
+                    <DatePicker
                         floatingLabelText="Birthday"
                         floatingLabelFixed={true}
                         id="birthday"
-                        defaultValue={this.state.birthday}
-                    /> <br/>
+                        defaultDate={new Date(this.state.birthday)}
+                    />
                     <TextField
                         floatingLabelText="Introduction"
                         floatingLabelFixed={true}
+                        rows={2}
+                        rowsMax={5}
                         id="introduction"
                         defaultValue={this.state.introduction}
                     /> <br/>
