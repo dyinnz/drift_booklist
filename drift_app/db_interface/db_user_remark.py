@@ -173,8 +173,10 @@ def get_book_remark(book_id, page=1, per_page=10):
         user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page,
                                                                                                             per_page).query
         return json.dumps(
-            [{'id': user_book.id, 'avatar': json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],
-              'account': get_account_by_id(user_book.user_id), 'remark': user_book.remark,
+            [{'id': user_book.id,
+              'avatar': json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],
+              'account': get_account_by_id(user_book.user_id),
+              'remark': user_book.remark,
               'remark_time': user_book.remark_time} for user_book in user_books]
         )
     except Exception as e:
@@ -198,7 +200,8 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
         return json.dumps(
             [{'id': user_booklist.id,
               'avatar': json.loads(get_user_infos(get_account_by_id(user_booklist.user_id)))['pic_src'],
-              'account': get_account_by_id(user_booklist.user_id), 'remark': user_booklist.remark,
+              'account': get_account_by_id(user_booklist.user_id),
+              'remark': user_booklist.remark,
               'remark_time': user_booklist.remark_time} for user_booklist in user_booklists]
         )
     except Exception as e:

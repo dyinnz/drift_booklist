@@ -65,7 +65,7 @@
 
                 <div class="am-tabs-bd">
                     <div data-tab-panel-0 class="am-tab-panel am-active" id="panel0">
-                        <form action="/" class="am-form" data-am-validator id="rp1">
+                        <form action="/test" enctype="multipart/form-data" method="post" class="am-form" data-am-validator id="rp1">
                             <fieldset >
                                 <div class="am-form-group" id="input_username">
                                     <label for="account">User Name</label>
@@ -74,7 +74,7 @@
                                 </div>
                                 <div class="am-form-group">
                                     <label for="password">Password</label>
-                                    <input type="password" id="password" minlength="5" placeholder="请输入5位以上密码"
+                                    <input type="password" name="password" id="password" minlength="5" placeholder="请输入5位以上密码"
                                            class="am-form-field" required/>
                                 </div>
                                 <div class="am-form-group">
@@ -99,7 +99,7 @@
                                     <div class="am-form-file">
                                         <button type="button" class="am-btn am-btn-danger am-btn-sm">
                                             <i class="am-icon-cloud-upload"></i> 添加头像</button>
-                                        <input id="doc-form-file" type="file" multiple>
+                                        <input name="pic_src" id="doc-form-file" type="file" multiple>
                                     </div>
 
                                 </div>

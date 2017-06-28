@@ -1,0 +1,18 @@
+.card_media{
+    width: 200px;
+    height: 300px;
+    margin: 10px;
+    float: left;
+}
+
+.clearfix::after {
+   content: " ";
+   display: block;
+   height: 0;
+   clear: both;
+}
+
+.home{
+    width:70%;
+    margin:auto
+}

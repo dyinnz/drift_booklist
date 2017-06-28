@@ -76,8 +76,13 @@ def get_booklists_followed():
     return get_booklists_by_ids(booklist_ids)
 
 #----------------------------------------------------------
-@mine_bp.route('/test')
+@mine_bp.route('/test',methods=['POST','GET'])
 def test():
+    logging.info("tests")
+    if request.method!='POST':
+        return 'need post request'
+    data=request.form.to_dict()
+    logging.info("test%s", data)
     return flask.current_app.send_static_file('mine.html')
 
 

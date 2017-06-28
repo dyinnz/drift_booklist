@@ -35,22 +35,6 @@
     <link rel="stylesheet" href="static/assets/css/app.css">
 </head>
 
-<body>
-<label>Id:</label>
-<span id=booklist_id>...</span>
-
-<br>
-<label>Name:</label>
-<span id=booklist_name>...</span>
-
-<br>
-<label>Cover:</label>
-<span id=booklist_cover>...</span>
-
-<br>
-<label>Creater:</label>
-<span id=create_user>...</span>
-
 <br>
 <span id=data>...</span>
 <br>
@@ -70,29 +54,6 @@
 </body>
 
 <script>
-    $(document).ready(function () {
-        $.ajax({
-            type: 'POST',
-            url: '/get_mydata',
-            //data: JSON.stringify(data),
-            contentType: 'application/json; charset=UTF-8',
-            dataType: 'json',
-            success: function(data) {
-                //var results=jQuery.parseJSON(data);
-                //var results = eval ("(" + data + ")");
-                //var results=JSON.parse(data)
-                alert('success');
-                $('#booklist_id').html(data['booklist_id']);
-                $('#booklist_name').html(data['booklist_name']);
-                $('#booklist_cover').html(data['booklist_cover']);
-                $('#create_user').html(data['create_user']);
-                },
-            error: function(xhr, type) {
-                alert("Xhr: " + xhr + "\nType: " + type);
-            }
-    });
-    });
-    
     $('#update_name').click(function () {
         $.ajax({
             type:'POST',
