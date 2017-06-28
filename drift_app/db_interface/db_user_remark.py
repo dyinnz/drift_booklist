@@ -1,7 +1,7 @@
 from drift_app.db_interface import db
 from .db_user import get_account_by_id, get_user_infos
 import logging
-import datetime.datetime as datetime
+from datetime import datetime
 from flask import json
 
 
