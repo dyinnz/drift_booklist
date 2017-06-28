@@ -42,6 +42,7 @@
 
 
 <body>
+
 <div class="am-g myapp-login">
     <div class="wrapper-page">
 
@@ -65,9 +66,8 @@
                 <div class="am-tabs-bd">
                     <div data-tab-panel-0 class="am-tab-panel am-active" id="panel0">
                         <form action="" class="am-form" data-am-validator id="rp1">
-                            <fieldset id="">
-                                <div id="root"></div>
-                                <!--div class="am-form-group" id="input_username">
+                            <fieldset >
+                                <div class="am-form-group" id="input_username">
                                     <label for="username_r">User Name</label>
                                     <input type="text" id="username_r" minlength="3" placeholder="请输入3位以上用户名"
                                            class="am-form-field" required/>
@@ -82,13 +82,45 @@
                                     <input type="password" id="password_r1" minlength="5" placeholder="确认密码"
                                            data-equal-to="#password_r" class="am-form-field" required/>
                                 </div>
-                                <div class="am-form-group myapp-login-treaty"><label
-                                        class="am-form-label"></label><label class="am-checkbox-inline"> <input
-                                        type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4"
-                                        required=""/>已同意使用条约 </label></div>
+
+                                <div class="am-form-group">
+                                    <label for="birthday" class="am-u-sm-3 am-form-label">生日</label>
+                                    <input type="text" id="birthday" class="am-form-field tpl-form-no-bg" placeholder="选择生日" data-am-datepicker="" readonly/>
+
+                                </div>
+
+                                <div class="am-form-group">
+                                    <label for="doc-form-file" class="am-u-sm-3 am-form-label">头像</label>
+                                        <div class="am-form-group am-form-file">
+                                            <div class="" style="width: 50px; height: 50px;">
+                                                <img style="width:50px; height:50px;" src="/static/react/i/01.jpg" alt="">
+                                            </div>
+                                        </div>
+                                    <div class="am-form-file">
+                                        <button type="button" class="am-btn am-btn-danger am-btn-sm">
+                                            <i class="am-icon-cloud-upload"></i> 添加头像</button>
+                                        <input id="doc-form-file" type="file" multiple>
+                                    </div>
+
+                                </div>
+
+                                <div class="am-form-group myapp-login-treaty">
+                                    <label class="am-form-label"></label><label class="am-checkbox-inline">
+                                        <input type="radio" name="doc-radio" value="option2"/>男
+                                    </label>
+                                    <label class="am-form-label"></label><label class="am-checkbox-inline">
+                                        <input type="radio" name="doc-radio" value="option1" checked>女
+                                    </label>
+                                </div>
+
+                                <div class="am-form-group">
+                                    <label for="user-intro" class="am-u-sm-3 am-form-label">简介</label>
+                                    <textarea style="background: none;" class="am-form-field" rows="1" id="user-intro" placeholder="输入个人简介"></textarea>
+                                </div>
+
                                 <button class="myapp-login-button am-btn am-btn-secondary"
-                                         id="register_button" type="button">Register
-                                </button-->
+                                         id="register_button">Register
+                                </button>
                             </fieldset>
                         </form>
                     </div>
@@ -106,6 +138,7 @@
                                     <input type="password" id="password_l" name="password" minlength="5" placeholder="请输入密码"
                                            class="am-form-field" required/>
                                 </div>
+
                                 <!--div class="am-form-group myapp-login-treaty"><label class="am-form-label"></label><label class="am-checkbox-inline"> <input type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4" required="">已同意使用条约 </label></div-->
                                 <br/>
                                 <button class="myapp-login-button am-btn am-btn-secondary" id="login_button"
@@ -116,28 +149,6 @@
                         </form>
                     </div>
 
-                    <div data-tab-panel-2 class="am-tab-panel" id="panel2">
-                        <form action="login" method="POST" class="am-form">
-                            <fieldset>
-                                <div class="am-form-group">
-                                    <label for="account">User Name</label>
-                                    <input type="text" id="account" name="account" minlength="3" placeholder="请输入用户名"
-                                           class="am-form-field" required/>
-                                </div>
-                                <div class="am-form-group">
-                                    <label for="password_l">Password</label>
-                                    <input type="password" id="password_l" name="password" minlength="5" placeholder="请输入密码"
-                                           class="am-form-field" required/>
-                                </div>
-                                <!--div class="am-form-group myapp-login-treaty"><label class="am-form-label"></label><label class="am-checkbox-inline"> <input type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4" required="">已同意使用条约 </label></div-->
-                                <br/>
-                                <button class="myapp-login-button am-btn am-btn-secondary" id="login_button"
-                                        type="submit">SIGN IN
-                                </button>
-                            </fieldset>
-                            <legend>Forgot Password?</legend>
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
@@ -153,5 +164,6 @@
 <script src="/static/react/js/amazeui.ie8polyfill.min.js"></script>
 <![endif]-->
 <script src="/static/react/js/amazeui.min.js"></script>
+<script src="/static/react/js/calendar.js"></script>
 </body>
 </html>

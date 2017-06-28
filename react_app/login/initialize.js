@@ -7,9 +7,9 @@ import React from 'react';
 import Form from 'login/components/Form';
 
 const App = () => (
-
     <Form/>
 );
+
 
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
@@ -17,3 +17,4 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('root')
     );
 });
+

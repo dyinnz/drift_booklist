@@ -6,7 +6,7 @@ exports.files = {
       'js/index.js': /^react_app\/index/,
       'js/friends.js': /^react_app\/friends/,
       'js/mine.js': /^react_app\/mine/,
-        'js/login.js': /^react_app\/login/,
+        'js/login.js': /^react_app\/login/
     }
   },
   stylesheets: {

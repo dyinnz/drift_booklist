@@ -140,3 +140,21 @@
     color: #9194a7;
     text-align: center;
 }
+
+.tpl-form-no-bg {
+    background: none!important;
+}
+
+.tpl-form-file-img {
+    width: 300px;
+    margin-bottom: 10px;
+}
+
+.tpl-form-file-img img {
+    width: 100%;
+    display: block;
+}
+
+.am-form-group{
+    margin-bottom: 1.0rem;
+}
