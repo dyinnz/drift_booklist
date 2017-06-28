@@ -2,6 +2,18 @@ from drift_app.db_interface import db
 import logging
 from flask import json
 
+_user_interest_table = db.Table(
+    'user_interest',
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('tag_name', db.String, db.ForeignKey('tags.name'), primary_key=True)
+)
+
+_friend_table = db.Table(
+    'friend',
+    db.Column('user_id1', db.Integer, db.ForeignKey('user.id'), primary_key=True),
+    db.Column('user_id2', db.Integer, db.ForeignKey('user.id'), primary_key=True)
+)
+
 
 class DB_user(db.Model):
     __tablename__ = 'user'
@@ -13,6 +25,10 @@ class DB_user(db.Model):
     introduction = db.Column(db.String(45), nullable=True, default='No Introduction yet.')
     gender = db.Column(db.Enum('male', 'female'))
     pic_src = db.Column(db.String(128), nullable=True, default='resource/pic/default.png')
+    interests = db.relationship('DB_tags', secondary=_user_interest_table, backref=db.backref('users', lazy='dynamic'))
+    friends = db.relationship('DB_user', secondary=_friend_table, primaryjoin=id == _friend_table.c.user_id1,
+                              secondaryjoin=id == _friend_table.c.user_id2,
+                              backref=db.backref('friends2'))
 
     def __repr__(self):
         return 'User Id:%s\nUser Name:%s\nAccount name:%s' % (self.id, self.name, self.account)
@@ -23,26 +39,31 @@ class DB_tags(db.Model):
     name = db.Column(db.String(16), primary_key=True, unique=True)
 
     def __repr__(self):
-        return 'tag:%s' % self.name
+        return '%s' % self.name
 
 
-class DB_user_interest(db.Model):
-    __tablename__ = 'user_interest'
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
-    tag_name = db.Column(db.String(16), db.ForeignKey("tags.name"), primary_key=True)
+def get_user_interests(user_id):
+    try:
+        user = DB_user.query.filter_by(id=user_id).first()
+        if user is None:
+            return None
+        return json.dumps([x.name for x in user.interests])
+    except Exception as e:
+        logging.error(user_id)
+        logging.error(e)
+        return None
 
-    def __repr__(self):
-        return 'User:%s is interested in %s' % (self.user_id, self.tag_name)
 
-
-class DB_friend(db.Model):
-    __tablename__ = 'friend'
-    user_id1 = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
-    user_id2 = db.Column(db.Integer, db.ForeignKey("user.id"), primary_key=True)
-
-    def __repr__(self):
-        return 'User %s and User %s are friends' % (self.user_id1, self.user_id2)
-
+def get_friends(user_id):
+    try:
+        user = DB_user.query.filter_by(id=user_id).first()
+        if user is None:
+            return None
+        return json.dumps([x.account for x in user.friends])
+    except Exception as e:
+        logging.error(user_id)
+        logging.error(e)
+        return None
 
 def get_account_by_id(user_id):
     """
@@ -214,10 +235,9 @@ def add_user_interest(account, tag):
     """
     try:
         user = DB_user.query.filter_by(account=account).first_or_404()
-        id = user.id
-        user_interest = DB_user_interest(user_id=id, tag_name=tag)
-        db.session.add(user_interest)
-        db.session.commit()
+        tag = DB_tags.query.filter_by(name=tag).first_or_404()
+        user.interests.append(tag)
+        db.session().commit()
     except Exception as e:
         logging.error(account, tag)
         logging.error(e)
