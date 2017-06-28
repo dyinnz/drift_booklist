@@ -10,9 +10,22 @@ explore_bp = Blueprint('explore_bp', __name__)
 
 @explore_bp.route('/explore')
 def friends():
-    return current_app.send_static_file('react/explore.html')
+    return current_app.send_static_file('explore.html')
 
 
 @explore_bp.route('/test_explore')
 def test_explore():
     return current_app.send_static_file('explore.html')
+
+
+@explore_bp.route('/test_friend', methods=['GET', 'POST'])
+def test_friend():
+    if request.method == 'POST':
+        data = request.get_json()
+        print("json: ", data)
+        jsondata = db_user.get_friends(data['user_id'])
+        logging.debug(jsondata)
+        return jsonify(jsondata)
+    else:
+        return 'need post request'
+
