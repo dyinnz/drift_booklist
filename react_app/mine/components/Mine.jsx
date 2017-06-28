@@ -16,6 +16,12 @@ import IconButton from 'material-ui/IconButton'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import {blue500} from 'material-ui/styles/colors'
+import Dialog from 'material-ui/Dialog'
+
+import update from 'immutability-helper'
+
+import CommentPane from 'mine/components/CommentPane'
+import BooklistPane from 'mine/components/BooklistPane'
 
 function fetchPostJson(url, data) {
     return fetch(url, {
@@ -28,33 +34,6 @@ function fetchPostJson(url, data) {
     })
 }
 
-class ListContainer extends React.Component {
-
-    renderListItem(item) {
-        return <ListItem
-            key = {item.booklist_id}
-            leftAvatar={<Avatar src="/static/react/small_avatar.jpg"/>}
-
-            primaryText= {<span>
-                {item.booklist_name} &nbsp;&nbsp;
-                <b>{item.book_number}</b>
-            </span>}
-
-            onTouchTap={event => this.props.handleTouch(item.booklist_id)}
-        />
-    }
-
-    render() {
-        return (
-            <Paper><List>
-                <Subheader>{this.props.listName}</Subheader>
-                {this.props.items.map((item) => {
-                    return this.renderListItem(item)
-                })}
-            </List></Paper>
-        )
-    }
-}
 
 class ShowContainer extends React.Component {
     render() {
@@ -78,15 +57,15 @@ class ShowContainer extends React.Component {
 
                         <CardText>{this.props.details.introduction}</CardText>
 
-                        <Badge badgeContent={this.props.details.up_number} > <IconButton tooltip="Up">
+                        <Badge badgeContent={this.props.details.up_number}> <IconButton tooltip="Up">
                             <ActionThumbUp/>
                         </IconButton> </Badge>
 
-                        <Badge badgeContent={this.props.details.down_number} > <IconButton tooltip="Down">
+                        <Badge badgeContent={this.props.details.down_number}> <IconButton tooltip="Down">
                             <ActionThumbDown/>
                         </IconButton> </Badge>
 
-                        <Badge badgeContent={this.props.details.follower_number} > <IconButton tooltip="Star">
+                        <Badge badgeContent={this.props.details.follower_number}> <IconButton tooltip="Star">
                             <ActionStars/>
                         </IconButton></Badge>
 
@@ -121,125 +100,11 @@ class BookGrid extends React.Component {
                         </GridTile>
                     ))}
                 </GridList>
-            </Paper> </div>
-        )
-    }
-}
-
-class Comment extends React.Component {
-    render() {
-        console.log("comment: ", this.props.details)
-        return (
-            <div className="clearfix">
-                <CardHeader
-                    className="comment_who"
-                    title={this.props.details.account}
-                    avatar="/static/react/zen.jpg"
-                />
-
-                <CardText className="comment_content">
-                    {this.props.details.remark}
-                </CardText>
-            </div>
-        )
-    }
-}
-
-class CommentList extends React.Component {
-    renderComments() {
-        if (0 === this.props.items.length) {
-            return (
-                <div className="no_comment">
-                    <p>No comment here yet</p>
-                </div>
-            )
-        } else {
-            return (
-                <div>
-                    {this.props.items.map((item) => {
-                        return <Comment
-                            key={item.remark_time}
-                            details={item}/>
-                    })}
-                </div>
-            )
-        }
-    }
-
-    render() {
-        if ("undefined" === typeof(this.props.items)) {
-            return <p>No comments</p>
-        }
-
-        console.log("commentlist: ", this.props.items)
-
-        return (
-            <div><Paper>
-                <div className="comment_head">
-                    <Subheader> COMMENTS </Subheader>
-                    <FlatButton
-                        label = "New"
-                        primary={true}
-                        onClick={() => document.getElementById("comment_box").focus()}
-                    />
-                </div>
-                {this.renderComments()}
             </Paper></div>
         )
     }
 }
 
-const labelStyle = {
-    color: blue500
-};
-
-class CommentBox extends React.Component {
-    onReply () {
-        console.log("booklist_id in box:", this.props.booklist_id)
-        console.log("content in box:", document.getElementById("comment_box").value)
-
-        fetchPostJson("/add_booklist_remark", {
-            booklist_id: this.props.booklist_id,
-            remark: document.getElementById("comment_box").value
-        }).then(
-            resp => resp.text()
-        ).then( (data) => {
-            console.log(data)
-        })
-    }
-
-    render() {
-        console.log("booklist_id in box render:", this.props.booklist_id)
-        if ("undefined" === typeof(this.props.booklist_id)) {
-            return (<div></div>)
-        } else {
-            return (
-                <Paper>
-                    <div className="reply_wrapper">
-                        <TextField
-                            floatingLabelText="Add new comment here"
-                            floatingLabelStyle={labelStyle}
-                            multiLine={true}
-                            rows={2}
-                            rowsMax={5}
-                            fullWidth={true}
-                            id="comment_box"
-                        />
-                        <FlatButton
-                            label = "reply"
-                            onClick={() => this.onReply()}
-                        />
-                        <FlatButton
-                            label = "cancel"
-                        />
-                    </div>
-                </Paper>
-            )
-        }
-    }
-}
-
-// <CommentList/>
 
 class Mine extends React.Component {
     constructor(props) {
@@ -274,18 +139,10 @@ class Mine extends React.Component {
 
     renderLeftPane() {
         return (
-            <div className="left_pane">
-                <ListContainer
-                    listName="MY BOOKLIST"
-                    items={this.state.myBooklist}
-                    handleTouch={this.touchBooklist.bind(this)}
-                />
-                <ListContainer
-                    listName="INTERESTED BOOKLIST"
-                    items={this.state.followerBooklist}
-                    handleTouch={this.touchBooklist.bind(this)}
-                />
-            </div>
+            <BooklistPane myListItems={this.state.myBooklist}
+                          favoriteListItems={this.state.followerBooklist}
+                          handleTouch={(i) => this.touchBooklist(i)}
+            />
         )
     }
 
@@ -315,8 +172,8 @@ class Mine extends React.Component {
             <div className="right_pane">
                 <ShowContainer details={this.state.showBooklist}/>
                 <BookGrid items={this.state.showBooklist.books}/>
-                <CommentList items={this.state.showBooklist.remarks}/>
-                <CommentBox booklist_id={this.state.booklist_id}/>
+                <CommentPane items={this.state.showBooklist.remarks}
+                             booklist_id={this.state.booklist_id}/>
             </div>
         )
     }
