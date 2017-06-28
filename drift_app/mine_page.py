@@ -154,6 +154,7 @@ def add_booklist_remark():
             user_id = flask_login.current_user.db_id
 
     data=request.get_json()
+    logging.info("booklist remark %s", data)
     true=db_user_remark.user_remark_booklist(data['booklist_id'],user_id,data['remark'])
     remarks=json.loads(db_user_remark.get_booklist_remark(data['booklist_id'],1,10))
 
