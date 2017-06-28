@@ -1,6 +1,6 @@
 from drift_app.db_interface import db
 from drift_app.db_interface.db_user import get_account_by_id, get_user_infos, DB_user, get_following
-from drift_app.db_interface.db_book import get_book_name
+from drift_app.db_interface.db_book import get_book_name, get_booklist_name
 import logging
 from datetime import datetime
 from flask import json
@@ -15,7 +15,8 @@ class DB_user_book_remark(db.Model):
     remark_time = db.Column(db.DateTime)
 
     def __repr__(self):
-        return 'User %s remark book %s: %s at %s' % (self.user_id, self.book_id, self.remark, self.remark_time)
+        return '用户 %s 于%s 评论了 书 %s: %s' % (
+        get_account_by_id(self.user_id), self.remark_time, get_book_name(self.book_id), self.remark)
 
 
 class DB_user_book_opinion(db.Model):
@@ -29,21 +30,21 @@ class DB_user_book_opinion(db.Model):
 
     def vote_str(self):
         if self.vote == 'up':
-            return '用户 %s 于%s 顶了%s' % (
+            return '用户 %s 于%s 顶了书 %s' % (
                 get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
         elif self.vote == 'down':
-            return '用户 %s 于%s 踩了%s' % (
+            return '用户 %s 于%s 踩了书 %s' % (
                 get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
         else:
-            return '用户 %s 于%s 将%s改为中立' % (
+            return '用户 %s 于%s 将书 %s改为中立' % (
                 get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
 
     def follow_str(self):
         if self.is_follow:
-            return '用户 %s 于%s 关注了%s' % (
+            return '用户 %s 于%s 关注了书 %s' % (
                 get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id))
         else:
-            return '用户 %s 于%s 取关了%s' % (
+            return '用户 %s 于%s 取关了书 %s' % (
                 get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id))
 
 
@@ -56,7 +57,8 @@ class DB_user_booklist_remark(db.Model):
     remark_time = db.Column(db.DateTime)
 
     def __repr__(self):
-        return 'User %s remark booklist %s: %s at %s' % (self.user_id, self.booklist_id, self.remark, self.remark_time)
+        return '用户 %s 于%s 评论了 书单 %s: %s' % (
+        get_account_by_id(self.user_id), self.remark_time, get_booklist_name(self.booklist_id), self.remark)
 
 
 class DB_user_booklist_opinion(db.Model):
@@ -70,22 +72,22 @@ class DB_user_booklist_opinion(db.Model):
 
     def vote_str(self):
         if self.vote == 'up':
-            return '用户 %s 于%s 顶了%s' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.booklist_id))
+            return '用户 %s 于%s 顶了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id))
         elif self.vote == 'down':
-            return '用户 %s 于%s 踩了%s' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.booklist_id))
+            return '用户 %s 于%s 踩了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id))
         else:
-            return '用户 %s 于%s 将%s改为中立' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.booklist_id))
+            return '用户 %s 于%s 将书单 %s改为中立' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id))
 
     def follow_str(self):
         if self.is_follow:
-            return '用户 %s 于%s 关注了%s' % (
-                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.booklist_id))
+            return '用户 %s 于%s 关注了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_booklist_name(self.booklist_id))
         else:
-            return '用户 %s 于%s 取关了%s' % (
-                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.booklist_id))
+            return '用户 %s 于%s 取关了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_booklist_name(self.booklist_id))
 
 
 class DB_user_book_remark_opinion(db.Model):
@@ -637,17 +639,30 @@ def user_vote_booklist_remark(user_id, booklist_remark_id, attitude):
 def get_user_moments(user_id, page=1, per_page=10):
     try:
         following = [f[0] for f in json.loads(get_following(user_id))]
-        result = db.session.query(DB_user_book_opinion, DB_user_booklist_opinion).join(DB_user_booklist_opinion,
-                       DB_user_book_opinion.user_id == DB_user_booklist_opinion.user_id and DB_user_book_opinion.user_id == 2).all()
-        logging.debug(result[0].DB_user_book_opinion)
-        results = [x.DB_user_book_opinion.vote_str() for x in result].extend([x.DB_user_booklist_opinion.vote_str() for x in result])
+        book_remark = DB_user_book_remark.query.filter_by(user_id=user_id).order_by(
+            DB_user_book_remark.remark_time).paginate(page, per_page).query
+        booklist_remark = DB_user_booklist_remark.query.filter_by(user_id=user_id).order_by(
+            DB_user_booklist_remark.remark_time).paginate(page, per_page).query
+        book_vote = DB_user_book_opinion.query.filter_by(user_id=user_id).order_by(
+            DB_user_book_opinion.last_vote_time).paginate(page, per_page).query
+        booklist_vote = DB_user_booklist_opinion.query.filter_by(user_id=user_id).order_by(
+            DB_user_booklist_opinion.last_vote_time).paginate(page, per_page).query
+        book_follow = DB_user_book_opinion.query.filter_by(user_id=user_id).order_by(
+            DB_user_book_opinion.last_follow_time).paginate(page, per_page).query
+        booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=user_id).order_by(
+            DB_user_booklist_opinion.last_follow_time).paginate(page, per_page).query
+        results = [(str(x), x.remark_time) for x in book_remark]
+        results.extend([(str(x), x.remark_time) for x in booklist_remark])
+        results.extend([(x.vote_str(), x.last_vote_time) for x in book_vote])
+        results.extend([(x.vote_str(), x.last_vote_time) for x in booklist_vote])
+        results.extend([(x.follow_str(), x.last_follow_time) for x in book_follow])
+        results.extend([(x.follow_str(), x.last_follow_time) for x in booklist_follow])
+
+        results = [x[0] for x in
+                   sorted(results, key=lambda x: x[1], reverse=True)[(page - 1) * per_page:page * per_page]]
         logging.debug(results)
-        return None
-        # results = [DB_user_book_opinion.query.filter_by(user_id=user_id).order_by(
-        #     DB_user_book_opinion.last_vote_time).paginate(page, 10).query.all() for user_id in following]
-        #
-        # logging.debug(type(results[0][0].last_vote_time))
-        # return json.dumps([x.vote_str() for result in results for x in result], ensure_ascii=False)
+        return json.dumps(results, ensure_ascii=False)
+
     except Exception as e:
         logging.error('error in get_user_moments')
         logging.error('%s %s %s', user_id, page, per_page)
