@@ -1,11 +1,10 @@
-import React from 'react';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
-import {GridList, GridTile} from 'material-ui/GridList';
-import Paper from 'material-ui/Paper'
-import IconButton from 'material-ui/IconButton'
-import Subheader from 'material-ui/Subheader';
-import StarBorder from 'material-ui/svg-icons/toggle/star-border';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
+import React from "react";
+import {Card, CardHeader, CardMedia, CardText} from "material-ui/Card";
+import {GridList, GridTile} from "material-ui/GridList";
+import Paper from "material-ui/Paper";
+import Subheader from "material-ui/Subheader";
+import FloatingActionButton from "material-ui/FloatingActionButton";
+import FlatButton from 'material-ui/FlatButton';
 
 
 function fetchPostJson(url, data) {
@@ -50,6 +49,17 @@ class TopContainer extends React.Component {
         )
     }
 }
+const style = {
+    bgstyle:{
+      width:130,
+        height:0,
+    },
+    iconstyle:{
+        width:100,
+        height:100,
+        top:20,
+    }
+};
 
 class FriendsGrid extends React.Component {
     render() {
@@ -59,27 +69,35 @@ class FriendsGrid extends React.Component {
         console.log("books grid: ", this.props.items)
         return (
             <div className="grid_list">
-                <Subheader> Friends </Subheader>
-                <GridList className="grid_wrapper">
+                <Subheader> Friends </Subheader><Paper>
+                <GridList cols={3} className="grid_wrapper" cellHeight={110} >
                     {this.props.items.map((friend) => (
                         <GridTile
                             key={friend.id}
                             title={friend.friend_account}
                             subtitle={friend.friend_name}
-                            actionIcon={<IconButton
-                                onTouchTap={event => this.props.handleTouch(friend.friend_account)}>
-                                <img src={friend.avatar}/>
-                            </IconButton>}
-
+                            actionIcon={
+                                <FloatingActionButton
+                                    onTouchTap={event => this.props.click(friend.friend_account)}
+                                    style = {style.bgstyle}
+                                    iconStyle={style.iconstyle}
+                                >
+                                    <img src={friend.avatar}  />
+                                </FloatingActionButton>
+                            }
+                            actionPosition="left"
+                            titlePosition="top"
+                            titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
                         >
-                            <FloatingActionButton
-                                onTouchTap={event => this.props.handleTouch(friend.friend_account)}>
-                                <img src={friend.avatar}/>>
-                            </FloatingActionButton>
+                            <div>
+                            <label>sss</label>
+                            <br></br>
+                            <label>ssssss</label>
+                            </div>
                         </GridTile>
-
                     ))}
                 </GridList>
+            </Paper>
 
             </div>
         )
@@ -112,7 +130,7 @@ class Friends extends React.Component {
     }
 
     componentWillMount() {
-        fetch('/get_friends_data', {credentials: 'same-origin'})
+        fetch('/get_friend_detail', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data)
@@ -128,9 +146,9 @@ class Friends extends React.Component {
         return (
             <div id="home">
                 <TopContainer detail={this.state.userInfo}/>
-                <FriendsGrid items={this.state.friends} handleTouch={this.touchUserDetail.bind(this)}/>
+                <FriendsGrid items={this.state.friends} click={this.touchUserDetail.bind(this)}/>
             </div>
-        );
+        )
     }
 }
 

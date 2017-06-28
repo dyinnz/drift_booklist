@@ -1,6 +1,6 @@
 .card_media{
     width: 200px;
-    height: 300px;
+    height: 240px;
     margin: 10px;
     float: left;
 }
@@ -12,7 +12,14 @@
    clear: both;
 }
 
-.home{
-    width:70%;
+#home{
+    width:60%;
     margin:auto
+}
+
+.show_information{
+    height:270px;
+}
+.grid_wrapper{
+    overflow: auto;
 }
