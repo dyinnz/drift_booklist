@@ -16,7 +16,8 @@ class DB_user_book_remark(db.Model):
 
     def __repr__(self):
         return '用户 %s 于%s 评论了 书 %s: %s' % (
-        get_account_by_id(self.user_id), self.remark_time, get_book_name(self.book_id), self.remark)
+            get_account_by_id(self.user_id), self.remark_time, get_book_name(self.book_id),
+            self.remark[:30] + '...' if len(self.remark) > 30 else self.remark)
 
 
 class DB_user_book_opinion(db.Model):
@@ -58,7 +59,8 @@ class DB_user_booklist_remark(db.Model):
 
     def __repr__(self):
         return '用户 %s 于%s 评论了 书单 %s: %s' % (
-        get_account_by_id(self.user_id), self.remark_time, get_booklist_name(self.booklist_id), self.remark)
+            get_account_by_id(self.user_id), self.remark_time, get_booklist_name(self.booklist_id),
+            self.remark[:30] + '...' if len(self.remark) > 30 else self.remark)
 
 
 class DB_user_booklist_opinion(db.Model):
@@ -639,24 +641,27 @@ def user_vote_booklist_remark(user_id, booklist_remark_id, attitude):
 def get_user_moments(user_id, page=1, per_page=10):
     try:
         following = [f[0] for f in json.loads(get_following(user_id))]
-        book_remark = DB_user_book_remark.query.filter_by(user_id=user_id).order_by(
-            DB_user_book_remark.remark_time).paginate(page, per_page).query
-        booklist_remark = DB_user_booklist_remark.query.filter_by(user_id=user_id).order_by(
-            DB_user_booklist_remark.remark_time).paginate(page, per_page).query
-        book_vote = DB_user_book_opinion.query.filter_by(user_id=user_id).order_by(
-            DB_user_book_opinion.last_vote_time).paginate(page, per_page).query
-        booklist_vote = DB_user_booklist_opinion.query.filter_by(user_id=user_id).order_by(
-            DB_user_booklist_opinion.last_vote_time).paginate(page, per_page).query
-        book_follow = DB_user_book_opinion.query.filter_by(user_id=user_id).order_by(
-            DB_user_book_opinion.last_follow_time).paginate(page, per_page).query
-        booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=user_id).order_by(
-            DB_user_booklist_opinion.last_follow_time).paginate(page, per_page).query
-        results = [(str(x), x.remark_time) for x in book_remark]
-        results.extend([(str(x), x.remark_time) for x in booklist_remark])
-        results.extend([(x.vote_str(), x.last_vote_time) for x in book_vote])
-        results.extend([(x.vote_str(), x.last_vote_time) for x in booklist_vote])
-        results.extend([(x.follow_str(), x.last_follow_time) for x in book_follow])
-        results.extend([(x.follow_str(), x.last_follow_time) for x in booklist_follow])
+        logging.debug(following)
+        results = []
+        for u_id in following:
+            book_remark = DB_user_book_remark.query.filter_by(user_id=u_id).order_by(
+                DB_user_book_remark.remark_time).paginate(page, per_page).query
+            booklist_remark = DB_user_booklist_remark.query.filter_by(user_id=u_id).order_by(
+                DB_user_booklist_remark.remark_time).paginate(page, per_page).query
+            book_vote = DB_user_book_opinion.query.filter_by(user_id=u_id).order_by(
+                DB_user_book_opinion.last_vote_time).paginate(page, per_page).query
+            booklist_vote = DB_user_booklist_opinion.query.filter_by(user_id=u_id).order_by(
+                DB_user_booklist_opinion.last_vote_time).paginate(page, per_page).query
+            book_follow = DB_user_book_opinion.query.filter_by(user_id=u_id).order_by(
+                DB_user_book_opinion.last_follow_time).paginate(page, per_page).query
+            booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=u_id).order_by(
+                DB_user_booklist_opinion.last_follow_time).paginate(page, per_page).query
+            results.extend([(str(x), x.remark_time) for x in book_remark])
+            results.extend([(str(x), x.remark_time) for x in booklist_remark])
+            results.extend([(x.vote_str(), x.last_vote_time) for x in book_vote])
+            results.extend([(x.vote_str(), x.last_vote_time) for x in booklist_vote])
+            results.extend([(x.follow_str(), x.last_follow_time) for x in book_follow])
+            results.extend([(x.follow_str(), x.last_follow_time) for x in booklist_follow])
 
         results = [x[0] for x in
                    sorted(results, key=lambda x: x[1], reverse=True)[(page - 1) * per_page:page * per_page]]
