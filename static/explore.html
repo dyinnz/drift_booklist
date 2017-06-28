@@ -56,39 +56,12 @@
 </body>
 
 <script>
-{#    $(document).ready(function () {
-        $.ajax({
-            type: 'POST',
-            url: '/get_mydata',
-            //data: JSON.stringify(data),
-            contentType: 'application/json; charset=UTF-8',
-            dataType: 'json',
-            success: function(data) {
-                //var results=jQuery.parseJSON(data);
-                //var results = eval ("(" + data + ")");
-                //var results=JSON.parse(data)
-                alert('success');
-                $('#booklist_id').html(data['booklist_id']);
-                $('#booklist_name').html(data['booklist_name']);
-                $('#booklist_cover').html(data['booklist_cover']);
-                $('#create_user').html(data['create_user']);
-            },
-            error: function(xhr, type) {
-                alert("Xhr: " + xhr + "\nType: " + type);
-            }
-        });
-    });#}
-
     $('#update_name').click(function () {
         $.ajax({
             type:'POST',
-            url:'/book_detail',
+            url:'/test_interest',
             data:JSON.stringify({
-                'book_id':2,
-                //   'attitude':'up'
-                //    'booklist_name':'name',
-                //    'booklist_cover':'default.png',
-                //    'introduction':'i'
+                'user_id':1,
             }),
             contentType:'application/json; charset=UTF-8',
             dataType: 'json',

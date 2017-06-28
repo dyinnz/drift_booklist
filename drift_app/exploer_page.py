@@ -16,3 +16,15 @@ def friends():
 @explore_bp.route('/test_explore')
 def test_explore():
     return current_app.send_static_file('explore.html')
+
+
+@explore_bp.route('/test_interest', methods=['GET', 'POST'])
+def test_interest():
+    if request.method == 'POST':
+        data = request.get_json()
+        print("json: ", data)
+        jsondata = db_user.get_user_interest(1)
+        logging.debug(jsondata)
+        return jsonify(jsondata)
+    else:
+        return 'need post request'
