@@ -1,5 +1,6 @@
 from drift_app.db_interface import db
-from .db_user import get_account_by_id, get_user_infos
+from drift_app.db_interface.db_user import get_account_by_id, get_user_infos, DB_user, get_following
+from drift_app.db_interface.db_book import get_book_name
 import logging
 from datetime import datetime
 from flask import json
@@ -26,9 +27,24 @@ class DB_user_book_opinion(db.Model):
     last_vote_time = db.Column(db.DateTime)
     last_follow_time = db.Column(db.DateTime)
 
-    def __repr__(self):
-        return 'User %s %svoted book %s' % (self.user_id, self.vote, self.book_id) if self.vote in ['up', 'down'] \
-            else "User %s didn't vote book %s" % (self.user_id, self.book_id)
+    def vote_str(self):
+        if self.vote == 'up':
+            return '用户 %s 于%s 顶了%s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
+        elif self.vote == 'down':
+            return '用户 %s 于%s 踩了%s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
+        else:
+            return '用户 %s 于%s 将%s改为中立' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
+
+    def follow_str(self):
+        if self.is_follow:
+            return '用户 %s 于%s 关注了%s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id))
+        else:
+            return '用户 %s 于%s 取关了%s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id))
 
 
 class DB_user_booklist_remark(db.Model):
@@ -52,10 +68,24 @@ class DB_user_booklist_opinion(db.Model):
     last_vote_time = db.Column(db.DateTime)
     last_follow_time = db.Column(db.DateTime)
 
-    def __repr__(self):
-        return 'User %s %svoted booklist %s' % (self.user_id, self.vote, self.booklist_id) if self.vote in ['up',
-                                                                                                            'down'] \
-            else "User %s didn't vote booklist %s" % (self.user_id, self.booklist_id)
+    def vote_str(self):
+        if self.vote == 'up':
+            return '用户 %s 于%s 顶了%s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.booklist_id))
+        elif self.vote == 'down':
+            return '用户 %s 于%s 踩了%s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.booklist_id))
+        else:
+            return '用户 %s 于%s 将%s改为中立' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.booklist_id))
+
+    def follow_str(self):
+        if self.is_follow:
+            return '用户 %s 于%s 关注了%s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.booklist_id))
+        else:
+            return '用户 %s 于%s 取关了%s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.booklist_id))
 
 
 class DB_user_book_remark_opinion(db.Model):
@@ -170,8 +200,8 @@ def get_book_remark(book_id, page=1, per_page=10):
     :return: If success, return json key-value format user-remark datas, else None.
     """
     try:
-        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page,
-                                                                                                            per_page).query
+        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('remark_time').paginate(page,
+                                                                                                           per_page).query
         return json.dumps(
             [{'id': user_book.id,
               'avatar': json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],
@@ -369,7 +399,7 @@ def user_remark_book(book_id, user_id, remark):
         else:"""
         current_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
         user_book_remark = DB_user_book_remark(user_id=user_id, book_id=book_id, remark=remark,
-                                           remark_time=current_time)
+                                               remark_time=current_time)
         db.session.add(user_book_remark)
         db.session.commit()
         return True
@@ -601,4 +631,25 @@ def user_vote_booklist_remark(user_id, booklist_remark_id, attitude):
         logging.error("vote book remark false at %s" % (booklist_remark_id))
         logging.error(e)
         db.session.rollback()
+        return None
+
+
+def get_user_moments(user_id, page=1, per_page=10):
+    try:
+        following = [f[0] for f in json.loads(get_following(user_id))]
+        result = db.session.query(DB_user_book_opinion, DB_user_booklist_opinion).join(DB_user_booklist_opinion,
+                       DB_user_book_opinion.user_id == DB_user_booklist_opinion.user_id and DB_user_book_opinion.user_id == 2).all()
+        logging.debug(result[0].DB_user_book_opinion)
+        results = [x.DB_user_book_opinion.vote_str() for x in result].extend([x.DB_user_booklist_opinion.vote_str() for x in result])
+        logging.debug(results)
+        return None
+        # results = [DB_user_book_opinion.query.filter_by(user_id=user_id).order_by(
+        #     DB_user_book_opinion.last_vote_time).paginate(page, 10).query.all() for user_id in following]
+        #
+        # logging.debug(type(results[0][0].last_vote_time))
+        # return json.dumps([x.vote_str() for result in results for x in result], ensure_ascii=False)
+    except Exception as e:
+        logging.error('error in get_user_moments')
+        logging.error('%s %s %s', user_id, page, per_page)
+        logging.error(e)
         return None

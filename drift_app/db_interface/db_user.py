@@ -26,9 +26,9 @@ class DB_user(db.Model):
     gender = db.Column(db.Enum('male', 'female'))
     pic_src = db.Column(db.String(128), nullable=True, default='resource/pic/default.png')
     interests = db.relationship('DB_tags', secondary=_user_interest_table, backref=db.backref('users', lazy='dynamic'))
-    friends = db.relationship('DB_user', secondary=_friend_table, primaryjoin=id == _friend_table.c.user_id1,
+    following = db.relationship('DB_user', secondary=_friend_table, primaryjoin=id == _friend_table.c.user_id1,
                               secondaryjoin=id == _friend_table.c.user_id2,
-                              backref=db.backref('friends2'))
+                              backref=db.backref('followers'))
 
     def __repr__(self):
         return 'User Id:%s\nUser Name:%s\nAccount name:%s' % (self.id, self.name, self.account)
@@ -40,6 +40,7 @@ class DB_tags(db.Model):
 
     def __repr__(self):
         return '%s' % self.name
+
 
 
 def get_user_interests(user_id):
@@ -54,12 +55,23 @@ def get_user_interests(user_id):
         return None
 
 
-def get_friends(user_id):
+def get_following(user_id):
     try:
         user = DB_user.query.filter_by(id=user_id).first()
         if user is None:
             return None
-        return json.dumps([x.account for x in user.friends])
+        return json.dumps([[x.id, x.account] for x in user.following])
+    except Exception as e:
+        logging.error(user_id)
+        logging.error(e)
+        return None
+
+def get_followers(user_id):
+    try:
+        user = DB_user.query.filter_by(id=user_id).first()
+        if user is None:
+            return None
+        return json.dumps([[x.id, x.account] for x in user.followers])
     except Exception as e:
         logging.error(user_id)
         logging.error(e)

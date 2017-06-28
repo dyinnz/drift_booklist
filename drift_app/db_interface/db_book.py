@@ -76,6 +76,29 @@ def get_book(book_id):
         return None
 
 
+def get_book_name(book_id):
+    try:
+        book = DB_Book.query.filter_by(id=book_id).first()
+        if book is None:
+            return None
+        return book.name
+    except Exception as e:
+        logging.error(book_id)
+        logging.error(e)
+        return None
+
+def get_booklist_name(booklist_id):
+    try:
+        booklist = DB_booklist.query.filter_by(id=booklist_id).first()
+        if booklist is None:
+            return None
+        return booklist.name
+    except Exception as e:
+        logging.error(booklist_id)
+        logging.error(e)
+        return None
+
+
 def get_book_by_ISBN(ISBN):
     """
     get book by book ISBN.
