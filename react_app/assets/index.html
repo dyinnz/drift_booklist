@@ -9,9 +9,13 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="stylesheet" href="/static/react/css/amazeui.min.css"/>
+    <link rel="stylesheet" href="/static/react/css/index.css">
+    <script src="/static/react/js/vendor.js"></script>
+    <script src="/static/react/js/index.js"></script>
+    <script>require('index/initialize');</script>
     <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
-    <link rel="stylesheet" href="static/assets/css/amazeui.min.css"/>
-    <link rel="stylesheet" href="static/assets/css/index.css">
+
     <style>
         .get {
             background: #1E5B94;
@@ -29,61 +33,6 @@
 
         .get-btn {
             background: #fff;
-        }
-
-        .detail {
-            background: #fff;
-        }
-
-        .detail-h2 {
-            text-align: center;
-            font-size: 150%;
-            margin: 40px 0;
-        }
-
-        .detail-h3 {
-            color: #1f8dd6;
-        }
-
-        .detail-p {
-            color: #7f8c8d;
-        }
-
-        .detail-mb {
-            margin-bottom: 30px;
-        }
-
-        .hope {
-            background: #0bb59b;
-            padding: 50px 0;
-        }
-
-        .hope-img {
-            text-align: center;
-        }
-
-        .hope-hr {
-            border-color: #149C88;
-        }
-
-        .hope-title {
-            font-size: 140%;
-        }
-
-        .about {
-            background: #fff;
-            padding: 40px 0;
-            color: #7f8c8d;
-        }
-
-        .about-color {
-            color: #34495e;
-        }
-
-        .about-title {
-            font-size: 180%;
-            padding: 30px 0 50px 0;
-            text-align: center;
         }
 
         .footer p {
@@ -116,8 +65,7 @@
                 <li class="hidden-xs am-hide-sm-only">
                     <form role="search" class="app-search">
                         <input type="text" placeholder="Search..." class="form-control">
-                        <!--button class="am-icon-search"></button-->
-                        <a href=""><img src="static/assets/i/search.png"></a>
+                        <a href=""><img src="/static/assets/i/search.png"></a>
                     </form>
                 </li>
             </ul>
@@ -160,7 +108,7 @@
                         <li>
                             <a href="#" class="tpl-dropdown-content-message">
                                 <span class="tpl-dropdown-content-photo">
-                      <img src="static/assets/i/user02.png" alt=""> </span>
+                      <img src="/static/assets/i/user02.png" alt=""> </span>
                                 <span class="tpl-dropdown-content-subject">
                       <span class="tpl-dropdown-content-from"> 禁言小张 </span>
                                 <span class="tpl-dropdown-content-time">10分钟前 </span>
@@ -169,7 +117,7 @@
                             </a>
                             <a href="#" class="tpl-dropdown-content-message">
                                 <span class="tpl-dropdown-content-photo">
-                      <img src="static/assets/i/user03.png" alt=""> </span>
+                      <img src="/static/assets/i/user03.png" alt=""> </span>
                                 <span class="tpl-dropdown-content-subject">
                       <span class="tpl-dropdown-content-from"> Steam </span>
                                 <span class="tpl-dropdown-content-time">18分钟前</span>
@@ -185,7 +133,7 @@
                 <li class="am-dropdown dropbar" data-am-dropdown>
                     <a class="am-dropdown-toggle tpl-header-list-link" data-am-dropdown-toggle href="javascript:;">
                         <span class="tpl-header-list-user-nick">用户</span>
-                        <span class="tpl-header-list-user-ico"> <img src="static/assets/i/user.png"></span>
+                        <span class="tpl-header-list-user-ico"> <img src="/static/assets/i/user.png"></span>
                     </a>
                     <ul class="am-dropdown-content">
                         <li><a href="#"><span class="am-icon-bell"></span> 资料</a></li>
@@ -196,26 +144,13 @@
 
             </ul>
 
-            <!--li class="am-dropdown dropbar" data-am-dropdown >
-                <a class="am-dropdown-toggle tpl-header-list-link" data-am-dropdown-toggle href="javascript:;">
-                    <span class="tpl-header-list-user-nick">用户</span>
-                    <span class="tpl-header-list-user-ico"> <img src="assets/i/user.png"></span>
-                </a>
-                <ul class="am-dropdown-content">
-                    <li><a href="#"><span class="am-icon-bell"></span> 资料</a></li>
-                    <li><a href="#"><span class="am-icon-cog"></span> 设置</a></li>
-                    <li><a href="#"><span class="am-icon-power-off"></span> 退出</a></li>
-                </ul>
-            </li-->
-
-
         </div>
 
     </div>
 
 </header>
 
-<div class="get" style="background-image: url(static/assets/i/index.jpg); background-size: cover;">
+<div class="get" style="background-image: url(/static/assets/i/index.jpg); background-size: cover;">
     <div class="am-g">
         <div class="am-u-lg-12">
             <h1 class="get-title">漂流书单</h1>
@@ -232,8 +167,8 @@
 </div>
 
 <div style="padding-left: 10%; padding-right: 10%;">
-    <div class="you-like">
-        <div class="s-bar">推荐
+    <div class="you-like" id="root">
+        <!--div class="s-bar">推荐
             <a class="am-badge am-badge-danger am-round">小清新</a>
             <a class="am-badge am-badge-danger am-round">文艺范</a>
             <a class="i-load-more-item-shadow" href="#"><i class="am-icon-refresh am-icon-fw"></i>换一组</a>
@@ -244,124 +179,53 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
 
-                <li style="float: left; width: 25%">
-                    <div class="am-gallery-item am_list_block">
-                        <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
-                        </a>
-
-                        <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
-                                class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
-
-                    </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
-                                                                                      alt=""></span><span
-                            class="am_imglist_user_font">路见不平Eason吼</span></a>
-                </li>
-
-                <li style="float: left; width: 25%">
-                    <div class="am-gallery-item am_list_block">
-                        <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
-                        </a>
-
-                        <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
-                                class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
-
-                    </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
-                                                                                      alt=""></span><span
-                            class="am_imglist_user_font">路见不平Eason吼</span></a>
-                </li>
-
-                <li style="float: left; width: 25%">
-                    <div class="am-gallery-item am_list_block">
-                        <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
-                        </a>
-
-                        <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
-                                class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
-
-                    </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
-                                                                                      alt=""></span><span
-                            class="am_imglist_user_font">路见不平Eason吼</span></a>
-                </li>
-
-                <li style="float: left; width: 25%">
-                    <div class="am-gallery-item am_list_block">
-                        <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
-                        </a>
-
-                        <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
-                                class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
-
-                    </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
-                                                                                      alt=""></span><span
-                            class="am_imglist_user_font">路见不平Eason吼</span></a>
-                </li>
-
-                <li style="float: left; width: 25%">
-                    <div class="am-gallery-item am_list_block">
-                        <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
-                        </a>
-
-                        <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
-                                class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
-
-                    </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
-                                                                                      alt=""></span><span
-                            class="am_imglist_user_font">路见不平Eason吼</span></a>
-                </li>
-
-                <li style="float: left; width: 25%">
-                <div class="am-gallery-item am_list_block">
-                    <a href="###" class="am_img_bg">
-                        <img src="static/assets/i/01.jpg"/>
-                    </a>
-
-                    <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
-                            class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
-
-                </div>
-                <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
-                                                                                  alt=""></span><span
-                        class="am_imglist_user_font">路见不平Eason吼</span></a>
-            </li>
-
-                <li style="float: left; width: 25%">
-                <div class="am-gallery-item am_list_block">
-                    <a href="###" class="am_img_bg">
-                        <img src="static/assets/i/01.jpg"/>
-                    </a>
-
-                    <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
-                            class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
-
-                </div>
-                <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
-                                                                                  alt=""></span><span
-                        class="am_imglist_user_font">路见不平Eason吼</span></a>
-            </li>
             </ul>
-        </div>
+        </div-->
+
+        <!--div>
+            <div className="s-bar">推荐
+                <a className="am-badge am-badge-danger am-round">小清新</a>
+                <a className="am-badge am-badge-danger am-round">文艺范</a>
+                <a className="i-load-more-item-shadow" href="#">
+                    <i className="am-icon-refresh am-icon-fw">ll</i>换一组</a>
+            </div>
+
+            <div className="s-content" style="border-top: 1px solid #E8EEF2;">
+                <ul data-am-widget="gallery" className="am-gallery am-avg-sm-2 am-avg-lg-4 am-avg-md-3 am-gallery-default">
+                    <li style="float: left; width: 25%">
+                        <div className="am-gallery-item am_list_block">
+                            <a href="###" className="am_img_bg">
+                                <img src="/static/assets/i/01.jpg"/>
+                            </a>
+
+                            <div className="am_listimg_info">
+                                <span className="am-icon-heart"> 132</span>
+                                <span className="am-icon-comments"> 67</span>
+                                <span className="am_imglist_time">15分钟前</span>
+                            </div>
+                        </div>
+                        <a className="am_imglist_user">
+                                <span className="am_imglist_user_ico">
+                                    <img src="/static/assets/i/kj.png" alt=""/>
+                                </span>
+                            <span className="am_imglist_user_font">路见不平Eason吼</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div-->
     </div>
 
     <div class="you-like" style="width: 23%; float: right;">
@@ -372,7 +236,7 @@
         <div class="s-content" style="">
             <div class="card-box widget-user">
                 <div>
-                    <img src="static/assets/i/user.png" class="img-responsive img-circle" alt="user" >
+                    <img src="/static/assets/i/user.png" class="img-responsive img-circle" alt="user" >
                     <div class="wid-u-info">
                         <h4 class="m-t-0 m-b-5 font-600">Chadengle</h4>
                         <small class="text-custom"><b>网络组主管</b></small>
@@ -383,7 +247,7 @@
         <div class="s-content" style="">
             <div class="card-box widget-user">
                 <div>
-                    <img src="static/assets/i/user02.png" class="img-responsive img-circle" alt="user">
+                    <img src="/static/assets/i/user02.png" class="img-responsive img-circle" alt="user">
                     <div class="wid-u-info">
                         <h4 class="m-t-0 m-b-5 font-600">Chadengle</h4>
                         <small class="text-warning"><b>管理员</b></small>
@@ -394,7 +258,7 @@
         <div class="s-content" style="">
             <div class="card-box widget-user">
                 <div>
-                    <img src="static/assets/i/user03.png" class="img-responsive img-circle" alt="user">
+                    <img src="/static/assets/i/user03.png" class="img-responsive img-circle" alt="user">
                     <div class="wid-u-info">
                         <h4 class="m-t-0 m-b-5 font-600">Chadengle</h4>
                         <small class="text-success"><b>设计师</b></small>
@@ -405,7 +269,7 @@
         <div class="s-content" style="">
             <div class="card-box widget-user">
                 <div>
-                    <img src="static/assets/i/index.jpg" class="img-responsive img-circle" alt="user">
+                    <img src="/static/assets/i/index.jpg" class="img-responsive img-circle" alt="user">
                     <div class="wid-u-info">
                         <h4 class="m-t-0 m-b-5 font-600">Chadengle</h4>
                         <small class="text-info"><b>开发者</b></small>
@@ -427,14 +291,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -442,14 +306,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -457,14 +321,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -472,14 +336,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -487,14 +351,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -502,14 +366,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -517,14 +381,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -532,14 +396,14 @@
                 <li style="float: left; width: 25%">
                     <div class="am-gallery-item am_list_block">
                         <a href="###" class="am_img_bg">
-                            <img src="static/assets/i/01.jpg"/>
+                            <img src="/static/assets/i/01.jpg"/>
                         </a>
 
                         <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
                                 class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
 
                     </div>
-                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="static/assets/i/kj.png"
+                    <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
                                                                                       alt=""></span><span
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
@@ -549,9 +413,8 @@
 </div>
 
 
+<script src="/static/react/js/jquery.min.js"></script>
+<script src="/static/react/js/amazeui.min.js"></script>
 
-<script src="static/assets/js/jquery.min.js"></script>
-<script src="static/assets/js/amazeui.min.js"></script>
-<script src="static/assets/js/index.js"></script>
 </body>
 </html>
