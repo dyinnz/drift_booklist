@@ -14,6 +14,10 @@ class DB_user_book_remark(db.Model):
     remark = db.Column(db.String(1024))
     remark_time = db.Column(db.DateTime)
 
+
+    def remark_str(self):
+        return get_account_by_id(self.user_id), str(self)
+
     def __repr__(self):
         return '用户 %s 于%s 评论了 书 %s: %s' % (
             get_account_by_id(self.user_id), self.remark_time, get_book_name(self.book_id),
@@ -31,22 +35,22 @@ class DB_user_book_opinion(db.Model):
 
     def vote_str(self):
         if self.vote == 'up':
-            return '用户 %s 于%s 顶了书 %s' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 顶了书 %s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id)))
         elif self.vote == 'down':
-            return '用户 %s 于%s 踩了书 %s' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 踩了书 %s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id)))
         else:
-            return '用户 %s 于%s 将书 %s改为中立' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 将书 %s改为中立' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_book_name(self.book_id)))
 
     def follow_str(self):
         if self.is_follow:
-            return '用户 %s 于%s 关注了书 %s' % (
-                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 关注了书 %s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id)))
         else:
-            return '用户 %s 于%s 取关了书 %s' % (
-                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id))
+            return (get_account_by_id(self.user_id), '用户 %s 于%s 取关了书 %s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_book_name(self.book_id)))
 
 
 class DB_user_booklist_remark(db.Model):
@@ -56,6 +60,10 @@ class DB_user_booklist_remark(db.Model):
     booklist_id = db.Column(db.Integer, db.ForeignKey('booklist.id'))
     remark = db.Column(db.String(1024))
     remark_time = db.Column(db.DateTime)
+
+
+    def remark_str(self):
+        return (get_account_by_id(self.user_id), str(self))
 
     def __repr__(self):
         return '用户 %s 于%s 评论了 书单 %s: %s' % (
@@ -74,22 +82,22 @@ class DB_user_booklist_opinion(db.Model):
 
     def vote_str(self):
         if self.vote == 'up':
-            return '用户 %s 于%s 顶了书单 %s' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 顶了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id)))
         elif self.vote == 'down':
-            return '用户 %s 于%s 踩了书单 %s' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 踩了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id)))
         else:
-            return '用户 %s 于%s 将书单 %s改为中立' % (
-                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 将书单 %s改为中立' % (
+                get_account_by_id(self.user_id), self.last_vote_time, get_booklist_name(self.booklist_id)))
 
     def follow_str(self):
         if self.is_follow:
-            return '用户 %s 于%s 关注了书单 %s' % (
-                get_account_by_id(self.user_id), self.last_follow_time, get_booklist_name(self.booklist_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 关注了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_booklist_name(self.booklist_id)))
         else:
-            return '用户 %s 于%s 取关了书单 %s' % (
-                get_account_by_id(self.user_id), self.last_follow_time, get_booklist_name(self.booklist_id))
+            return (get_account_by_id(self.user_id) ,'用户 %s 于%s 取关了书单 %s' % (
+                get_account_by_id(self.user_id), self.last_follow_time, get_booklist_name(self.booklist_id)))
 
 
 class DB_user_book_remark_opinion(db.Model):
@@ -98,6 +106,10 @@ class DB_user_book_remark_opinion(db.Model):
     book_remark_id = db.Column(db.Integer, db.ForeignKey('user_book_remark.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
     last_vote_time = db.Column(db.DateTime)
+
+
+    def vote_str(self):
+        return get_account_by_id(self.user_id), str(self)
 
     def __repr__(self):
         return 'User %s %svoted book remark %s' % (self.user_id, self.vote, self.book_remark_id) if self.vote in ['up',
@@ -111,6 +123,9 @@ class DB_user_booklist_remark_opinion(db.Model):
     booklist_remark_id = db.Column(db.Integer, db.ForeignKey('user_booklist_remark.id'), primary_key=True)
     vote = db.Column(db.Enum('up', 'down', 'netural'), default='netural')
     last_vote_time = db.Column(db.DateTime)
+
+    def vote_str(self):
+        return get_account_by_id(self.user_id), str(self)
 
     def __repr__(self):
         return 'User %s %svoted booklist remark %s' % (
@@ -656,8 +671,8 @@ def get_user_moments(user_id, page=1, per_page=10):
                 DB_user_book_opinion.last_follow_time).paginate(page, per_page).query
             booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=u_id).order_by(
                 DB_user_booklist_opinion.last_follow_time).paginate(page, per_page).query
-            results.extend([(str(x), x.remark_time) for x in book_remark])
-            results.extend([(str(x), x.remark_time) for x in booklist_remark])
+            results.extend([(x.remark_str(), x.remark_time) for x in book_remark])
+            results.extend([(x.remark_str(), x.remark_time) for x in booklist_remark])
             results.extend([(x.vote_str(), x.last_vote_time) for x in book_vote])
             results.extend([(x.vote_str(), x.last_vote_time) for x in booklist_vote])
             results.extend([(x.follow_str(), x.last_follow_time) for x in book_follow])
@@ -665,6 +680,7 @@ def get_user_moments(user_id, page=1, per_page=10):
 
         results = [x[0] for x in
                    sorted(results, key=lambda x: x[1], reverse=True)[(page - 1) * per_page:page * per_page]]
+        results = [dict(zip(['user', 'info'], x)) for x in results]
         logging.debug(results)
         return json.dumps(results, ensure_ascii=False)
 
