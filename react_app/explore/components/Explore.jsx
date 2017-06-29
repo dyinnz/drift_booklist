@@ -36,15 +36,15 @@ const rightIconMenu = (
 class ListContainer extends React.Component {
     renderListItem(item) {
         return <ListItem
-            // key = {item.booklist_id}
-            leftAvatar={<Avatar src="/static/react/small_avatar.jpg"/>}
+            leftAvatar={<Avatar src={item.avatar}/>}
 
             primaryText= {<span>
-                {item.user} &nbsp;&nbsp;
+                {item.account} &nbsp;&nbsp;
             </span>}
             secondaryText={
                 <p>
-                    {item.info}
+                    <span style={{color: darkBlack}}>{item.timestamp}</span> --
+                    {item.content}
                 </p>
             }
             secondaryTextLines={2}
