@@ -24,11 +24,7 @@ def test_explore():
 
 @explore_bp.route('/get_moment', methods=['GET', 'POST'])
 def get_moment():
-    if request.method == 'POST':
-        data = request.get_json()
-        print("json: ", data)
-        jsondata = db_user_remark.get_user_moments(data['user_id'])
-        logging.debug(jsondata)
-        return jsonify(jsondata)
-    else:
-        return 'need post request'
+    #data = request.get_json()
+    jsondata = db_user_remark.get_user_moments(flask_login.current_user.db_id)
+    # print(jsondata)
+    return jsondata
