@@ -10,7 +10,7 @@
     // margin: 0 auto;
 }
 
-.left_pane {
+.booklist_pane {
     width: 250px;
     margin: 20px;
     float: left;
@@ -49,9 +49,14 @@
     float: left;
 }
 
-.comment_who {
+.comment_person {
     width: 150px;
     float: left;
+}
+
+.comment_result {
+    padding-left: 30px;
+    padding-bottom: 10px;
 }
 
 .tags_wrapper {
@@ -66,9 +71,16 @@
 .reply_wrapper {
     margin-left: 20px;
     margin-right: 20px;
-    padding-bottom: 20px;
 }
 
 .comment_label {
     color: green;
+}
+
+.flex_class {
+    display: flex;
+}
+
+.new_booklist {
+    margin-top: 4px;
 }
