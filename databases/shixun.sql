@@ -87,7 +87,7 @@ CREATE TABLE `booklist` (
   PRIMARY KEY (`id`,`user_id`),
   KEY `fk_booklist_1_idx` (`user_id`),
   CONSTRAINT `fk_booklist_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -96,7 +96,7 @@ CREATE TABLE `booklist` (
 
 LOCK TABLES `booklist` WRITE;
 /*!40000 ALTER TABLE `booklist` DISABLE KEYS */;
-INSERT INTO `booklist` VALUES (1,'my favorite',1,'this is my favorite','it is cover');
+INSERT INTO `booklist` VALUES (1,'my favorite',1,'this is my favorite','it is cover'),(2,'booklist1',2,'dsdsds','daaddfa'),(3,'booklist1',2,'dsdsds','daaddfa'),(4,'booklist1',2,'dsdsds','daaddfa');
 /*!40000 ALTER TABLE `booklist` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -263,7 +263,7 @@ CREATE TABLE `user_book_opinion` (
 
 LOCK TABLES `user_book_opinion` WRITE;
 /*!40000 ALTER TABLE `user_book_opinion` DISABLE KEYS */;
-INSERT INTO `user_book_opinion` VALUES (1,1,'up',1,NULL,NULL),(1,2,'down',1,NULL,NULL),(2,1,'up',1,NULL,NULL),(2,2,'down',1,NULL,NULL);
+INSERT INTO `user_book_opinion` VALUES (1,1,'up',1,'2017-06-29 16:00:35','2017-06-29 16:00:15'),(1,2,'down',1,'2017-06-29 16:00:35','2017-06-29 16:00:15'),(2,1,'up',1,'2017-06-29 16:00:35','2017-06-29 16:00:15'),(2,2,'down',1,'2017-06-29 16:00:35','2017-06-29 16:00:15');
 /*!40000 ALTER TABLE `user_book_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -285,7 +285,7 @@ CREATE TABLE `user_book_remark` (
   KEY `fk_book_remark_1` (`book_id`),
   CONSTRAINT `fk_book_remark_1` FOREIGN KEY (`book_id`) REFERENCES `book` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_book_remark_2` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -294,7 +294,7 @@ CREATE TABLE `user_book_remark` (
 
 LOCK TABLES `user_book_remark` WRITE;
 /*!40000 ALTER TABLE `user_book_remark` DISABLE KEYS */;
-INSERT INTO `user_book_remark` VALUES (1,2,1,'good','2017-06-24 22:23:01'),(2,2,1,'good','2017-06-24 22:23:12'),(3,2,1,'good','2017-06-24 22:23:36'),(4,2,2,'good','2017-06-24 22:23:43'),(5,1,2,'good','2017-06-24 22:23:47'),(6,1,1,'good','2017-06-24 22:23:51');
+INSERT INTO `user_book_remark` VALUES (1,2,1,'good','2017-06-24 22:23:01'),(2,2,1,'good','2017-06-24 22:23:12'),(3,2,1,'good','2017-06-24 22:23:36'),(4,2,2,'good','2017-06-24 22:23:43'),(5,1,2,'good','2017-06-24 22:23:47'),(6,1,1,'good','2017-06-24 22:23:51'),(7,1,1,'shit','2017-06-29 15:57:16'),(8,1,2,'shit','2017-06-29 15:57:39'),(9,1,5,'shit','2017-06-29 15:57:41'),(10,1,7,'shit','2017-06-29 15:57:48');
 /*!40000 ALTER TABLE `user_book_remark` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -323,7 +323,7 @@ CREATE TABLE `user_book_remark_opinion` (
 
 LOCK TABLES `user_book_remark_opinion` WRITE;
 /*!40000 ALTER TABLE `user_book_remark_opinion` DISABLE KEYS */;
-INSERT INTO `user_book_remark_opinion` VALUES (1,1,'up',NULL),(1,2,'up',NULL),(1,3,'up',NULL),(2,2,'up',NULL),(2,3,'up',NULL),(2,4,'up',NULL);
+INSERT INTO `user_book_remark_opinion` VALUES (1,1,'up','2017-06-29 16:02:18'),(1,2,'up','2017-06-29 16:02:18'),(1,3,'up','2017-06-29 16:02:18'),(2,2,'up','2017-06-29 16:02:18'),(2,3,'up','2017-06-29 16:02:18'),(2,4,'up','2017-06-29 16:02:18');
 /*!40000 ALTER TABLE `user_book_remark_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -354,7 +354,7 @@ CREATE TABLE `user_booklist_opinion` (
 
 LOCK TABLES `user_booklist_opinion` WRITE;
 /*!40000 ALTER TABLE `user_booklist_opinion` DISABLE KEYS */;
-INSERT INTO `user_booklist_opinion` VALUES (1,1,'up',1,NULL,NULL),(2,1,'up',1,NULL,NULL);
+INSERT INTO `user_booklist_opinion` VALUES (1,1,'up',1,'2017-06-29 16:00:40','2017-06-29 16:00:11'),(2,1,'up',1,'2017-06-29 16:00:40','2017-06-29 16:00:11');
 /*!40000 ALTER TABLE `user_booklist_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -414,7 +414,7 @@ CREATE TABLE `user_booklist_remark_opinion` (
 
 LOCK TABLES `user_booklist_remark_opinion` WRITE;
 /*!40000 ALTER TABLE `user_booklist_remark_opinion` DISABLE KEYS */;
-INSERT INTO `user_booklist_remark_opinion` VALUES (1,1,'up',NULL),(2,1,'up',NULL);
+INSERT INTO `user_booklist_remark_opinion` VALUES (1,1,'up','2017-06-29 16:02:23'),(2,1,'up','2017-06-29 16:02:23');
 /*!40000 ALTER TABLE `user_booklist_remark_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -454,4 +454,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-29 15:38:36
+-- Dump completed on 2017-06-29 16:07:19

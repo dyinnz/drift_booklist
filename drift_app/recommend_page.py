@@ -13,7 +13,7 @@ def recommend():
     else:
         logging.info('recomemnd page for anonymous')
 
-    return current_app.send_static_file('index.html')
+    return current_app.send_static_file('react/index.html')
 
 
 @recommend_bp.route('/recommend/fetch')
