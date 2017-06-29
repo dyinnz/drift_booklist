@@ -122,7 +122,7 @@ class CommentPane extends React.Component {
 
 
         fetchPostJson("/add_booklist_remark", {
-            booklist_id: this.props.booklist_id,
+            booklist_id: this.props.currListID,
             remark: commentBox.value
         }).then(
             resp => resp.json()
@@ -161,7 +161,7 @@ class CommentPane extends React.Component {
     }
 
     renderBody() {
-        if ("undefined" === typeof(this.props.booklist_id)) {
+        if ("undefined" === typeof(this.props.currListID)) {
             return <CircularProgress/>
         }
 
@@ -178,7 +178,7 @@ class CommentPane extends React.Component {
     }
 
     render() {
-        console.log("Render CommentPane of booklist[%d]", this.props.booklist_id);
+        console.log("Render CommentPane of booklist[%d]", this.props.currListID);
 
         return (
             <Paper>

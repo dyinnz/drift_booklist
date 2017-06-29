@@ -12,7 +12,7 @@ from drift_app.settings_page import settings_bp
 from drift_app.friends_page import friends_bp
 from drift_app.exploer_page import explore_bp
 from drift_app.utility import utility_bp
-
+from drift_app.book_page import book_bp
 
 json_config = None
 with open('config.json') as f:
@@ -34,6 +34,7 @@ app.register_blueprint(settings_bp)
 app.register_blueprint(utility_bp)
 app.register_blueprint(friends_bp)
 app.register_blueprint(explore_bp)
+app.register_blueprint(book_bp)
 
 logging.basicConfig(level=logging.DEBUG)
 

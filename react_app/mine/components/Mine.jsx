@@ -17,11 +17,14 @@ import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import {blue500} from 'material-ui/styles/colors'
 import Dialog from 'material-ui/Dialog'
+import FloatingActionButton from 'material-ui/FloatingActionButton';
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import update from 'immutability-helper'
 
 import CommentPane from 'mine/components/CommentPane'
 import BooklistPane from 'mine/components/BooklistPane'
+
 
 function fetchPostJson(url, data) {
     return fetch(url, {
@@ -83,12 +86,19 @@ class ShowContainer extends React.Component {
 
 class BookGrid extends React.Component {
     render() {
+        const newBookStyle = {
+            paddingLeft: 40,
+            height: "100%",
+            display: "flex",
+            alignItems: "center",
+        };
+
         if ("undefined" === typeof(this.props.items)) {
             return <p>No Content</p>
         }
         console.log("books grid: ", this.props.items)
         return (
-            <div className="grid_list"><Paper>
+            <div><Paper>
                 <Subheader> BOOKS </Subheader>
                 <GridList cols={4} className="grid_wrapper">
                     {this.props.items.map((book) => (
@@ -99,7 +109,15 @@ class BookGrid extends React.Component {
                             <img src={book.book_cover}/>
                         </GridTile>
                     ))}
+                    <div style={newBookStyle}>
+                        <FloatingActionButton
+                        >
+                            <ContentAdd />
+                        </FloatingActionButton>
+                    </div>
                 </GridList>
+
+
             </Paper></div>
         )
     }
@@ -111,9 +129,9 @@ class Mine extends React.Component {
         super(props);
         this.jsonData = undefined
         this.state = {
-            myBooklist: [],
-            followerBooklist: [],
-            showBooklist: {},
+            myListItems: [],
+            favoriteListItems: [],
+            currBooklist: {},
         }
     }
 
@@ -124,9 +142,9 @@ class Mine extends React.Component {
                 console.log("main data: ", data)
                 console.log("init state: ", this.state)
                 this.setState({
-                    myBooklist: data.my_booklists,
-                    followerBooklist: data.followed_booklists,
-                    showBooklist: this.state.showBooklist,
+                    myListItems: data.my_booklists,
+                    favoriteListItems: data.followed_booklists,
+                    currBooklist: this.state.currBooklist,
                 })
             })
     }
@@ -136,43 +154,56 @@ class Mine extends React.Component {
         this.fetchData()
     }
 
+    updateBookList(lists) {
+        if ('myListItems' in lists) {
+            this.setState(update(this.state, {
+                myListItems: lists.myListItems
+            }))
+
+        }
+        if ('favoriteListItems' in lists) {
+            this.setState(update(this.state, {
+                favoriteListItems: lists.favoriteListItems
+            }))
+        }
+    }
+
     renderLeftPane() {
         return (
-            <BooklistPane myListItems={this.state.myBooklist}
-                          favoriteListItems={this.state.followerBooklist}
+            <BooklistPane myListItems={this.state.myListItems}
+                          favoriteListItems={this.state.favoriteListItems}
                           handleTouch={(i) => this.touchBooklist(i)}
+                          updateBooklist={this.updateBookList.bind(this)}
             />
         )
     }
 
-    touchBooklist(booklist_id) {
-        console.log("booklist_id: ", booklist_id);
-
-        var data = JSON.stringify({booklist_id: booklist_id})
+    touchBooklist(currListID) {
+        console.log("currListID: ", currListID);
 
         fetchPostJson("/booklist_detail", {
-            booklist_id: booklist_id
+            booklist_id: currListID
         }).then(
             resp => resp.json()
         ).then((data) => {
             console.log("booklist_detail: ", data)
             this.setState({
-                myBooklist: this.state.myBooklist,
-                followerBooklist: this.state.followerBooklist,
-                showBooklist: data,
-                booklist_id: booklist_id,
+                myListItems: this.state.myListItems,
+                favoriteListItems: this.state.favoriteListItems,
+                currBooklist: data,
+                currListID: currListID,
             })
         })
     }
 
     renderRightPane() {
-        console.log("mine : ", this.state.booklist_id)
+        console.log("mine : ", this.state.currListID)
         return (
             <div className="right_pane">
-                <ShowContainer details={this.state.showBooklist}/>
-                <BookGrid items={this.state.showBooklist.books}/>
-                <CommentPane items={this.state.showBooklist.remarks}
-                             booklist_id={this.state.booklist_id}/>
+                <ShowContainer details={this.state.currBooklist}/>
+                <BookGrid items={this.state.currBooklist.books}/>
+                <CommentPane items={this.state.currBooklist.remarks}
+                             currListID={this.state.currListID}/>
             </div>
         )
     }
