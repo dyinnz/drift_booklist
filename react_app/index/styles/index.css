@@ -249,6 +249,17 @@ ul.tpl-dropdown-content li > a.tpl-dropdown-content-message:last-child {
     overflow: hidden;
 }
 
+.you-like .s-content_1 {
+    padding-top: 0px;
+    overflow: hidden;
+    border-top: 1px solid #E8EEF2;
+}
+
+.li1{
+    float: left;
+    width: 25%;
+}
+
 .i-load-more-item-shadow {
     position: absolute;
     right: 0px;

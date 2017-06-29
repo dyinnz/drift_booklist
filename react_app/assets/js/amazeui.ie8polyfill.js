@@ -765,7 +765,7 @@ var spliceWorksWithLargeSparseArrays = (function () {
     // Per https://github.com/es-shims/es5-shim/issues/295
     // Safari 7/8 breaks with sparse arrays of size 1e5 or greater
     var arr = new $Array(1e5);
-    // note: the index MUST be 8 or larger or the test will false pass
+    // note: the bak MUST be 8 or larger or the test will false pass
     arr[8] = 'x';
     arr.splice(1, 1);
     // note: this test must be defined *after* the indexOf shim
