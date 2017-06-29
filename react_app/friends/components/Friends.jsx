@@ -1,10 +1,12 @@
 import React from "react";
-import {Card, CardHeader, CardMedia, CardText} from "material-ui/Card";
+import {Card, CardActions, CardMedia, CardTitle} from "material-ui/Card";
 import {GridList, GridTile} from "material-ui/GridList";
 import Paper from "material-ui/Paper";
 import Subheader from "material-ui/Subheader";
 import FloatingActionButton from "material-ui/FloatingActionButton";
-import FlatButton from 'material-ui/FlatButton';
+import FlatButton from "material-ui/FlatButton";
+import Chip from "material-ui/Chip";
+import FontIcon from 'material-ui/FontIcon';
 
 
 function fetchPostJson(url, data) {
@@ -31,18 +33,24 @@ class TopContainer extends React.Component {
                     </CardMedia>
 
                     <div className="card_rhs">
-                        <CardHeader
-                            title={this.props.detail.account}
-                            subtitle={this.props.detail.name}
+                        <CardTitle
+                            title={this.props.detail.name}
+                            subtitle={this.props.detail.account}
                         />
-
-                        <CardText>{this.props.detail.birthday}</CardText>
-                        <CardText>{this.props.detail.introduction}</CardText>
-                        <div>
-                            <label>{"friends number:"}</label>
-                            <label>{"20"}</label>
+                        <label>{this.props.detail.birthday}</label>
+                        <br/>
+                        <label>{this.props.detail.introduction}</label>
+                        <CardActions>
+                            <FlatButton backgroundColor="#42cef4">Following:{this.props.detail.following_number}</FlatButton>
+                            <FlatButton backgroundColor="#42cef4">Followers: {this.props.detail.followers_number}</FlatButton>
+                        </CardActions>
+                        <div className="tags">
+                            {this.props.detail.tags.map((tag) => (
+                                <Chip>
+                                    {tag}
+                                </Chip>
+                            ))}
                         </div>
-
                     </div>
                 </div>
             </Card>
@@ -50,14 +58,12 @@ class TopContainer extends React.Component {
     }
 }
 const style = {
-    bgstyle:{
-      width:130,
-        height:0,
+    bgstyle: {
+        //width: 130,
+        height: 0,
     },
-    iconstyle:{
-        width:100,
-        height:100,
-        top:20,
+    labelstyle: {
+        fontsize: 1,
     }
 };
 
@@ -66,34 +72,38 @@ class FriendsGrid extends React.Component {
         if ("undefined" === typeof(this.props.items)) {
             return <p>No Content</p>
         }
-        console.log("books grid: ", this.props.items)
+        console.log("friends grid: ", this.props.items)
         return (
-            <div className="grid_list">
-                <Subheader> Friends </Subheader><Paper>
-                <GridList cols={3} className="grid_wrapper" cellHeight={110} >
+            <div >
+                <Subheader>{this.props.type}:</Subheader><Paper>
+                <GridList cols={2} cellHeight={100}>
                     {this.props.items.map((friend) => (
                         <GridTile
-                            key={friend.id}
-                            title={friend.friend_account}
-                            subtitle={friend.friend_name}
-                            actionIcon={
-                                <FloatingActionButton
-                                    onTouchTap={event => this.props.click(friend.friend_account)}
-                                    style = {style.bgstyle}
-                                    iconStyle={style.iconstyle}
-                                >
-                                    <img src={friend.avatar}  />
-                                </FloatingActionButton>
-                            }
-                            actionPosition="left"
-                            titlePosition="top"
-                            titleBackground="linear-gradient(to bottom, rgba(0,0,0,0.7) 0%,rgba(0,0,0,0.3) 70%,rgba(0,0,0,0) 100%)"
+                            key={friend.account}
                         >
-                            <div>
-                            <label>sss</label>
-                            <br></br>
-                            <label>ssssss</label>
-                            </div>
+                            <Card>
+                                <div className="clearfix2">
+                                    <CardMedia className="card_media_">
+                                        <FloatingActionButton
+                                            onTouchTap={event => this.props.click(friend.account)}
+                                            style={style.bgstyle}
+                                        >
+                                            <img src={friend.avatar}/>
+                                        </FloatingActionButton>
+                                    </CardMedia>
+                                    <div className="card_right">
+                                        <CardActions >
+                                            <FlatButton
+                                                label={friend.name}
+                                                labelStyle={style.labelstyle}
+                                                onTouchTap={event => this.props.click(friend.account)}
+                                            />
+                                        </CardActions>
+                                        <label className="label1">following:{friend.following_number}</label>
+                                        <label className="label2">followers:{friend.followers_number}</label>
+                                    </div>
+                                </div>
+                            </Card>
                         </GridTile>
                     ))}
                 </GridList>
@@ -109,8 +119,30 @@ class Friends extends React.Component {
         super(props);
         this.state = {
             userInfo: {},
-            friends: []
+            friends: [],
+            type: 'following'
         };
+    }
+
+    touchFriendsList(account, type) {
+        console.log("account: ", account);
+        console.log("type: ", type);
+
+        var data = {
+            account: account,
+            type: type
+        }
+
+        fetchPostJson("/get_friends_list", data)
+            .then(resp => resp.json())
+            .then((data) => {
+                console.log("friend_list: ", data)
+                this.setState({
+                    friends: data,
+                    userInfo: this.state.userInfo,
+                    type: type
+                })
+            })
     }
 
     touchUserDetail(account) {
@@ -118,35 +150,42 @@ class Friends extends React.Component {
 
         var data = {account: account}
 
-        fetchPostJson("/friend_detail", data)
+        fetchPostJson("/get_friend_detail", data)
             .then(resp => resp.json())
             .then((data) => {
-                console.log("user_information: ", data)
+                console.log("friend_list: ", data)
                 this.setState({
                     friends: this.state.friends,
                     userInfo: data,
+                    type: this.state.type
                 })
             })
     }
 
-    componentWillMount() {
+    getMydata() {
         fetch('/get_friend_detail', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data)
                 console.log("init state: ", this.state)
                 this.setState({
-                    userInfo: data.user_info,
-                    friends: data.friends_list,
+                    userInfo: data,
+                    friends: this.state.friends,
+                    type: 'following'
                 })
+                this.touchFriendsList(data.account, this.state.type)
             })
+    }
+
+    componentWillMount() {
+        this.getMydata()
     }
 
     render() {
         return (
             <div id="home">
                 <TopContainer detail={this.state.userInfo}/>
-                <FriendsGrid items={this.state.friends} click={this.touchUserDetail.bind(this)}/>
+                <FriendsGrid type={this.state.type} items={this.state.friends} click={this.touchUserDetail.bind(this)}/>
             </div>
         )
     }

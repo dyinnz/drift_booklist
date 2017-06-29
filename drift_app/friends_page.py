@@ -8,7 +8,26 @@ import json
 
 friends_bp = Blueprint('friends_bp', __name__)
 
+def get_friends_list_by_userid(user_id,ing_or_ers):
+    if ing_or_ers=='following':
+        friends=json.loads(db_user.get_following(user_id))
+    elif ing_or_ers=='followers':
+        friends=json.loads(db_user.get_followers(user_id))
+    friends_info=[]
+    for friend in friends:
+        friend_data=json.loads(db_user.get_user_infos(friend[1]))
+        friend_info={
+            'name':friend_data['name'],
+            'avatar':friend_data['pic_src'],
+            'account':friend[1],
+            'following_number':len(json.loads(db_user.get_following(friend[0]))),
+            'followers_number':len(json.loads(db_user.get_followers(friend[0])))
+        }
+        friends_info.append(friend_info)
 
+    return friends_info
+
+#---------------------------------------------------
 @friends_bp.route('/friends')
 def friends():
     logging.debug(current_user.is_anonymous)
@@ -16,19 +35,9 @@ def friends():
         return flask.redirect(flask.url_for('login_bp.login'))
     return current_app.send_static_file('react/friends.html')
 
+
 @friends_bp.route('/get_friend_detail',methods=['POST','GET'])
 def get_friend_detail():
-
-    friends=[]
-    for i in range(0,6):
-        friend = {
-            'id':i,
-            'friend_account': "xlm%s"%(i),
-            'friend_name': 'ssss',
-            'avatar': '/static/react/small_avatar.jpg'
-        }
-        friends.append(friend)
-
     if request.method=='POST':
         data=request.get_json()
         user_account=data['account']
@@ -36,32 +45,19 @@ def get_friend_detail():
         user_account=flask_login.current_user.id
     user_information=json.loads(db_user.get_user_infos(user_account))
     user_information['account']=user_account
-    user_information['tags']=db_user.get_user_interests(db_user.get_id_by_account(user_account))
-    user_information['following_number']=db_user.get_following(db_user.get_id_by_account(user_account))
-    user_information['followers_number']=db_user.get_followers(db_user.get_id_by_account(user_account))
+    user_information['tags']=json.loads(db_user.get_user_interests(db_user.get_id_by_account(user_account)))
+    user_information['following_number']=len(json.loads(db_user.get_following(db_user.get_id_by_account(user_account))))
+    user_information['followers_number']=len(json.loads(db_user.get_followers(db_user.get_id_by_account(user_account))))
 
     user_information['pic_src']='/static/react/small_avatar.jpg'
-    return jsonify({'user_info':user_information,
-                    'friends_list':friends})
+    return jsonify(user_information
+                   )
 
 @friends_bp.route('/get_friends_list',methods=['POST','GET'])
 def get_friends_list():
     if request.method!='POST':
-        return 'need POST'
-    data=request.get_json()
+        return 'need post request'
 
-    user_account=data['account']
-    friends=[]
-    if data['type']=='following':
-        friends=db_user.get_following(db_user.get_id_by_account(user_account))
-    elif data['type']=='followers':
-        friends=db_user.get_followers(db_user.get_id_by_account(user_account))
-    else:
-        logging.info('no_type')
-        return
-    friends_info=[]
-    user_information=json.loads(db_user.get_user_infos(data['account']))
-    user_information['account']=data['account']
-    user_information['pic_src'] = '/static/react/small_avatar.jpg'
-    logging.debug("get data %s"%(user_information))
-    return jsonify(user_information)
+    data=request.get_json()
+    friends_info=get_friends_list_by_userid(db_user.get_id_by_account(data['account']),data['type'])
+    return jsonify(friends_info)

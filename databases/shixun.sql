@@ -19,8 +19,6 @@
 -- Table structure for table `book`
 --
 
-USE shixun;
-
 DROP TABLE IF EXISTS `book`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -81,7 +79,7 @@ DROP TABLE IF EXISTS `booklist`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `booklist` (
-  `id` int(10) unsigned NOT NULL,
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(45) NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
   `introduction` varchar(256) NOT NULL,
@@ -89,7 +87,7 @@ CREATE TABLE `booklist` (
   PRIMARY KEY (`id`,`user_id`),
   KEY `fk_booklist_1_idx` (`user_id`),
   CONSTRAINT `fk_booklist_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -233,7 +231,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'xlm','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','resource/pic/default.png'),(2,'xlm2','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','resource/pic/default.png');
+INSERT INTO `user` VALUES (1,'xlm','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','/static/react/small_avatar.jpg'),(2,'xlm2','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','/static/react/small_avatar.jpg');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -249,6 +247,8 @@ CREATE TABLE `user_book_opinion` (
   `book_id` int(10) unsigned NOT NULL,
   `vote` enum('up','down','netural') NOT NULL DEFAULT 'netural',
   `is_follow` tinyint(4) NOT NULL DEFAULT '0',
+  `last_vote_time` datetime DEFAULT NULL,
+  `last_follow_time` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`,`book_id`),
   KEY `fk_user_book_2_idx` (`book_id`),
   CONSTRAINT `fk_user_book_op_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -262,7 +262,7 @@ CREATE TABLE `user_book_opinion` (
 
 LOCK TABLES `user_book_opinion` WRITE;
 /*!40000 ALTER TABLE `user_book_opinion` DISABLE KEYS */;
-INSERT INTO `user_book_opinion` VALUES (1,1,'up',1),(1,2,'down',1),(2,1,'up',1),(2,2,'down',1);
+INSERT INTO `user_book_opinion` VALUES (1,1,'up',1,NULL,NULL),(1,2,'down',1,NULL,NULL),(2,1,'up',1,NULL,NULL),(2,2,'down',1,NULL,NULL);
 /*!40000 ALTER TABLE `user_book_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -308,6 +308,7 @@ CREATE TABLE `user_book_remark_opinion` (
   `user_id` int(10) unsigned NOT NULL,
   `book_remark_id` int(10) unsigned NOT NULL,
   `vote` enum('up','down','netural') NOT NULL DEFAULT 'netural',
+  `last_vote_time` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`,`book_remark_id`),
   KEY `fk_user_book_2_idx` (`book_remark_id`),
   CONSTRAINT `fk_user_book_remark_op_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -321,7 +322,7 @@ CREATE TABLE `user_book_remark_opinion` (
 
 LOCK TABLES `user_book_remark_opinion` WRITE;
 /*!40000 ALTER TABLE `user_book_remark_opinion` DISABLE KEYS */;
-INSERT INTO `user_book_remark_opinion` VALUES (1,1,'up'),(1,2,'up'),(1,3,'up'),(2,2,'up'),(2,3,'up'),(2,4,'up');
+INSERT INTO `user_book_remark_opinion` VALUES (1,1,'up',NULL),(1,2,'up',NULL),(1,3,'up',NULL),(2,2,'up',NULL),(2,3,'up',NULL),(2,4,'up',NULL);
 /*!40000 ALTER TABLE `user_book_remark_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -337,11 +338,13 @@ CREATE TABLE `user_booklist_opinion` (
   `booklist_id` int(10) unsigned NOT NULL,
   `vote` enum('up','down','netural') NOT NULL DEFAULT 'netural',
   `is_follow` tinyint(4) NOT NULL DEFAULT '0',
+  `last_vote_time` datetime DEFAULT NULL,
+  `last_follow_time` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`,`booklist_id`),
   KEY `fk_user_booklist_2_idx` (`booklist_id`),
   CONSTRAINT `fk_user_booklist_op_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_user_booklist_op_2` FOREIGN KEY (`booklist_id`) REFERENCES `booklist` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -350,7 +353,7 @@ CREATE TABLE `user_booklist_opinion` (
 
 LOCK TABLES `user_booklist_opinion` WRITE;
 /*!40000 ALTER TABLE `user_booklist_opinion` DISABLE KEYS */;
-INSERT INTO `user_booklist_opinion` VALUES (1,1,'up',1),(2,1,'up',1);
+INSERT INTO `user_booklist_opinion` VALUES (1,1,'up',1,NULL,NULL),(2,1,'up',1,NULL,NULL);
 /*!40000 ALTER TABLE `user_booklist_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -396,6 +399,7 @@ CREATE TABLE `user_booklist_remark_opinion` (
   `user_id` int(10) unsigned NOT NULL,
   `booklist_remark_id` int(10) unsigned NOT NULL,
   `vote` enum('up','down','netural') NOT NULL DEFAULT 'netural',
+  `last_vote_time` datetime DEFAULT NULL,
   PRIMARY KEY (`user_id`,`booklist_remark_id`),
   KEY `fk_user_booklist_remark_2_idx` (`booklist_remark_id`),
   CONSTRAINT `fk_user_booklist_remark_op_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -409,7 +413,7 @@ CREATE TABLE `user_booklist_remark_opinion` (
 
 LOCK TABLES `user_booklist_remark_opinion` WRITE;
 /*!40000 ALTER TABLE `user_booklist_remark_opinion` DISABLE KEYS */;
-INSERT INTO `user_booklist_remark_opinion` VALUES (1,1,'up'),(2,1,'up');
+INSERT INTO `user_booklist_remark_opinion` VALUES (1,1,'up',NULL),(2,1,'up',NULL);
 /*!40000 ALTER TABLE `user_booklist_remark_opinion` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -448,4 +452,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-25 11:32:21
+-- Dump completed on 2017-06-29 15:07:23
