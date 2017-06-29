@@ -12,7 +12,7 @@ class DB_Book(db.Model):
     author = db.Column(db.String(64))
     publisher = db.Column(db.String(45))
     introduction = db.Column(db.String(256))
-    cover=db.Column(db.String(40))
+    cover = db.Column(db.String(40))
 
     def __repr__(self):
         return "Book:%s\nIntroduction:%s" % (self.name, self.introductionn)
@@ -26,7 +26,7 @@ class DB_book_tag(db.Model):
 
 class DB_booklist(db.Model):
     __tablename__ = 'booklist'
-    id = db.Column(db.Integer, primary_key=True,autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(45))
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     introduction = db.Column(db.String(256))
@@ -64,7 +64,7 @@ def get_book(book_id):
         return json.dumps({
             'book_id': book.id,
             'book_name': book.name,
-            'book_cover':book.cover,
+            'book_cover': book.cover,
             'ISBN': book.ISBN,
             'author': book.author,
             'publisher': book.publisher,
@@ -86,6 +86,7 @@ def get_book_name(book_id):
         logging.error(book_id)
         logging.error(e)
         return None
+
 
 def get_booklist_name(booklist_id):
     try:
@@ -112,7 +113,7 @@ def get_book_by_ISBN(ISBN):
         return json.dumps({
             'book_id': book.id,
             'book_name': book.name,
-            'book_cover':book.cover,
+            'book_cover': book.cover,
             'ISBN': book.ISBN,
             'author': book.author,
             'publisher': book.publisher,
@@ -196,7 +197,7 @@ def upload_book(name, ISBN, author, publisher, introduction):
         return None
 
 
-def add_booklist(user_id, booklist_name, introduction,cover):
+def add_booklist(user_id, booklist_name, introduction, cover):
     """
     user create a new booklist.
     :param user_id: user id.
@@ -205,17 +206,18 @@ def add_booklist(user_id, booklist_name, introduction,cover):
     :return: If successs, return new booklist id, else return None.
     """
     try:
-        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
+        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction, cover=cover)
         db.session.add(booklist)
         db.session.commit()
         return booklist.id
     except Exception as e:
-        logging.error('%s,%s,%s,%s' % (user_id, booklist_name, introduction,cover))
+        logging.error('%s,%s,%s,%s' % (user_id, booklist_name, introduction, cover))
         logging.error(e)
         db.session.rollback()
         return None
 
-def add_my_favorite_booklist(booklist_id,user_id, booklist_name, introduction,cover):
+
+def add_my_favorite_booklist(user_id, booklist_name, introduction, cover):
     """
     user create a new booklist.
     :param user_id: user id.
@@ -224,15 +226,17 @@ def add_my_favorite_booklist(booklist_id,user_id, booklist_name, introduction,co
     :return: If successs, return new booklist id, else return None.
     """
     try:
-        booklist = DB_booklist(id=booklist_id,user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
+        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction,
+                               cover=cover)
         db.session.add(booklist)
         db.session.commit()
         return booklist.id
     except Exception as e:
-        logging.error('%s,%s,%s,%s' % (user_id, booklist_name, introduction,cover))
+        logging.error('%s,%s,%s,%s' % (user_id, booklist_name, introduction, cover))
         logging.error(e)
         db.session.rollback()
         return None
+
 
 def add_book_to_booklist(booklist_id, book_id):
     """
@@ -251,7 +255,9 @@ def add_book_to_booklist(booklist_id, book_id):
         logging.error(e)
         db.session.rollback()
         return False
-def move_book_from_booklist(booklist_id,book_id):
+
+
+def move_book_from_booklist(booklist_id, book_id):
     """
 
     :param booklist_id:
@@ -259,16 +265,17 @@ def move_book_from_booklist(booklist_id,book_id):
     :return:
     """
     try:
-        booklist_book=DB_booklist_book.query.filter_by(booklist_id=booklist_id,book_id=book_id).first()
+        booklist_book = DB_booklist_book.query.filter_by(booklist_id=booklist_id, book_id=book_id).first()
         if booklist_book is None:
             return False
         db.session.delete(booklist_book)
         db.session.commit()
         return True
     except Exception as e:
-        logging.error("move book false at %s %s "%(booklist_id,book_id))
+        logging.error("move book false at %s %s " % (booklist_id, book_id))
         logging.error(e)
         return None
+
 
 def get_user_created_booklist(user_id):
     """
@@ -277,13 +284,14 @@ def get_user_created_booklist(user_id):
     :return: list of booklist_id
     """
     try:
-        booklists=DB_booklist.query.filter_by(user_id=user_id).order_by('id').all()
-        booklist_ids=[item.id for item in booklists]
+        booklists = DB_booklist.query.filter_by(user_id=user_id).order_by('id').all()
+        booklist_ids = [item.id for item in booklists]
         return json.dumps(booklist_ids)
     except Exception as e:
-        logging.error('get booklist created by %s' %(user_id))
+        logging.error('get booklist created by %s' % (user_id))
         logging.error(e)
         return None
+
 
 def get_booklist_by_id(booklist_id):
     """
@@ -292,20 +300,23 @@ def get_booklist_by_id(booklist_id):
     :return: the infomation of booklist
     """
     try:
-        booklist=DB_booklist.query.filter_by(id=booklist_id).first()
-        if booklist ==None:
+        booklist = DB_booklist.query.filter_by(id=booklist_id).first()
+        logging.debug(booklist_id)
+        logging.debug(booklist)
+        if booklist is None:
             return None
         return json.dumps({
-            'booklist_id':booklist.id,
-            'booklist_name':booklist.name,
-            'booklist_cover':booklist.cover,
-            'create_user':get_account_by_id(booklist.user_id),
-            'introduction':booklist.introduction
-            })
+            'booklist_id': booklist.id,
+            'booklist_name': booklist.name,
+            'booklist_cover': booklist.cover,
+            'create_user': get_account_by_id(booklist.user_id),
+            'introduction': booklist.introduction
+        })
     except Exception as e:
-        logging.error("%s %s" %(booklist.id,booklist.name))
+        logging.error("%s" % booklist_id)
         logging.error(e)
         return None
+
 
 def delete_booklist(booklist_id):
     """
@@ -314,7 +325,7 @@ def delete_booklist(booklist_id):
     :return: if success return true else return false
     """
     try:
-        booklist=DB_booklist.query.filter_by(id=booklist_id).first()
+        booklist = DB_booklist.query.filter_by(id=booklist_id).first()
         if booklist is None:
             return False
         db.session.delete(booklist)
@@ -324,7 +335,8 @@ def delete_booklist(booklist_id):
         logging.error(e)
         return None
 
-def change_booklist(booklist_id,booklist_name,booklist_cover,introduction):
+
+def change_booklist(booklist_id, booklist_name, booklist_cover, introduction):
     """
     uppdate the info of booklist
     :param booklist_id:
@@ -334,32 +346,33 @@ def change_booklist(booklist_id,booklist_name,booklist_cover,introduction):
     :return: if success return true else return false
     """
     try:
-        booklist=DB_booklist.query.filter_by(id=booklist_id).first()
+        booklist = DB_booklist.query.filter_by(id=booklist_id).first()
         if booklist is None:
             return False
 
-        booklist.cover=booklist_cover
-        booklist.introduction=introduction
-        booklist.name=booklist_name
+        booklist.cover = booklist_cover
+        booklist.introduction = introduction
+        booklist.name = booklist_name
         db.session.commit()
         return True
     except Exception as e:
-        logging.error("change booklist info false at %s" %(booklist_id))
+        logging.error("change booklist info false at %s" % (booklist_id))
         logging.error(e)
         return None
 
-def change_booklist_tags(booklist_id,tags):
+
+def change_booklist_tags(booklist_id, tags):
     """
 
     :return:
     """
     try:
         for tag in tags:
-            booklist_tag=DB_booklist_tag(booklist_id=booklist_id,tag_name=tag)
+            booklist_tag = DB_booklist_tag(booklist_id=booklist_id, tag_name=tag)
             db.session.add(booklist_tag)
         db.session.commit()
         return True
     except Exception as e:
-        logging.error("change tags false at %s"%(booklist_id))
+        logging.error("change tags false at %s" % (booklist_id))
         logging.error(e)
         return None

@@ -45,6 +45,7 @@ class TopContainer extends React.Component {
                             <FlatButton backgroundColor="#42cef4">Followers: {this.props.detail.followers_number}</FlatButton>
                         </CardActions>
                         <div className="tags">
+
                             {this.props.detail.tags.map((tag) => (
                                 <Chip>
                                     {tag}
@@ -118,7 +119,9 @@ class Friends extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userInfo: {},
+            userInfo: {
+                tags:[]
+            },
             friends: [],
             type: 'following'
         };

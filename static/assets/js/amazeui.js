@@ -1017,7 +1017,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Array} src
 	 * @param {String} find
 	 * @param {String} [findByKey]
-	 * @return {Boolean|Number} false when not found, or the index
+	 * @return {Boolean|Number} false when not found, or the bak
 	 */
 	function inArray(src, find, findByKey) {
 	  if (src.indexOf && !findByKey) {
@@ -1626,7 +1626,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var isTouch = (pointerType == INPUT_TYPE_TOUCH);
 
-	    // get index of the event in the store
+	    // get bak of the event in the store
 	    var storeIndex = inArray(store, ev.pointerId, 'pointerId');
 
 	    // start and mouse must be down
@@ -10889,7 +10889,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  '       <%= option.text %></li>' +
 	  '       <% } else { %>' +
 	  '       <li class="<%= option.classNames%>" ' +
-	  '         data-index="<%= option.index %>" ' +
+	  '         data-bak="<%= option.bak %>" ' +
 	  '         data-group="<%= option.group || 0 %>" ' +
 	  '         data-value="<%= option.value %>" >' +
 	  '         <span class="am-selected-text"><%= option.text %></span>' +
@@ -10907,7 +10907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  '       <%= option.text %></li>' +
 	  '       <% } else { %>' +
 	  '       <li class="<%= option.classNames %>" ' +
-	  '         data-index="<%= option.index %>" ' +
+	  '         data-bak="<%= option.bak %>" ' +
 	  '         data-group="<%= option.group || 0 %>" ' +
 	  '         data-value="<%= option.value %>" >' +
 	  '         <span class="am-selected-text"><%= option.text %></span>' +
@@ -11303,7 +11303,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  qq: {
 	    title: 'QQ 好友',
-	    url: 'http://connect.qq.com/widget/shareqq/index.html',
+	    url: 'http://connect.qq.com/widget/shareqq/bak.html',
 	    icon: 'qq'
 	  },
 	  // url:,
