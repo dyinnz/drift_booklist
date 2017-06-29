@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS `shixun`.`booklist` (
   `name` VARCHAR(45) NOT NULL,
   `user_id` INT(10) UNSIGNED NOT NULL,
   `introduction` VARCHAR(256) NOT NULL,
+  `cover` VARCHAR(45) NULL DEFAULT NULL,
   PRIMARY KEY (`id`, `user_id`),
   INDEX `fk_booklist_1_idx` (`user_id` ASC),
   CONSTRAINT `fk_booklist_1`

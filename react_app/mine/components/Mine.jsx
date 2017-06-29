@@ -134,7 +134,6 @@ class Mine extends React.Component {
 
     componentWillMount() {
         this.fetchData()
-        this.touchBooklist(0)
     }
 
     renderLeftPane() {
