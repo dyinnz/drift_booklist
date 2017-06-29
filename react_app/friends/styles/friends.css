@@ -45,7 +45,7 @@
 }
 
 .show_information{
-    height:220px;
+    height:230px;
 }
 
 .label1{
@@ -59,4 +59,9 @@
 .tags {
     display: flex;
     flex-wrap: wrap;
+}
+.user_info{
+    //position: relative;
+    //left:16px;
+    padding-left: 16px;
 }

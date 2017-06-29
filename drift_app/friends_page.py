@@ -49,9 +49,7 @@ def get_friend_detail():
     user_information['following_number']=len(json.loads(db_user.get_following(db_user.get_id_by_account(user_account))))
     user_information['followers_number']=len(json.loads(db_user.get_followers(db_user.get_id_by_account(user_account))))
 
-    user_information['pic_src']='/static/react/small_avatar.jpg'
-    return jsonify(user_information
-                   )
+    return jsonify(user_information)
 
 @friends_bp.route('/get_friends_list',methods=['POST','GET'])
 def get_friends_list():
