@@ -17,7 +17,7 @@ class Book(Base):
     cover = Column(String)
 
 
-db_uri = input("Input db_uri:\nExample:mysql+pymysql://user:password/database?charset=utf8\n")
+db_uri = input("Input db_uri:\nExample:mysql+pymysql://user:password@localhost:3306/database?charset=utf8\n")
 engine = create_engine(db_uri, echo=True)
 
 Session = sessionmaker(bind=engine)
