@@ -13,6 +13,8 @@ mine_bp = Blueprint('mine_bp', __name__)
 
 def get_booklist_detail(booklist_id):
     booklistinfo = db_book.get_booklist_by_id(booklist_id)
+    if booklistinfo is None:
+        return dict()
     jsondata = json.loads(booklistinfo)
 
     data = db_book.get_books_in_booklist(booklist_id)
@@ -144,6 +146,8 @@ def booklistdetail():
         data = request.get_json()
         print("json: ", data)
         jsondata = get_booklist_detail(data['booklist_id'])
+        if jsondata is None:
+            return None
         # logging.debug(jsondata)
         return jsonify(jsondata)
     else:

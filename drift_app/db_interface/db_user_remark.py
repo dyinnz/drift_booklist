@@ -245,7 +245,7 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
     """
     try:
         user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).order_by(
-            '-remark_time').paginate(page, per_page).query
+            'remark_time').paginate(page, per_page).query
         return json.dumps(
             [{'id': user_booklist.id,
               'avatar': json.loads(get_user_infos(get_account_by_id(user_booklist.user_id)))['pic_src'],
@@ -680,7 +680,7 @@ def get_user_moments(user_id, page=1, per_page=10):
 
         results = [x[0] for x in
                    sorted(results, key=lambda x: x[1], reverse=True)[(page - 1) * per_page:page * per_page]]
-        results = [dict(zip(['user', 'info'], x)) for x in results]
+        results = [dict(zip(['user'))]
         logging.debug(results)
         return json.dumps(results, ensure_ascii=False)
 
