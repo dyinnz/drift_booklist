@@ -1,15 +1,42 @@
 .card_media{
     width: 200px;
-    height: 240px;
+    height: 200px;
     margin: 10px;
     float: left;
 }
+.card_right{
+    position: relative;
+    float: left;
+    top:-6px;
+    left: 5px;
+    margin:5px;
+}
 
+.card_rhs {
+// width: 350px;
+    margin: 10px;
+//    height: 300px;
+    float: left;
+}
+
+.card_media_{
+    width: 30px;
+    //height: 30px;
+    margin: 10px;
+    float: left;
+}
 .clearfix::after {
    content: " ";
    display: block;
    height: 0;
    clear: both;
+}
+
+.clearfix2::after {
+    content: " ";
+    display: block;
+    height: 0;
+    clear: both;
 }
 
 #home{
@@ -18,8 +45,18 @@
 }
 
 .show_information{
-    height:270px;
+    height:220px;
 }
-.grid_wrapper{
-    overflow: auto;
+
+.label1{
+    position:relative;
+    left:23px;
+}
+.label2{
+    position:relative;
+    left:40px;
+}
+.tags {
+    display: flex;
+    flex-wrap: wrap;
 }
