@@ -277,20 +277,20 @@ DROP TABLE IF EXISTS `shixun`.`user_booklist_opinion` ;
 
 CREATE TABLE IF NOT EXISTS `shixun`.`user_booklist_opinion` (
   `user_id` INT(10) UNSIGNED NOT NULL,
-  `book_id` INT(10) UNSIGNED NOT NULL,
+  `booklist_id` INT(10) UNSIGNED NOT NULL,
   `vote` ENUM('up', 'down', 'netural') NOT NULL DEFAULT 'netural',
   `is_follow` TINYINT(4) NOT NULL DEFAULT '0',
   `last_vote_time` DATETIME NULL DEFAULT NULL,
   `last_follow_time` DATETIME NULL DEFAULT NULL,
-  PRIMARY KEY (`user_id`, `book_id`),
-  INDEX `fk_user_book_2_idx` (`book_id` ASC),
+  PRIMARY KEY (`user_id`, `booklist_id`),
+  INDEX `fk_user_booklist_2_idx` (`booklist_id` ASC),
   CONSTRAINT `fk_user_booklist_op_1`
     FOREIGN KEY (`user_id`)
     REFERENCES `shixun`.`user` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE,
   CONSTRAINT `fk_user_booklist_op_2`
-    FOREIGN KEY (`book_id`)
+    FOREIGN KEY (`booklist_id`)
     REFERENCES `shixun`.`booklist` (`id`)
     ON DELETE CASCADE
     ON UPDATE CASCADE)
@@ -379,15 +379,3 @@ DEFAULT CHARACTER SET = utf8;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
-
-ALTER TABLE `shixun`.`user_booklist_opinion`
-DROP FOREIGN KEY `fk_user_booklist_op_2`;
-ALTER TABLE `shixun`.`user_booklist_opinion`
-CHANGE COLUMN `book_id` `booklist_id` INT(10) UNSIGNED NOT NULL ;
-ALTER TABLE `shixun`.`user_booklist_opinion`
-ADD CONSTRAINT `fk_user_booklist_op_2`
-  FOREIGN KEY (`booklist_id`)
-  REFERENCES `shixun`.`booklist` (`id`)
-  ON DELETE CASCADE
-  ON UPDATE CASCADE;
-
