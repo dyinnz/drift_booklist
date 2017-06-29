@@ -177,6 +177,7 @@ CREATE TABLE `friend` (
 
 LOCK TABLES `friend` WRITE;
 /*!40000 ALTER TABLE `friend` DISABLE KEYS */;
+INSERT INTO `friend` VALUES (1,1),(3,1),(5,1),(1,2),(1,3),(1,5),(1,6),(2,6),(3,6);
 /*!40000 ALTER TABLE `friend` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -222,7 +223,7 @@ CREATE TABLE `user` (
   `pic_src` varchar(128) NOT NULL DEFAULT 'resource/pic/default.png',
   PRIMARY KEY (`id`),
   UNIQUE KEY `account_UNIQUE` (`account`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -231,7 +232,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'xlm','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','/static/react/small_avatar.jpg'),(2,'xlm2','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','/static/react/small_avatar.jpg');
+INSERT INTO `user` VALUES (1,'xlm','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','/static/react/small_avatar.jpg'),(2,'xlm2','sictiy','xlm104600','2000-01-01','No Introduction yet.','male','/static/react/small_avatar.jpg'),(3,'xlm1','ssss','11111','2000-01-01','No Introduction yet.','male','resource/pic/default.png'),(5,'xlm3','ssss','11111','2000-01-01','No Introduction yet.','male','resource/pic/default.png'),(6,'xlm4','ssss','11111','2000-01-01','No Introduction yet.','male','resource/pic/default.png'),(7,'xlm5','ssss','11111','2000-01-01','No Introduction yet.','male','resource/pic/default.png');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -440,6 +441,7 @@ CREATE TABLE `user_interest` (
 
 LOCK TABLES `user_interest` WRITE;
 /*!40000 ALTER TABLE `user_interest` DISABLE KEYS */;
+INSERT INTO `user_interest` VALUES (1,'tag1'),(1,'tag2');
 /*!40000 ALTER TABLE `user_interest` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -452,4 +454,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-29 15:07:23
+-- Dump completed on 2017-06-29 15:38:36

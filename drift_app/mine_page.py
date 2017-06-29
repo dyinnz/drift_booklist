@@ -108,7 +108,8 @@ def mine():
 def get_mydata():
     jsondata = {
         'my_booklists': get_my_booklists(),
-        'followed_booklists': get_booklists_followed()
+        'followed_booklists': get_booklists_followed(),
+        'favorite_books_id':json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id))[0]
     }
 
     return jsonify(jsondata)
