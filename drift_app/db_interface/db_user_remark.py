@@ -680,7 +680,7 @@ def get_user_moments(user_id, page=1, per_page=10):
 
         results = [x[0] for x in
                    sorted(results, key=lambda x: x[1], reverse=True)[(page - 1) * per_page:page * per_page]]
-        results = [dict(zip(['user'))]
+        results = [dict(zip(['user', 'info'], x)) for x in results]
         logging.debug(results)
         return json.dumps(results, ensure_ascii=False)
 
