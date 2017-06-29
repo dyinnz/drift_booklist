@@ -1,0 +1,14 @@
+import logging
+import flask
+import flask_login
+from flask_login import current_user
+from flask import Blueprint, current_app, jsonify, request
+from drift_app.db_interface import db_user
+
+book_bp = Blueprint('book_bp', __name__)
+
+
+@book_bp.route('/book')
+@flask_login.login_required
+def book():
+    return current_app.send_static_file('react/book.html')

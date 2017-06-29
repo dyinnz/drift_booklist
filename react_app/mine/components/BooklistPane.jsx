@@ -54,21 +54,10 @@ class ListItems extends React.Component {
 class MyList extends React.Component {
     constructor(props) {
         super(props);
-        let items = [];
-        if ('items' in props) {
-            items = props.items
-        }
         this.state = {
             newList: false ,
-            items: items,
             result: "",
         };
-    }
-
-    componentWillReceiveProps(next) {
-        this.setState(update(this.state, {
-            items: {$set: next.items}
-        }))
     }
 
     newListOpen() {
@@ -88,7 +77,7 @@ class MyList extends React.Component {
         if ('' === new_name) {
             this.setState(update(this.state, {
                 result: {$set: "Empty name"}
-            }))
+            }));
             return
         }
 
@@ -108,9 +97,9 @@ class MyList extends React.Component {
                 this.setState(state)
 
             } else {
-                state = update(state, {
-                    items: {$set: data.my_booklists}
-                });
+                this.props.updateBookList({
+                    myListItems: data.my_booklists
+                })
                 this.props.handleTouch(data.new_id)
                 this.setState(state)
                 this.newListClose();
@@ -170,7 +159,7 @@ class MyList extends React.Component {
                         {this.renderDialog()}
                     </div>
                 </div>
-                <ListItems items={this.state.items}
+                <ListItems items={this.props.items}
                            handleTouch={this.props.handleTouch}
                 />
             </List>
@@ -202,7 +191,7 @@ class BooklistPane extends React.Component {
                 <MyList listName="MY BOOKLIST"
                         items={this.props.myListItems}
                         handleTouch={this.props.handleTouch}
-                        newBooklist={this.props.newBooklist}
+                        updateBooklist={this.props.updateBooklist}
                 />
                 <Divider/>
                 <FavoriteList
