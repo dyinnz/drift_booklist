@@ -8,6 +8,21 @@ import FlatButton from 'material-ui/FlatButton'
 import Dialog from 'material-ui/Dialog'
 import TextField from 'material-ui/TextField'
 
+import update from 'immutability-helper'
+import $ from 'jquery'
+
+function fetchPostJson(url, data) {
+    console.log("fetchPostJson: ", data);
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+    })
+}
+
 class ListItems extends React.Component {
     renderItem(item) {
         return <ListItem
@@ -25,6 +40,7 @@ class ListItems extends React.Component {
     }
 
     render() {
+        console.log(this.props.items)
         return (
             <div>
                 {this.props.items.map((item) => {
@@ -37,23 +53,73 @@ class ListItems extends React.Component {
 
 class MyList extends React.Component {
     constructor(props) {
-        super(props)
-        this.state = { newList: false };
+        super(props);
+        let items = [];
+        if ('items' in props) {
+            items = props.items
+        }
+        this.state = {
+            newList: false ,
+            items: items,
+            result: "",
+        };
+    }
+
+    componentWillReceiveProps(next) {
+        this.setState(update(this.state, {
+            items: {$set: next.items}
+        }))
     }
 
     newListOpen() {
-        this.setState({newList: true})
+        this.setState(update(this.state, {
+            newList: {$set: true}
+        }))
     }
 
     newListClose() {
-        this.setState({newList: false})
+        this.setState(update(this.state, {
+            newList: {$set: false}
+        }))
     }
 
     newBooklist() {
-        this.newListClose();
+        let new_name = $("#new_name").val();
+        if ('' === new_name) {
+            this.setState(update(this.state, {
+                result: {$set: "Empty name"}
+            }))
+            return
+        }
+
+        fetchPostJson('/new_booklist', {
+            booklist_name: new_name,
+            booklist_introduction: $("#new_intro").val(),
+            booklist_cover: '/static/react/default.png'
+        }).then(
+            resp => resp.json()
+        ).then((data) => {
+            let state = this.state;
+
+            if (!data.OK) {
+                state = update(state, {
+                    result: {$set: data.result}
+                })
+                this.setState(state)
+
+            } else {
+                state = update(state, {
+                    items: {$set: data.my_booklists}
+                });
+                this.props.handleTouch(data.new_id)
+                this.setState(state)
+                this.newListClose();
+            }
+        });
+
     }
 
-    render() {
+    renderDialog() {
         const actions = [
             <FlatButton label="Create"
                         primary={true}
@@ -66,6 +132,32 @@ class MyList extends React.Component {
         ];
 
         return (
+            <Dialog title="CREATE NEW BOOKLIST"
+                    actions={actions}
+                    open={this.state.newList}
+                    onRequestClose={() => this.newListClose()}
+            >
+                <TextField
+                    hintText="name here..."
+                    id="new_name"
+                />
+                <br/>
+                <TextField
+                    hintText="introduction"
+                    id="new_intro"
+                    fullWidth={true}
+                    rows={2}
+                    rowsMax={5}
+                    multiLine={true}
+                />
+                <br/>
+                <p>{this.state.result}</p>
+            </Dialog>
+        )
+    }
+
+    render() {
+        return (
             <List>
                 <div className="flex_class">
                     <Subheader>{this.props.listName}</Subheader>
@@ -75,19 +167,10 @@ class MyList extends React.Component {
                             primary={true}
                             onClick={() => this.newListOpen()}
                         />
-                        <Dialog title="Enter the name of new booklist"
-                                actions={actions}
-                                open={this.state.newList}
-                                onRequestClose={() => this.newListClose()}
-                        >
-                            <TextField
-                                hintText = {"name here..."}
-                                fullWidth={true}
-                            />
-                        </Dialog>
+                        {this.renderDialog()}
                     </div>
                 </div>
-                <ListItems items={this.props.items}
+                <ListItems items={this.state.items}
                            handleTouch={this.props.handleTouch}
                 />
             </List>
@@ -124,7 +207,7 @@ class BooklistPane extends React.Component {
                 <Divider/>
                 <FavoriteList
                     listName="FAVORITE BOOKLIST"
-                    items={this.props.myListItems}
+                    items={this.props.favoriteListItems}
                     handleTouch={this.props.handleTouch}/>
             </Paper></div>
         )

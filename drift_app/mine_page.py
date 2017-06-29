@@ -105,17 +105,24 @@ def get_mydata():
 @mine_bp.route('/new_booklist',methods=['POST','GET'])
 def new_booklist():
     if request.method!='POST':
-        return 'need post request'
+        return jsonify({
+            "OK": False,
+            "result": "not POST request"
+        })
     data=request.get_json()
     user_id=flask_login.current_user.db_id
     new_booklist_id=db_book.add_booklist(user_id,data['booklist_name'],data['booklist_introduction'],data['booklist_cover'])
     if new_booklist_id ==None :
-        return None
-    jsondata=get_booklist_detail(new_booklist_id)
+        return jsonify({
+            "OK": False,
+            "result": "DB error in creating new booklist"
+        })
 
-    jsondata['my_booklist']=get_my_booklists()
-
-    return jsonify(jsondata)
+    return jsonify({
+        "OK": True,
+        "new_id": new_booklist_id,
+        "my_booklists": get_my_booklists()
+    })
 
 @mine_bp.route('/booklist_detail',methods=['POST','GET'])
 def booklistdetail():

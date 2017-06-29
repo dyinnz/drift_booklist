@@ -8,6 +8,8 @@ import TextField from "material-ui/TextField";
 import CircularProgress from "material-ui/CircularProgress";
 import Divider from 'material-ui/Divider';
 
+import update from 'immutability-helper'
+
 import {blue500} from "material-ui/styles/colors";
 
 
@@ -111,6 +113,13 @@ class CommentPane extends React.Component {
 
     onReply() {
         let commentBox = document.getElementById("comment_box");
+        if ('' === commentBox.value) {
+            this.setState(update(this.state, {
+                result: {$set: "Empty content!"}
+            }));
+            return
+        }
+
 
         fetchPostJson("/add_booklist_remark", {
             booklist_id: this.props.booklist_id,

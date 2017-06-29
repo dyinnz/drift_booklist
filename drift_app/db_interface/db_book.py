@@ -205,7 +205,7 @@ def add_booklist(user_id, booklist_name, introduction,cover):
     :return: If successs, return new booklist id, else return None.
     """
     try:
-        booklist = DB_booklist(id=DB_booklist.query.count(),user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
+        booklist = DB_booklist(user_id=user_id, name=booklist_name, introduction=introduction,cover=cover)
         db.session.add(booklist)
         db.session.commit()
         return booklist.id
