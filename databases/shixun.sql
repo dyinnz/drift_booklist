@@ -30,7 +30,7 @@ CREATE TABLE `book` (
   `ISBN` varchar(32) NOT NULL,
   `author` varchar(64) NOT NULL,
   `publisher` varchar(45) NOT NULL,
-  `introduction` varchar(256) NOT NULL,
+  `introduction` varchar(1024) NOT NULL,
   `cover` varchar(40) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
@@ -333,7 +333,7 @@ DROP TABLE IF EXISTS `user_booklist_opinion`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `user_booklist_opinion` (
-  `user_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `booklist_id` int(10) unsigned NOT NULL,
   `vote` enum('up','down','netural') NOT NULL DEFAULT 'netural',
   `is_follow` tinyint(4) NOT NULL DEFAULT '0',
