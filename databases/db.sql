@@ -379,3 +379,15 @@ DEFAULT CHARACTER SET = utf8;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+ALTER TABLE `shixun`.`user_booklist_opinion`
+DROP FOREIGN KEY `fk_user_booklist_op_2`;
+ALTER TABLE `shixun`.`user_booklist_opinion`
+CHANGE COLUMN `book_id` `booklist_id` INT(10) UNSIGNED NOT NULL ;
+ALTER TABLE `shixun`.`user_booklist_opinion`
+ADD CONSTRAINT `fk_user_booklist_op_2`
+  FOREIGN KEY (`booklist_id`)
+  REFERENCES `shixun`.`booklist` (`id`)
+  ON DELETE CASCADE
+  ON UPDATE CASCADE;
+
