@@ -75,7 +75,7 @@ def get_friend_detail():
     return jsonify(
          get_information_by_account(user_account))
 
-@friends_bp.route('/user_detail/<account>',methods=['POST','GET'])
+@friends_bp.route('/user/<account>',methods=['POST','GET'])
 def user_detail(account):
     if request.method!='POST':
         return current_app.send_static_file('react/friends.html')
