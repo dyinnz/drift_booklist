@@ -10,6 +10,23 @@ _booklist_book_table = db.Table(
     db.Column('book_id', db.Integer, db.ForeignKey('book.id'), primary_key=True)
 )
 
+_book_tag_table = db.Table(
+    'book_tag',
+    db.Column('book_id', db.Integer, db.ForeignKey('book.id'), primary_key=True),
+    db.Column('tag_name', db.String(16), db.ForeignKey('tags.name'), primary_key=True)
+)
+
+_booklist_tag_table = db.Table(
+    'booklist_tag',
+    db.Column('booklist_id', db.Integer, db.ForeignKey('booklist.id'), primary_key=True),
+    db.Column('tag_name', db.String(16), db.ForeignKey('tags.name'), primary_key=True)
+)
+
+# class DB_booklist_tag(db.Model):
+#     __tablename__ = 'booklist_tag'
+#     booklist_id = db.Column(db.Integer, db.ForeignKey("booklist.id"), primary_key=True)
+#     tag_name = db.Column(db.String(16), db.ForeignKey("tags.name"), primary_key=True)
+
 class DB_Book(db.Model):
     __tablename__ = 'book'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -19,15 +36,16 @@ class DB_Book(db.Model):
     publisher = db.Column(db.String(45))
     introduction = db.Column(db.String(256))
     cover = db.Column(db.String(40))
+    tags = db.relationship('DB_tags', secondary=_book_tag_table, backref=db.backref('books', lazy='dynamic'))
 
     def __repr__(self):
         return "Book:%s\nIntroduction:%s" % (self.name, self.introductionn)
 
 
-class DB_book_tag(db.Model):
-    __tablename__ = 'book_tag'
-    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), primary_key=True)
-    tag_name = db.Column(db.String(16), db.ForeignKey("tags.name"), primary_key=True)
+# class DB_book_tag(db.Model):
+#     __tablename__ = 'book_tag'
+#     book_id = db.Column(db.Integer, db.ForeignKey("book.id"), primary_key=True)
+#     tag_name = db.Column(db.String(16), db.ForeignKey("tags.name"), primary_key=True)
 
 
 class DB_booklist(db.Model):
@@ -38,15 +56,12 @@ class DB_booklist(db.Model):
     introduction = db.Column(db.String(256))
     cover = db.Column(db.String(40))
     books = db.relationship('DB_Book', secondary=_booklist_book_table, backref=db.backref('booklists', lazy='dynamic'))
+    tags = db.relationship('DB_tags', secondary=_booklist_tag_table, backref=db.backref('booklists', lazy='dynamic'))
 
     def __repr__(self):
         return 'Booklist %s created by user %s:%s' % (self.name, self.user_id, self.introduction)
 
 
-class DB_booklist_tag(db.Model):
-    __tablename__ = 'booklist_tag'
-    booklist_id = db.Column(db.Integer, db.ForeignKey("booklist.id"), primary_key=True)
-    tag_name = db.Column(db.String(16), db.ForeignKey("tags.name"), primary_key=True)
 
 
 # class DB_booklist_book(db.Model):
@@ -139,8 +154,9 @@ def get_book_tags(book_id):
     :return: If success, return all tags of the book in json format(all tags in a single list), else None.
     """
     try:
-        book_tags = DB_book_tag.query.filter_by(book_id=book_id).all()
-        tags = json.dumps([b_t.tag_name for b_t in book_tags])
+        # book_tags = DB_book_tag.query.filter_by(book_id=book_id).all()
+        book = DB_Book.query.filter_by(id=book_id).one()
+        return json.dumps([t.name for t in book.tags])
     except Exception as e:
         logging.error(book_id)
         logging.error(e)
@@ -156,8 +172,10 @@ def get_booklist_tag(booklist_id):
     :return: If success, return all tags of the booklist in json format(all tags in a single list), else None.
     """
     try:
-        booklist_tags = DB_booklist_tag.query.filter_by(booklist_id=booklist_id).all()
-        tags = json.dumps([b_t.tag_name for b_t in booklist_tags])
+        # booklist_tags = DB_booklist_tag.query.filter_by(booklist_id=booklist_id).all()
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one()
+        return json.dumps([t.name for t in booklist.tags])
+        # tags = json.dumps([b_t.tag_name for b_t in booklist_tags])
     except Exception as e:
         logging.error(booklist_id)
         logging.error(e)
@@ -258,10 +276,10 @@ def add_book_to_booklist(booklist_id, book_id):
     :return: If success, return True else False.
     """
     try:
-        booklist = DB_booklist.query.filter_by(id=booklist_id).one_or_404()
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one()
         if booklist is None:
             return False
-        booklist.books.append(DB_Book.query.filter_by(id=book_id).one_or_404())
+        booklist.books.append(DB_Book.query.filter_by(id=book_id).one())
         # booklist_book = DB_booklist_book(booklist_id=booklist_id, book_id=book_id)
         # db.session.add(booklist_book)
         db.session.commit()
@@ -388,9 +406,11 @@ def change_booklist_tags(booklist_id, tags):
     :return:
     """
     try:
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one_or_404()
         for tag in tags:
-            booklist_tag = DB_booklist_tag(booklist_id=booklist_id, tag_name=tag)
-            db.session.add(booklist_tag)
+            # booklist_tag = DB_booklist_tag(booklist_id=booklist_id, tag_name=tag)
+            booklist.tags.append(tag)
+            # db.session.add(booklist_tag)
         db.session.commit()
         return True
     except Exception as e:
