@@ -172,6 +172,7 @@ def bookdetail():
         remark['up_number'] = remark_vote_number['up']
         remark['down_number'] = remark_vote_number['down']
     jsondata['remarks'] = remarks
+    jsondata['tags'] = json.loads(db_book.get_book_tag(data['book_id']))
 
     return jsonify(jsondata)
 

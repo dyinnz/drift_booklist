@@ -6,7 +6,6 @@ import Subheader from "material-ui/Subheader";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import FlatButton from "material-ui/FlatButton";
 import Chip from "material-ui/Chip";
-import FontIcon from 'material-ui/FontIcon';
 
 
 function fetchPostJson(url, data) {
@@ -20,8 +19,25 @@ function fetchPostJson(url, data) {
     })
 }
 
-class TopContainer extends React.Component {
+class RelationButton extends React.Component {
     render() {
+        if (this.props.relationship == 'self')
+            return (<div></div>)
+        else {
+            return (
+                <div style={{paddingTop: "6px", paddingLeft: "16px"}}>
+                    <FlatButton
+                        secondary={true}
+                        onTouchTap={event => this.props.click(this.props.account)}
+                    >{this.props.relationship}</FlatButton>
+                </div>
+            )
+        }
+    }
+}
+
+class TopContainer extends React.Component {
+    renderfunction() {
         if (typeof (this.props.detail) === "undefined") {
             return (<p>Not Found</p>)
         }
@@ -31,42 +47,95 @@ class TopContainer extends React.Component {
                     <CardMedia className="card_media">
                         <img src={this.props.detail.pic_src}/>
                     </CardMedia>
-
                     <div className="card_rhs">
-                        <CardTitle
-                            title={this.props.detail.name}
-                            subtitle={this.props.detail.account}
-                        />
-                        <label>{this.props.detail.birthday}</label>
-                        <br/>
-                        <label>{this.props.detail.introduction}</label>
-                        <CardActions>
-                            <FlatButton backgroundColor="#42cef4">Following:{this.props.detail.following_number}</FlatButton>
-                            <FlatButton backgroundColor="#42cef4">Followers: {this.props.detail.followers_number}</FlatButton>
+                        <div style={{display: "flex"}}>
+                            <CardTitle style={{padding: "5px", paddingLeft: "9px", display: "flex"}}
+                                       title={this.props.detail.name}
+                                       subtitleStyle={{paddingLeft: "5px", paddingTop: "13px"}}
+                                       subtitle={this.props.detail.account}
+                            />
+                            <RelationButton
+                                relationship={this.props.detail.relationship}
+                                click={this.props.clickr}
+                                account={this.props.detail.account}/>
+                        </div>
+                        <CardActions style={{paddingLeft: "5px"}}>
+                            <FlatButton
+                                primary={true}
+                                onTouchTap={event => this.props.click(this.props.detail.account, 'following')}
+                            >关注:{this.props.detail.following_number}</FlatButton>
+                            <FlatButton
+                                primary={true}
+                                onTouchTap={event => this.props.click(this.props.detail.account, 'followers')}
+                            >粉丝:{this.props.detail.followers_number}</FlatButton>
                         </CardActions>
+                        <label>生日:{new Date(this.props.detail.birthday).toISOString().substr(0, 10)}</label>
+                        <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                        <label>性别:{this.props.detail.gender}</label>
+                        <br/><br/>
                         <div className="tags">
-
                             {this.props.detail.tags.map((tag) => (
                                 <Chip>
                                     {tag}
                                 </Chip>
                             ))}
                         </div>
+                        <br/>
+                        <label>个人简介:{this.props.detail.introduction}</label>
+                    </div>
+                </div>
+            </Card>
+        )
+    }
+
+    render() {
+        return (
+            <div>{this.renderfunction()}</div>
+        )
+    }
+}
+
+class GridHeader extends React.Component {
+    render() {
+        if (this.props.type == 'following')
+            return (
+                <Subheader>关注：</Subheader>
+            )
+        else
+            return (
+                <Subheader>粉丝：</Subheader>
+            )
+    }
+}
+
+class FriendCard extends React.Component{
+    render(){
+        return(
+            <Card>
+                <div className="clearfix2">
+                    <CardMedia className="card_media_">
+                        <FloatingActionButton
+                            onTouchTap={event => this.props.click(this.props.friend.account)}
+                            style={{height: 0}}
+                        >
+                            <img src={this.props.friend.avatar}/>
+                        </FloatingActionButton>
+                    </CardMedia>
+                    <div className="card_right">
+                        <CardActions >
+                            <FlatButton
+                                label={this.props.friend.name}
+                                onTouchTap={event => this.props.click(this.props.friend.account)}
+                            />
+                        </CardActions>
+                        <label className="label1">关注:{this.props.friend.following_number}</label>
+                        <label className="label2">粉丝:{this.props.friend.followers_number}</label>
                     </div>
                 </div>
             </Card>
         )
     }
 }
-const style = {
-    bgstyle: {
-        //width: 130,
-        height: 0,
-    },
-    labelstyle: {
-        fontsize: 1,
-    }
-};
 
 class FriendsGrid extends React.Component {
     render() {
@@ -76,39 +145,21 @@ class FriendsGrid extends React.Component {
         console.log("friends grid: ", this.props.items)
         return (
             <div >
-                <Subheader>{this.props.type}:</Subheader><Paper>
-                <GridList cols={2} cellHeight={100}>
-                    {this.props.items.map((friend) => (
-                        <GridTile
-                            key={friend.account}
-                        >
-                            <Card>
-                                <div className="clearfix2">
-                                    <CardMedia className="card_media_">
-                                        <FloatingActionButton
-                                            onTouchTap={event => this.props.click(friend.account)}
-                                            style={style.bgstyle}
-                                        >
-                                            <img src={friend.avatar}/>
-                                        </FloatingActionButton>
-                                    </CardMedia>
-                                    <div className="card_right">
-                                        <CardActions >
-                                            <FlatButton
-                                                label={friend.name}
-                                                labelStyle={style.labelstyle}
-                                                onTouchTap={event => this.props.click(friend.account)}
-                                            />
-                                        </CardActions>
-                                        <label className="label1">following:{friend.following_number}</label>
-                                        <label className="label2">followers:{friend.followers_number}</label>
-                                    </div>
-                                </div>
-                            </Card>
-                        </GridTile>
-                    ))}
-                </GridList>
-            </Paper>
+                <GridHeader type={this.props.type}/>
+                <Paper>
+                    <GridList cols={2} cellHeight={100}>
+                        {this.props.items.map((friend) => (
+                            <GridTile
+                                key={friend.account}
+                            >
+                                <FriendCard
+                                    click={this.props.click}
+                                    friend={friend}
+                                />
+                            </GridTile>
+                        ))}
+                    </GridList>
+                </Paper>
 
             </div>
         )
@@ -120,11 +171,31 @@ class Friends extends React.Component {
         super(props);
         this.state = {
             userInfo: {
-                tags:[]
+                tags: [],
+                birthday: '1900-1-1',
+                name: "",
+                introduction: "",
+                gender: "",
+                pic_src: "",
+                relationship: "self",
             },
             friends: [],
             type: 'following'
         };
+    }
+
+    followe_user(account) {
+        var data = {
+            account: account
+        }
+        fetchPostJson("/follow_user", data)
+            .then(resp => resp.json())
+            .then((data) => {
+                console.log("relationship: ", data)
+                if(data.OK){
+                    this.touchUserDetail(this.state.userInfo.account)
+                }
+            })
     }
 
     touchFriendsList(account, type) {
@@ -156,7 +227,11 @@ class Friends extends React.Component {
         fetchPostJson("/get_friend_detail", data)
             .then(resp => resp.json())
             .then((data) => {
-                console.log("friend_list: ", data)
+                console.log("user_info: ", data)
+                var type=this.state.type
+                if (this.state.userInfo.account!=data.account)
+                    type='following'
+                this.touchFriendsList(data.account,type)
                 this.setState({
                     friends: this.state.friends,
                     userInfo: data,
@@ -176,7 +251,7 @@ class Friends extends React.Component {
                     friends: this.state.friends,
                     type: 'following'
                 })
-                this.touchFriendsList(data.account, this.state.type)
+                this.touchFriendsList(this.state.userInfo.account, this.state.type)
             })
     }
 
@@ -187,8 +262,16 @@ class Friends extends React.Component {
     render() {
         return (
             <div id="home">
-                <TopContainer detail={this.state.userInfo}/>
-                <FriendsGrid type={this.state.type} items={this.state.friends} click={this.touchUserDetail.bind(this)}/>
+                <TopContainer
+                    detail={this.state.userInfo}
+                    click={this.touchFriendsList.bind(this)}
+                    clickr={this.followe_user.bind(this)}
+                />
+                <FriendsGrid
+                    type={this.state.type}
+                    items={this.state.friends}
+                    click={this.touchUserDetail.bind(this)}
+                />
             </div>
         )
     }

@@ -19,3 +19,12 @@ account
 name
 avatar
 followers/following}
+
+/follow_user
+{
+account
+}
+{
+'OK'
+relationship : following/follower/stranger/friend/self
+}
