@@ -90,13 +90,17 @@ class FM_Recommender():
             if is_converg:
                 print('Iter %d:Converge! DeltaE: %f' % (it, np.sum(mask * delta_E)))
 
-        self.V = self.U.dot(self.M.T) + self.bu.reshape(-1, 1) + self.overall_mean + self.bm
+        # self.V = self.U.dot(self.M.T) + self.bu.reshape(-1, 1) + self.overall_mean + self.bm
+        self.V = (self.U.dot(self.M.T) + self.bu.reshape(-1, 1) + self.overall_mean + self.bm) * np.bitwise_not(mask) + X
         return self
 
-    def topK(self, id_user, k):
+    def topK(self, id_user, k, exclude=None):
         if not hasattr(self, 'V'):
             print("The model hasn't been trained yet.")
             return
+        rating = self.V
+        if exclude is not None:
+            rating = np.delete(rating, exclude)
         return self.V[id_user].argsort()[:-(k + 1):-1]
 
 
