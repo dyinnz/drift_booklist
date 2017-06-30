@@ -458,9 +458,8 @@ def user_vote_book(book_id, user_id, attitude):
     :return: If success, return True, else False.
     """
     try:
-        user_vote = DB_user_book_opinion.query.filter_by(book_id=book_id, user_id=user_id)
+        user_vote = DB_user_book_opinion.query.filter_by(book_id=book_id, user_id=user_id).first()
         if user_vote is not None:
-            user_vote = user_vote.first()
             user_vote.vote = attitude
             user_vote.last_vote_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
@@ -488,9 +487,8 @@ def user_vote_booklist(booklist_id, user_id, attitude):
     :return: If success, return True, else False.
     """
     try:
-        user_vote = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, user_id=user_id)
+        user_vote = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, user_id=user_id).first()
         if user_vote is not None:
-            user_vote = user_vote.first()
             user_vote.vote = attitude
             user_vote.last_vote_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
