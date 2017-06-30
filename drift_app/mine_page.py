@@ -294,7 +294,7 @@ def vote_booklist():
     else:
         true = db_user_remark.user_vote_booklist(data['booklist_id'], user_id, data['attitude'])
 
-    vote=json.loads(db_user_remark.get_book_vote_num(data['booklist_id']))
+    vote=json.loads(db_user_remark.get_booklist_vote(data['booklist_id']))
     jsondata = {
         'OK': true,
         'up_number':vote['up'],
