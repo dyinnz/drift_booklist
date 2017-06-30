@@ -89,7 +89,7 @@ class RecommandList extends React.Component {
     }
 
     fetchData() {
-        fetch('/get_mydata', {credentials: 'same-origin'})
+        fetch('/recommand/fetch', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
