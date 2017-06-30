@@ -1,10 +1,31 @@
-from flask import Blueprint, current_app
+from flask import Blueprint, current_app,request ,jsonify
 import flask_login
 import logging
+import json
+import flask
+from drift_app.db_interface import  db_book
+from drift_app.db_interface import db_user_remark
+from drift_app.db_interface import db_user
 
 recommend_bp = Blueprint('recommend_bp', __name__)
 
+def get_booklist_by_id(booklist_ids):
+    booklist_infos=[]
+    for booklist_id in booklist_ids:
+        booklist_info=json.loads(db_book.get_booklist_by_id(booklist_id))
+        booklist_info['up_number']=json.loads(db_user_remark.get_booklist_vote(booklist_id))['up']
+        booklist_info['remark_number']=db_user_remark.get_booklist_remark_num(booklist_id)
 
+        user_info=json.loads(db_user.get_user_infos(booklist_info['create_user']))
+        booklist_info['user_account']=booklist_info['create_user']
+        booklist_info['avatar']=user_info['pic_src']
+        booklist_info['user_name']=user_info['name']
+
+        del booklist_info['create_user']
+        del booklist_info['introduction']
+        booklist_infos.append(booklist_info)
+    return booklist_infos
+#-----------------------------------------------------------------------
 @recommend_bp.route('/index')
 @recommend_bp.route('/recommend')
 def recommend():
@@ -18,4 +39,28 @@ def recommend():
 
 @recommend_bp.route('/recommend/fetch')
 def recommend_fetch():
-    return 'TODO: add some json data'
+    booklist_ids = json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id))
+    if flask_login.current_user.is_anonymous:
+        """get booklist Ids"""
+    else:
+        """get booklist ids"""
+
+    return jsonify(get_booklist_by_id(booklist_ids))
+
+@recommend_bp.route('/recommend/get_tags')
+def get_tags():
+    if flask_login.current_user.is_anonymous:
+        return flask.redirect(flask.url_for('login_bp.login'))
+    else:
+        return db_user.get_user_interests(flask_login.current_user.db_id)
+
+@recommend_bp.route('/recommend/boolist_by_tag',methods=['POST','GET'])
+def booklist_by_tag():
+    if request.method!="POST" :
+        return jsonify("need post")
+
+    tag=request.get_json['tag']
+    """get booklist by tag"""
+    booklist_ids = json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id))
+
+    return jsonify(get_booklist_by_id(booklist_ids))

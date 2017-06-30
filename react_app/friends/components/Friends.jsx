@@ -239,6 +239,25 @@ class Friends extends React.Component {
                 })
             })
     }
+    Touchuildetail() {
+        fetch(window.location.href, {
+            credentials: 'same-origin',
+            method: 'POST',
+
+        }).then(
+            resp => resp.json()
+
+        ).then((data) => {
+            console.log("main data: ", data)
+            console.log("init state: ", this.state)
+            this.setState({
+                userInfo: data,
+                friends: this.state.friends,
+                type: 'following',
+            })
+            this.touchFriendsList(this.state.userInfo.account, this.state.type)
+        })
+    }
 
     getMydata() {
         fetch('/get_friend_detail', {credentials: 'same-origin'})
@@ -256,7 +275,12 @@ class Friends extends React.Component {
     }
 
     componentWillMount() {
-        this.getMydata()
+        let url = window.location.href;
+        if (url.substr(url.lastIndexOf('/')) === '/friends') {
+            this.getMydata()
+        } else {
+            this.Touchuildetail()
+        }
     }
 
     render() {

@@ -7,12 +7,15 @@
 假定 booklist 长这样：
 ```json
 {
-"list_name": "xxx's list",
-"creator": "creator",
-"brief": "aaa bbb ccc",
-"detail": "xxx yyy zzz",
-"star": 888,
-"comments": 999
+"booklist_name": "xxx's list",
+"booklist_cover"
+"up_number"
+"remark_number"
+"booklist_id"
+
+"user_account"
+"avatar"
+"user_name"
 }
 ```
 

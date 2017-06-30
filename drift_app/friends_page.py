@@ -44,6 +44,17 @@ def get_relationship(user_id):
     else:
         return '点击关注'
 
+def get_information_by_account(user_account):
+    user_information = json.loads(db_user.get_user_infos(user_account))
+    user_information['account'] = user_account
+    user_information['tags'] = json.loads(db_user.get_user_interests(db_user.get_id_by_account(user_account)))
+    user_information['following_number'] = len(
+        json.loads(db_user.get_following(db_user.get_id_by_account(user_account))))
+    user_information['followers_number'] = len(
+        json.loads(db_user.get_followers(db_user.get_id_by_account(user_account))))
+    user_information['relationship']=get_relationship(db_user.get_id_by_account(user_account))
+
+    return user_information
 
 # ---------------------------------------------------
 @friends_bp.route('/friends')
@@ -60,17 +71,17 @@ def get_friend_detail():
         user_account = data['account']
     else:
         user_account = flask_login.current_user.id
-    user_information = json.loads(db_user.get_user_infos(user_account))
-    user_information['account'] = user_account
-    user_information['tags'] = json.loads(db_user.get_user_interests(db_user.get_id_by_account(user_account)))
-    user_information['following_number'] = len(
-        json.loads(db_user.get_following(db_user.get_id_by_account(user_account))))
-    user_information['followers_number'] = len(
-        json.loads(db_user.get_followers(db_user.get_id_by_account(user_account))))
-    user_information['relationship']=get_relationship(db_user.get_id_by_account(user_account))
 
     return jsonify(
-         user_information)
+         get_information_by_account(user_account))
+
+@friends_bp.route('/user_detail/<account>',methods=['POST','GET'])
+def user_detail(account):
+    if request.method!='POST':
+        return current_app.send_static_file('react/friends.html')
+
+    return jsonify(get_information_by_account(account))
+
 
 
 @friends_bp.route('/get_friends_list', methods=['POST', 'GET'])
