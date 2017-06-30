@@ -135,7 +135,7 @@ class Mine extends React.Component {
         }
     }
 
-    fetchData() {
+    fetchMyData() {
         fetch('/get_mydata', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
@@ -146,12 +146,40 @@ class Mine extends React.Component {
                     favoriteListItems: data.followed_booklists,
                     currBooklist: this.state.currBooklist,
                 })
+
+                this.touchBooklist(data.favorite_books_id)
             })
+    }
+
+    fetchListData() {
+        fetch(window.location.href, {
+            credentials: 'same-origin',
+            method: 'POST',
+
+        }).then(
+            resp => resp.json()
+
+        ).then((data) => {
+            console.log("main data: ", data)
+            console.log("init state: ", this.state)
+            this.setState({
+                myListItems: data.my_booklists,
+                favoriteListItems: data.followed_booklists,
+                currBooklist: this.state.currBooklist,
+            })
+
+            this.touchBooklist(data.booklist_id)
+        })
     }
 
 
     componentWillMount() {
-        this.fetchData()
+        let url = window.location.href;
+        if (url.substr(url.lastIndexOf('/')) === '/mine') {
+            this.fetchMyData()
+        } else {
+            this.fetchListData()
+        }
     }
 
     updateBookList(lists) {

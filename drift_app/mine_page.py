@@ -117,6 +117,18 @@ def get_mydata():
     return jsonify(jsondata)
 
 
+@mine_bp.route('/booklist/<booklist_id>', methods=['GET','POST'])
+def get_booklist(booklist_id):
+    if 'GET' == request.method:
+        return flask.current_app.send_static_file('react/mine.html')
+    else:
+        return jsonify({
+            'my_booklists': get_my_booklists(),
+            'followed_booklists': get_booklists_followed(),
+            'booklist_id': booklist_id,
+        })
+
+
 @mine_bp.route('/new_booklist', methods=['POST', 'GET'])
 def new_booklist():
     if request.method != 'POST':
