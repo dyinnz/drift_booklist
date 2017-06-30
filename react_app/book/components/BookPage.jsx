@@ -207,6 +207,22 @@ class BookComment extends React.Component {
 }
 
 class BookDetails extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            upNumber: 0,
+            downNumber: 0,
+            followNumber: 0,
+        }
+    }
+
+    componentWillReceiveProps(next) {
+        this.setState(update(this.state, {
+            upNumber: {$set: next.details.up_number},
+            downNumber: {$set: next.details.down_number},
+            followNumber: {$set: next.details.follower_number},
+        }))
+    }
 
     handleUpDown(attitude) {
         fetchPostJson('/vote_book', {
@@ -215,11 +231,15 @@ class BookDetails extends React.Component {
 
         }).then(
             resp => resp.json()
-
-        ).then( (data) => {
-
-            console.log(data)
-        } )
+        ).then((data) => {
+            console.log(data);
+            if (data.OK) {
+                this.setState(update(this.state, {
+                    upNumber: {$set: data.up_number},
+                    downNumber: {$set: data.down_number},
+                }))
+            }
+        })
     }
 
     handleStar() {
@@ -227,9 +247,13 @@ class BookDetails extends React.Component {
             book_id: this.props.details.book_id
         }).then(
             resp => resp.json()
-
-        ).then( (data) => {
-            console.log(data)
+        ).then((data) => {
+            console.log(data);
+            if (data.OK) {
+                this.setState(update(this.state, {
+                    followNumber: {$set: data.follow_number},
+                }))
+            }
         })
     }
 
@@ -278,7 +302,7 @@ class BookDetails extends React.Component {
                                 <Chip>tag1</Chip>
                             </div>
 
-                            <Badge badgeContent={details.up_number}
+                            <Badge badgeContent={this.state.upNumber}
                                    badgeStyle={badgeStyle}
                             > <IconButton tooltip="Up"
                                           onClick={() => this.handleUpDown('up')}
@@ -286,7 +310,7 @@ class BookDetails extends React.Component {
                                 <ActionThumbUp/>
                             </IconButton> </Badge>
 
-                            <Badge badgeContent={details.down_number}
+                            <Badge badgeContent={this.state.downNumber}
                                    badgeStyle={badgeStyle}
                             > <IconButton tooltip="Down"
                                           onClick={() => this.handleUpDown('down')}
@@ -294,7 +318,7 @@ class BookDetails extends React.Component {
                                 <ActionThumbDown/>
                             </IconButton> </Badge>
 
-                            <Badge badgeContent={details.follower_number}
+                            <Badge badgeContent={this.state.followNumber}
                                    badgeStyle={badgeStyle}
                             > <IconButton tooltip="Star"
                                           onClick={() => this.handleStar()}
