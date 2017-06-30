@@ -4,6 +4,9 @@ import logging
 import flask
 import flask_login
 from flask import Blueprint, current_app, jsonify, request
+from drift_app.mine_page import get_booklists_by_ids
+import drift_app.db_interface.db_user_remark as db_user_remark
+import drift_app.db_interface.db_book as db_book
 
 from drift_app.db_interface import db_user
 
@@ -114,3 +117,20 @@ def follow_user():
     return jsonify({
         'OK': true,
     })
+
+@friends_bp.route('/get_user_booklist',methods=['POST','GET'])
+def get_user_booklist():
+    if request.method!='POST':
+        return jsonify('need post')
+
+    data=request.get_json()
+    logging.info(data)
+    user_id=db_user.get_id_by_account(data['account'])
+    booklist_created_ids=json.loads(db_book.get_user_created_booklist(user_id))
+    booklist_followed_ids=json.loads(db_user_remark.get_booklist_user_followed(user_id))
+
+    jsondata={
+        'booklist_created':get_booklists_by_ids(booklist_created_ids),
+        'booklist_followed':get_booklists_by_ids(booklist_followed_ids)
+    }
+    return jsonify(jsondata)
