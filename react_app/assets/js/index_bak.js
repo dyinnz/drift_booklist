@@ -1,6 +1,7 @@
 /**
  * Created by lpq_user on 17-6-23.
  */
+/*
 (function ($) {
     'use strict';
 
@@ -15,16 +16,16 @@
         });
 
         /*
-        $(document).ready(function () {
-            $('#register_button').click(function () {
-                $('#input_username').hide();
-            });
-        });*/
+         $(document).ready(function () {
+         $('#register_button').click(function () {
+         $('#input_username').hide();
+         });
+         });*/
 
         /*
          var getWindowHeight = $(window).height(),
          myappLoginBg    = $('.myapp-login-bg');
          myappLoginBg.css('min-height',getWindowHeight + 'px');
-         */
+
     });
-})(jQuery);
+})(jQuery);*/
