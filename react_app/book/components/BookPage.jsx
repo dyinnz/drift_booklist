@@ -157,12 +157,12 @@ class BookComment extends React.Component {
         return (
             <div>
                 <div className="flex">
-                <Subheader> COMMENTS </Subheader>
-                <FlatButton
-                    label="NEW"
-                    primary={true}
-                    onClick={() => document.getElementById("comment_box").focus()}
-                />
+                    <Subheader> COMMENTS </Subheader>
+                    <FlatButton
+                        label="NEW"
+                        primary={true}
+                        onClick={() => document.getElementById("comment_box").focus()}
+                    />
                 </div>
             </div>
         )
@@ -207,6 +207,32 @@ class BookComment extends React.Component {
 }
 
 class BookDetails extends React.Component {
+
+    handleUpDown(attitude) {
+        fetchPostJson('/vote_book', {
+            book_id: this.props.details.book_id,
+            attitude: attitude,
+
+        }).then(
+            resp => resp.json()
+
+        ).then( (data) => {
+
+            console.log(data)
+        } )
+    }
+
+    handleStar() {
+        fetchPostJson('/follow_book', {
+            book_id: this.props.details.book_id
+        }).then(
+            resp => resp.json()
+
+        ).then( (data) => {
+            console.log(data)
+        })
+    }
+
     render() {
         const styleBookCover = {
             width: 300,
@@ -215,6 +241,11 @@ class BookDetails extends React.Component {
 
         const styleTagWrapper = {
             marginLeft: 20,
+        };
+
+        const badgeStyle = {
+            top: 35,
+            right: 10,
         };
 
         let details = this.props.details;
@@ -243,21 +274,33 @@ class BookDetails extends React.Component {
 
                             <CardText>{details.introduction}</CardText>
 
-                            <Badge badgeContent={details.up_number}> <IconButton tooltip="Up">
-                                <ActionThumbUp/>
-                            </IconButton> </Badge>
-
-                            <Badge badgeContent={details.down_number}> <IconButton tooltip="Down">
-                                <ActionThumbDown/>
-                            </IconButton> </Badge>
-
-                            <Badge badgeContent={details.follower_number}> <IconButton tooltip="Star">
-                                <ActionStars/>
-                            </IconButton></Badge>
-
                             <div style={styleTagWrapper}>
                                 <Chip>tag1</Chip>
                             </div>
+
+                            <Badge badgeContent={details.up_number}
+                                   badgeStyle={badgeStyle}
+                            > <IconButton tooltip="Up"
+                                          onClick={() => this.handleUpDown('up')}
+                            >
+                                <ActionThumbUp/>
+                            </IconButton> </Badge>
+
+                            <Badge badgeContent={details.down_number}
+                                   badgeStyle={badgeStyle}
+                            > <IconButton tooltip="Down"
+                                          onClick={() => this.handleUpDown('down')}
+                            >
+                                <ActionThumbDown/>
+                            </IconButton> </Badge>
+
+                            <Badge badgeContent={details.follower_number}
+                                   badgeStyle={badgeStyle}
+                            > <IconButton tooltip="Star"
+                                          onClick={() => this.handleStar()}
+                            >
+                                <ActionStars/>
+                            </IconButton></Badge>
                         </div>
                     </div>
                 </Card>
@@ -286,7 +329,6 @@ class BookPage extends React.Component {
 
         }).then(
             resp => resp.json()
-
         ).then((data) => {
             console.log(data);
             this.setState(update(this.state, {

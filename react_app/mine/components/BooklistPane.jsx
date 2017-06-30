@@ -97,7 +97,8 @@ class MyList extends React.Component {
                 this.setState(state)
 
             } else {
-                this.props.updateBookList({
+                console.log(this.props)
+                this.props.updateBooklist({
                     myListItems: data.my_booklists
                 })
                 this.props.handleTouch(data.new_id)

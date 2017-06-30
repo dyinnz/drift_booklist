@@ -39,7 +39,42 @@ function fetchPostJson(url, data) {
 
 
 class ShowContainer extends React.Component {
+    constructor(props) {
+        super(props)
+    }
+
+    handleUpDown(attitude) {
+        fetchPostJson('/vote_booklist', {
+            booklist_id: this.props.details.booklist_id,
+            attitude: attitude,
+
+        }).then(
+            resp => resp.json()
+
+        ).then( (data) => {
+
+            console.log(data)
+        } )
+    }
+
+    handleStar() {
+        fetchPostJson('/follow_booklist', {
+
+            booklist_id: this.props.details.booklist_id
+        }).then(
+            resp => resp.json()
+
+        ).then( (data) => {
+            console.log(data)
+        })
+    }
+
     render() {
+        const badgeStyle = {
+            top: 35,
+            right: 10,
+        };
+
         if (!("booklist_name" in this.props.details)) {
             return (<p>Empty Content!</p>)
         }
@@ -60,23 +95,37 @@ class ShowContainer extends React.Component {
 
                         <CardText>{this.props.details.introduction}</CardText>
 
-                        <Badge badgeContent={this.props.details.up_number}> <IconButton tooltip="Up">
-                            <ActionThumbUp/>
-                        </IconButton> </Badge>
-
-                        <Badge badgeContent={this.props.details.down_number}> <IconButton tooltip="Down">
-                            <ActionThumbDown/>
-                        </IconButton> </Badge>
-
-                        <Badge badgeContent={this.props.details.follower_number}> <IconButton tooltip="Star">
-                            <ActionStars/>
-                        </IconButton></Badge>
-
                         <div className="tags_wrapper">
                             {this.props.details.tags.map((tag) => {
                                 return <Chip key={tag}>{tag}</Chip>
                             })}
                         </div>
+
+                        <Badge badgeContent={this.props.details.up_number}
+                               badgeStyle={badgeStyle}
+                        > <IconButton tooltip="Up"
+                                      onClick={() => this.handleUpDown('up')}
+                        >
+                            <ActionThumbUp/>
+                        </IconButton>
+                        </Badge>
+
+                        <Badge badgeContent={this.props.details.down_number}
+                               badgeStyle={badgeStyle}
+                        > <IconButton tooltip="Down"
+                                      onClick={() => this.handleUpDown('down')}
+                        >
+                            <ActionThumbDown/>
+                        </IconButton> </Badge>
+
+                        <Badge badgeContent={this.props.details.follower_number}
+                               badgeStyle={badgeStyle}
+                        > <IconButton tooltip="Star"
+                                      onClick={() => this.handleStar()}
+                        >
+                            <ActionStars/>
+                        </IconButton></Badge>
+
                     </div>
                 </div>
             </Card>
@@ -93,6 +142,8 @@ class BookGrid extends React.Component {
             alignItems: "center",
         };
 
+        const prefix = 'http://' + window.location.host + '/book/'
+
         if ("undefined" === typeof(this.props.items)) {
             return <p>No Content</p>
         }
@@ -102,11 +153,12 @@ class BookGrid extends React.Component {
                 <Subheader> BOOKS </Subheader>
                 <GridList cols={4} className="grid_wrapper">
                     {this.props.items.map((book) => (
-                        <GridTile
-                            key={book.book_id}
-                            title={book.book_name}
+                        <GridTile key={book.book_id}
+                                  title={book.book_name}
                         >
-                            <img src={book.book_cover}/>
+                            <a href={prefix + book.book_id}>
+                                <img src={book.book_cover}/>
+                            </a>
                         </GridTile>
                     ))}
                     <div style={newBookStyle}>
@@ -158,7 +210,6 @@ class Mine extends React.Component {
 
         }).then(
             resp => resp.json()
-
         ).then((data) => {
             console.log("main data: ", data)
             console.log("init state: ", this.state)
@@ -185,25 +236,30 @@ class Mine extends React.Component {
     updateBookList(lists) {
         if ('myListItems' in lists) {
             this.setState(update(this.state, {
-                myListItems: lists.myListItems
+                myListItems: {$set: lists.myListItems}
             }))
 
         }
         if ('favoriteListItems' in lists) {
             this.setState(update(this.state, {
-                favoriteListItems: lists.favoriteListItems
+                favoriteListItems: {$set: lists.favoriteListItems}
             }))
         }
     }
 
     renderLeftPane() {
-        return (
-            <BooklistPane myListItems={this.state.myListItems}
-                          favoriteListItems={this.state.favoriteListItems}
-                          handleTouch={(i) => this.touchBooklist(i)}
-                          updateBooklist={this.updateBookList.bind(this)}
-            />
-        )
+        let url = window.location.href;
+        if (url.substr(url.lastIndexOf('/')) === '/mine') {
+            return (
+                <BooklistPane myListItems={this.state.myListItems}
+                              favoriteListItems={this.state.favoriteListItems}
+                              handleTouch={(i) => this.touchBooklist(i)}
+                              updateBooklist={this.updateBookList.bind(this)}
+                />
+            )
+        } else {
+            return (<div></div>)
+        }
     }
 
     touchBooklist(currListID) {

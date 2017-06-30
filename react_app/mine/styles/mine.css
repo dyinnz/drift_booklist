@@ -62,6 +62,8 @@
 .tags_wrapper {
     display: flex;
     flexWrap: wrap;
+    padding-top:10px;
+    padding-left:10px;
 }
 
 .no_comment {
