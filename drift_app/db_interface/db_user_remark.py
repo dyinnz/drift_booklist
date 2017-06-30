@@ -20,7 +20,7 @@ class DB_user_book_remark(db.Model):
         timestamp = str(self.remark_time)
         book_name = get_book_name(self.book_id)
         content = '评论了书 %s : %s' % (book_name, self.remark)
-        href = ''
+        href = 'book/%s' % self.book_id
         return dict({
             'avatar': avatar,
             'account': account,
@@ -45,7 +45,7 @@ class DB_user_book_opinion(db.Model):
         timestamp = str(self.last_vote_time)
         book_name = get_book_name(self.book_id)
         content = '顶了书 %s' % book_name if self.vote == 'up' else '踩了书 %s' % book_name
-        href = ''
+        href = 'book/%s' % self.book_id
         return dict({
             'avatar': avatar,
             'account': account,
@@ -60,7 +60,7 @@ class DB_user_book_opinion(db.Model):
         timestamp = str(self.last_vote_time)
         book_name = get_book_name(self.book_id)
         content = '关注了书 %s' % book_name if self.is_follow else '取关了书 %s' % book_name
-        href = ''
+        href = 'book/%s' % self.book_id
         return dict({
             'avatar': avatar,
             'account': account,
@@ -84,7 +84,7 @@ class DB_user_booklist_remark(db.Model):
         timestamp = str(self.remark_time)
         booklist_name = get_booklist_name(self.booklist_id)
         content = '评论了书单 %s : %s' % (booklist_name, self.remark)
-        href = ''
+        href = 'booklist/%s' % self.booklist_id
         return dict({
             'avatar': avatar,
             'account': account,
@@ -109,7 +109,7 @@ class DB_user_booklist_opinion(db.Model):
         timestamp = str(self.last_vote_time)
         booklist_name = get_booklist_name(self.booklist_id)
         content = '顶了书单 %s' % booklist_name if self.vote == 'up' else '踩了书单 %s' % booklist_name
-        href = ''
+        href = 'booklist/%s' % self.booklist_id
         return dict({
             'avatar': avatar,
             'account': account,
@@ -124,7 +124,7 @@ class DB_user_booklist_opinion(db.Model):
         timestamp = str(self.last_vote_time)
         booklist_name = get_booklist_name(self.booklist_id)
         content = '关注了书单 %s' % booklist_name if self.is_follow else '取关了书单 %s' % booklist_name
-        href = ''
+        href = 'booklist/%s' % self.booklist_id
         return dict({
             'avatar': avatar,
             'account': account,
@@ -147,7 +147,7 @@ class DB_user_book_remark_opinion(db.Model):
         timestamp = str(self.last_vote_time)
         remark = get_book_remark_by_id(self.book_remark_id)
         content = '顶了书评 %s' % remark if self.vote == 'up' else '踩了书评 %s' % remark
-        href = ''
+        href = 'book/%s' % get_book_id_from_remark(self.book_remark_id)
         return dict({
             'avatar': avatar,
             'account': account,
@@ -170,7 +170,7 @@ class DB_user_booklist_remark_opinion(db.Model):
         timestamp = str(self.last_vote_time)
         remark = get_booklist_remark_by_id(self.booklist_remark_id)
         content = '顶了书单评论 %s' % remark if self.vote == 'up' else '踩了书单评论 %s' % remark
-        href = ''
+        href = 'booklist/%s' % get_booklist_id_from_remark(self.booklist_remark_id)
         return dict({
             'avatar': avatar,
             'account': account,
@@ -268,11 +268,23 @@ def get_book_remark_by_id(id):
                 'remark_time': remark.remark_time,
             }
             )
+        return None
     except Exception as e:
         logging.error(id)
         logging.error(e)
         return None
 
+
+def get_book_id_from_remark(remark_id):
+    try:
+        remark = DB_user_book_remark.query.filter_by(id=remark_id).one_or_404()
+        if remark is None:
+            return None
+        return remark.book_id
+    except Exception as e:
+        logging.error(remark_id)
+        logging.error(e)
+        return None
 
 def get_book_remark(book_id, page=1, per_page=10):
     """
@@ -295,6 +307,18 @@ def get_book_remark(book_id, page=1, per_page=10):
         )
     except Exception as e:
         logging.error(book_id)
+        logging.error(e)
+        return None
+
+
+def get_booklist_id_from_remark(remark_id):
+    try:
+        remark = DB_user_booklist_remark.query.filter_by(id=remark_id).one_or_404()
+        if remark is None:
+            return None
+        return remark.booklist_id
+    except Exception as e:
+        logging.error(remark_id)
         logging.error(e)
         return None
 

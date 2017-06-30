@@ -35,7 +35,7 @@ const rightIconMenu = (
 
 class ListContainer extends React.Component {
     renderListItem(item) {
-        return <ListItem
+        return <a href={item.href}> <ListItem
             leftAvatar={<Avatar src={item.avatar}/>}
 
             primaryText= {<span>
@@ -48,7 +48,7 @@ class ListContainer extends React.Component {
                 </p>
             }
             secondaryTextLines={2}
-        />
+        /></a>
     }
 
     render() {

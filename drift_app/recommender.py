@@ -100,7 +100,7 @@ class FM_Recommender():
             return
         rating = self.V
         if exclude is not None:
-            rating = np.delete(rating, exclude)
+            rating = np.delete(rating, exclude, axis=1)
         return self.V[id_user].argsort()[:-(k + 1):-1]
 
 
@@ -117,14 +117,21 @@ class Tag_Based_Recommender():
         """
         self.book_tags = book_tags
 
-    def topK(self, user_tags, k):
+    def topK_books(self, user_tags, k, exclude=None):
         """
         get top K books for user.
         :param user_tags: user_tag vector v, v[j] = 1 if user is interested in tag j, otherwise 0.
         :param k: number of books.
         :return: K-size list containing k book id.
         """
+        book_tags = self.book_tags
+        if exclude is not None:
+            book_tags = np.delete(book_tags, exclude, axis=0)
         return self.book_tags.dot(user_tags).argsort()[:-(k + 1):-1]
+
+
+    def topK_booklists(self, booklist_book, k):
+        return None
 
 
 class Item_CF_Recommender():
