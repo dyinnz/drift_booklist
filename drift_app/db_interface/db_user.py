@@ -77,6 +77,46 @@ def get_followers(user_id):
         logging.error(e)
         return None
 
+def follow_user(user_id1,user_id2):
+    try:
+        user1=DB_user.query.filter_by(id=user_id1).one()
+        user2=DB_user.query.filter_by(id=user_id2).one()
+        if user1 is None or user2 is None:
+           return False
+        user1.following.append(user2)
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error("follow user false")
+        logging.error(e)
+        return None
+
+def unfollow_user(user_id1,user_id2):
+    try:
+        user1=DB_user.query.filter_by(id=user_id1).one()
+        user2=DB_user.query.filter_by(id=user_id2).one()
+        if user1 is None or user2 is None:
+            return False
+        user1.following.remove(user2)
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error("unfollow user false")
+        logging.error(e)
+        db.session.rollback()
+        return None
+
+
+def user1_follow_user2(user_id1,user_id2):
+    try:
+        user1 = DB_user.query.filter_by(id=user_id1).one()
+        user2 = DB_user.query.filter_by(id=user_id2).one()
+        return user2 in user1.following
+    except Exception as e:
+        logging.error("get follow state false")
+        logging.error(e)
+        return None
+
 def get_account_by_id(user_id):
     """
     get user account name by user id.
