@@ -7,6 +7,10 @@ import FloatingActionButton from "material-ui/FloatingActionButton";
 import FlatButton from "material-ui/FlatButton";
 import Chip from "material-ui/Chip";
 
+import BooklistShow from 'friends/components/BooklistShow'
+
+
+
 
 function fetchPostJson(url, data) {
     return fetch(url, {
@@ -180,8 +184,25 @@ class Friends extends React.Component {
                 relationship: "self",
             },
             friends: [],
-            type: 'following'
+            type: 'following',
+            booklists:{
+                booklist_created:[],
+                booklist_followed:[],
+            }
         };
+    }
+
+    fetchBooklistData(account) {
+        var data = {account: account}
+
+        fetchPostJson("/get_user_booklist", data)
+            .then(resp => resp.json())
+            .then((data) => {
+                console.log("user_booklist: ", data)
+                this.setState({
+                    booklists:data,
+                })
+            })
     }
 
     followe_user(account) {
@@ -229,8 +250,10 @@ class Friends extends React.Component {
             .then((data) => {
                 console.log("user_info: ", data)
                 var type=this.state.type
-                if (this.state.userInfo.account!=data.account)
-                    type='following'
+                if (this.state.userInfo.account!=data.account) {
+                    type = 'following'
+                    this.fetchBooklistData(data.account)
+                }
                 this.touchFriendsList(data.account,type)
                 this.setState({
                     friends: this.state.friends,
@@ -256,6 +279,7 @@ class Friends extends React.Component {
                 type: 'following',
             })
             this.touchFriendsList(this.state.userInfo.account, this.state.type)
+            this.fetchBooklistData(this.state.userInfo.account)
         })
     }
 
@@ -271,6 +295,7 @@ class Friends extends React.Component {
                     type: 'following'
                 })
                 this.touchFriendsList(this.state.userInfo.account, this.state.type)
+                this.fetchBooklistData(this.state.userInfo.account)
             })
     }
 
@@ -295,6 +320,11 @@ class Friends extends React.Component {
                     type={this.state.type}
                     items={this.state.friends}
                     click={this.touchUserDetail.bind(this)}
+                />
+                <BooklistShow
+                    account={this.state.userInfo.account}
+                    name={this.state.userInfo.name}
+                    booklists={this.state.booklists}
                 />
             </div>
         )
