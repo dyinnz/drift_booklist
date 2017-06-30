@@ -23,10 +23,16 @@
 }
 
 .card_media {
-    width: 200px;
+    width: 250px;
     height: 300px;
     margin: 10px;
     float: left;
+}
+
+.card_media_edit {
+    width: 250px;
+    height: 300px;
+    margin: 10px;
 }
 
 .card_rhs {

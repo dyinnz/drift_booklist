@@ -27,6 +27,7 @@ import BooklistPane from 'mine/components/BooklistPane'
 
 
 function fetchPostJson(url, data) {
+    console.log(data)
     return fetch(url, {
         method: "POST",
         headers: {
@@ -35,6 +36,77 @@ function fetchPostJson(url, data) {
         credentials: 'same-origin',
         body: JSON.stringify(data)
     })
+}
+
+class BooklistEdit extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: props.name,
+            introduction: props.introduction,
+            tags: props.tags,
+            cover: props.cover,
+            id: props.id,
+        };
+
+        console.log("booklist edit: ", props)
+    }
+
+    handleUpdate() {
+        let state = this.state;
+        fetchPostJson('/change_booklist/commit', {
+            booklist_id: state.id,
+            booklist_name: document.getElementById("edit_list_name").value,
+            introduction: document.getElementById("edit_list_intro").value,
+            booklist_cover: '/static/react/default.png',
+            tags: ['tags1', 'tags2']
+        }).then(
+            resp => resp.json()
+
+        ).then( (data) => {
+
+            console.log(data);
+        } )
+    }
+
+    handleCancel() {
+
+    }
+
+    render() {
+        return (
+            <Card>
+                <Subheader> EDIT BOOKLIST </Subheader>
+                <div className="flex_class">
+                    <CardMedia className="card_media_edit">
+                        <img src={this.state.cover}/>
+                    </CardMedia>
+
+                    <div>
+                        <TextField defaultValue={this.state.name}
+                                   floatingLabelText="Booklist name"
+                                   floatingLabelFixed={true}
+                                   id="edit_list_name"
+                        />
+                        <TextField defaultValue={this.state.introduction}
+                                   floatingLabelText="Introduction"
+                                   floatingLabelFixed={true}
+                                   id="edit_list_intro"
+                        />
+                        <br/>
+                        <FlatButton label="Update"
+                                    onClick={() => this.handleUpdate()}
+                                    primary={true}
+                        />
+                        <FlatButton label="Cancel"
+                                    onClick={() => this.handleCancel()}
+                                    secondary={true}
+                        />
+                    </div>
+                </div>
+            </Card>
+        )
+    }
 }
 
 
@@ -93,6 +165,21 @@ class ShowContainer extends React.Component {
     }
 
     render() {
+        let details = this.props.details;
+        if ('booklist_name' in details) {
+            return <BooklistEdit
+                id={details.booklist_id}
+                name={details.booklist_name}
+                introduction={details.introduction}
+                tags={details.tags}
+                cover={details.booklist_cover}
+            />
+        } else {
+            return <p>waiting</p>
+        }
+    }
+
+    renderShow() {
         const badgeStyle = {
             top: 35,
             right: 10,
