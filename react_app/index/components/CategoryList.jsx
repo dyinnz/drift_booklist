@@ -57,7 +57,7 @@ class CategoryList extends React.Component {
     }
 
     tagTouch(tag){
-        fetch('/recommand/booklist_by_tag', {tag: tag})
+        fetch('/recommend/booklist_by_tag', {tag: tag})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
@@ -70,7 +70,7 @@ class CategoryList extends React.Component {
     }
 
     fetchData() {
-        fetch('/recommand/get_tags', {credentials: 'same-origin'})
+        fetch('/recommend/get_tags', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
