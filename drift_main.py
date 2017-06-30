@@ -13,6 +13,7 @@ from drift_app.friends_page import friends_bp
 from drift_app.exploer_page import explore_bp
 from drift_app.utility import utility_bp
 from drift_app.book_page import book_bp
+from drift_app.recommender import init_recommender
 
 json_config = None
 with open('config.json') as f:
@@ -41,6 +42,7 @@ logging.basicConfig(level=logging.DEBUG)
 # init other model
 init_login_manager(app)
 init_db(app)
+init_recommender()
 
 if __name__ == '__main__':
     app.run()

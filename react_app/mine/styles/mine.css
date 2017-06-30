@@ -23,17 +23,19 @@
 }
 
 .card_media {
-    width: 200px;
+    width: 250px;
     height: 300px;
     margin: 10px;
-    float: left;
+}
+
+.card_img {
+    width: 250px;
+    height: 300px;
+    margin: 10px;
 }
 
 .card_rhs {
-    // width: 350px;
-    margin: 10px;
-    height: 300px;
-    float: left;
+    width: 350px;
 }
 
 .grid_wrapper {
@@ -85,4 +87,20 @@
 
 .new_booklist {
     margin-top: 4px;
+}
+
+.upload_input {
+    cursor: pointer;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    width: 100%;
+    opacity: 0;
+}
+
+.update_avatar_div {
+    margin-left: 40px;
+    margin-bottom: 20px;
 }

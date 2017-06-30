@@ -1,4 +1,7 @@
 import numpy as np
+from drift_app.db_interface import db
+import drift_app.db_interface.db_user_remark
+
 
 
 class FM_Recommender():
@@ -74,9 +77,9 @@ class FM_Recommender():
             delta_M = (mask * delta_E).T.dot(self.U) - self.beta * self.M
             delta_bu = np.sum(mask * delta_E, axis=1) - self.alpha * self.bu
             delta_bm = np.sum(mask * delta_E, axis=0) - self.beta * self.bm
-            if it % 1000 == 0:
+            if it % 100 == 0:
                 print('Iter %d:' % it, np.sum(mask * delta_E))
-            if abs(np.sum(mask * delta_E)) > 10000:
+            if it > 0 and abs(np.sum(mask * delta_E)) > 1000000:
                 print('Iter %d:boom!' % it, np.sum(mask * delta_E))
                 break
 
@@ -90,18 +93,31 @@ class FM_Recommender():
             if is_converg:
                 print('Iter %d:Converge! DeltaE: %f' % (it, np.sum(mask * delta_E)))
 
-        # self.V = self.U.dot(self.M.T) + self.bu.reshape(-1, 1) + self.overall_mean + self.bm
-        self.V = (self.U.dot(self.M.T) + self.bu.reshape(-1, 1) + self.overall_mean + self.bm) * np.bitwise_not(mask) + X
+        self.V = (self.U.dot(self.M.T) + self.bu.reshape(-1, 1) + self.overall_mean + self.bm) * np.bitwise_not(
+            mask) + X
         return self
 
-    def topK(self, id_user, k, exclude=None):
+    def topK_books(self, user_id, k=10, exclude=None):
         if not hasattr(self, 'V'):
             print("The model hasn't been trained yet.")
-            return
-        rating = self.V
+            return None
+        sort_indices = self.V[user_id].argsort()
         if exclude is not None:
-            rating = np.delete(rating, exclude, axis=1)
-        return self.V[id_user].argsort()[:-(k + 1):-1]
+            for t in exclude:
+                sort_indices.remove(t)
+        return sort_indices[:-(k + 1):-1]
+
+    def topK_booklists(self, user_id, booklist_book, k=10, exclude=None):
+        if not hasattr(self, 'V'):
+            print("The model hasn't been trained yet.")
+            return None
+        user_books = self.V[user_id]
+        user_booklists = booklist_book.dot(user_books.T)
+        sort_indices = user_booklists.argsort()
+        if exclude is not None:
+            for t in exclude:
+                sort_indices.remove(t)
+        return sort_indices[:-(k + 1):-1]
 
 
 class Tag_Based_Recommender():
@@ -110,28 +126,22 @@ class Tag_Based_Recommender():
     Useful for cool boot, assume user has selected several tags he's interested in,
     then tag based recommender can recommend some books fit the tags.
     """
-    def __init__(self, book_tags):
-        """
-        initialize the recommender.
-        :param book_tags: book_tags matrix M, M[i, j] = 1 if book i has tag j, otherwise 0.
-        """
-        self.book_tags = book_tags
 
-    def topK_books(self, user_tags, k, exclude=None):
-        """
-        get top K books for user.
-        :param user_tags: user_tag vector v, v[j] = 1 if user is interested in tag j, otherwise 0.
-        :param k: number of books.
-        :return: K-size list containing k book id.
-        """
-        book_tags = self.book_tags
+    def __init__(self):
+        pass
+
+    def topK_books(self, book_tags, user_tags, k=10, exclude=None):
+        user_book = user_tags.dot(book_tags.T)
+        return user_book.argsort()[:(k + 1):-1]
+
+    def topK_booklists(self, book_tags, user_tags, booklist_book, k=10, exclude=None):
+        user_book = user_tags.dot(book_tags.T)
+        user_booklist = user_book.dot(booklist_book.T)
+        sort_indices = user_booklist.argsort()
         if exclude is not None:
-            book_tags = np.delete(book_tags, exclude, axis=0)
-        return self.book_tags.dot(user_tags).argsort()[:-(k + 1):-1]
-
-
-    def topK_booklists(self, booklist_book, k):
-        return None
+            for t in exclude:
+                sort_indices.remove(t)
+        return sort_indices[:-(k + 1):-1]
 
 
 class Item_CF_Recommender():
@@ -140,3 +150,13 @@ class Item_CF_Recommender():
 
     def fit(self, X):
         pass
+
+
+fm_recommender = FM_Recommender(20)
+tag_recommender = Tag_Based_Recommender()
+
+
+def init_recommender():
+    global fm_recommender, tag_recommender
+    fm_recommender = FM_Recommender(20)
+    tag_recommender = Tag_Based_Recommender()

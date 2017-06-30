@@ -27,6 +27,7 @@ import BooklistPane from 'mine/components/BooklistPane'
 
 
 function fetchPostJson(url, data) {
+    console.log(data)
     return fetch(url, {
         method: "POST",
         headers: {
@@ -37,6 +38,137 @@ function fetchPostJson(url, data) {
     })
 }
 
+const cardMediaStyle = {
+    width: 240,
+    height: 280,
+    padding: 20,
+    marginBottom: 60,
+};
+const cardMediaStyleEdit = {
+    width: 240,
+    height: 280,
+    padding: 20,
+};
+
+const cardImgStyle = {
+    width: 240,
+    height: 280,
+};
+
+class BooklistEdit extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            name: props.name,
+            introduction: props.introduction,
+            tags: props.tags,
+            cover: props.cover,
+            id: props.id,
+            result: ""
+        };
+
+        console.log("booklist edit: ", props)
+    }
+
+    handleUpdate() {
+        let state = this.state;
+        fetchPostJson('/change_booklist/commit', {
+            booklist_id: state.id,
+            booklist_name: document.getElementById("edit_list_name").value,
+            introduction: document.getElementById("edit_list_intro").value,
+            booklist_cover: state.cover,
+            tags: []
+        }).then(
+            resp => resp.json()
+
+        ).then( (data) => {
+            if (data.OK) {
+                this.props.updateEditState(false)
+                this.props.handleTouch(state.id)
+            } else {
+                this.setState(update(this.state, {
+                    result: "update failed"
+                }))
+            }
+        } )
+    }
+
+    handleUpload() {
+        let form = new FormData(document.getElementById('upload_form'));
+        fetch("/upload", {
+            method: 'POST',
+            body: form,
+            credentials: 'same-origin',
+        }).then(
+            resp => resp.json()
+        ).then((data) => {
+            let new_state = update(this.state, {
+                result: {$set: data.result}
+            });
+
+            if ('' !== data.path) {
+                new_state = update(new_state, {
+                    cover: {$set: data.path}
+                });
+            }
+            this.setState(new_state)
+            console.log(this.state)
+        })
+    }
+
+    render() {
+        return (
+            <Card>
+                <Subheader> EDIT BOOKLIST </Subheader>
+
+                <div className="flex_class">
+                    <div>
+                        <CardMedia style={cardMediaStyleEdit}>
+                            <img style={cardImgStyle} src={this.state.cover}/>
+                        </CardMedia>
+                        <form id="upload_form" action="/upload" method="POST" encType="multipart/form-data">
+                            <div className="update_avatar_div">
+                                <FlatButton
+                                    label="Choose Avatar..."
+                                    containerElement="label"
+                                    primary={true}>
+                                    <input type="file"
+                                           id="file"
+                                           className="upload_input"
+                                           name="file"
+                                           onChange={()=>this.handleUpload()}/>
+                                </FlatButton>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div className="card_rhs">
+                        <TextField defaultValue={this.state.name}
+                                   floatingLabelText="Booklist name"
+                                   floatingLabelFixed={true}
+                                   id="edit_list_name"
+                        />
+                        <TextField defaultValue={this.state.introduction}
+                                   floatingLabelText="Introduction"
+                                   floatingLabelFixed={true}
+                                   id="edit_list_intro"
+                        />
+                        <br/>
+                        <FlatButton label="Update"
+                                    onClick={() => this.handleUpdate()}
+                                    primary={true}
+                        />
+                        <FlatButton label="Cancel"
+                                    onClick={() => this.props.updateEditState(false)}
+                                    secondary={true}
+                        />
+                    </div>
+                </div>
+            </Card>
+        )
+    }
+}
+
 
 class ShowContainer extends React.Component {
     constructor(props) {
@@ -45,6 +177,7 @@ class ShowContainer extends React.Component {
             upNumber: 0,
             downNumber: 0,
             followNumber: 0,
+            isEdit: false,
         }
     }
 
@@ -93,6 +226,37 @@ class ShowContainer extends React.Component {
     }
 
     render() {
+        if (this.state.isEdit) {
+            return this.renderEdit()
+        } else {
+            return this.renderShow()
+        }
+    }
+
+    renderEdit() {
+        let details = this.props.details;
+        if ('booklist_name' in details) {
+            return <BooklistEdit
+                id={details.booklist_id}
+                name={details.booklist_name}
+                introduction={details.introduction}
+                tags={details.tags}
+                cover={details.booklist_cover}
+                updateEditState={this.updateEditState.bind(this)}
+                handleTouch={this.props.handleTouch}
+            />
+        } else {
+            return <p>waiting</p>
+        }
+    }
+
+    updateEditState(is) {
+        this.setState(update(this.state, {
+            isEdit: {$set: is}
+        }))
+    }
+
+    renderShow() {
         const badgeStyle = {
             top: 35,
             right: 10,
@@ -104,10 +268,18 @@ class ShowContainer extends React.Component {
         console.log("show: ", this.props.details)
         return (
             <Card>
+
+                <div className="flex_class">
                 <Subheader> BOOKLIST DETAILS </Subheader>
-                <div className="clearfix">
-                    <CardMedia className="card_media">
-                        <img src="/static/react/default.png"/>
+                    <FlatButton label="Edit"
+                                primary={true}
+                                onClick={() => this.updateEditState(true)}
+                    />
+                </div>
+
+                <div className="flex_class">
+                    <CardMedia style={cardMediaStyle}>
+                        <img style={cardImgStyle} src={this.props.details.booklist_cover}/>
                     </CardMedia>
 
                     <div className="card_rhs">
@@ -307,7 +479,9 @@ class Mine extends React.Component {
         console.log("mine : ", this.state.currListID)
         return (
             <div className="right_pane">
-                <ShowContainer details={this.state.currBooklist}/>
+                <ShowContainer details={this.state.currBooklist}
+                               handleTouch={(i) => this.touchBooklist(i)}
+                />
                 <BookGrid items={this.state.currBooklist.books}/>
                 <CommentPane items={this.state.currBooklist.remarks}
                              currListID={this.state.currListID}/>
