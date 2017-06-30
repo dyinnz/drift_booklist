@@ -784,3 +784,8 @@ def get_user_moments(user_id, page=1, per_page=10):
         logging.error('%s %s %s', user_id, page, per_page)
         logging.error(e)
         return None
+
+
+
+def get_book_recommendation(user_id, K=10):
+    pass

@@ -4,6 +4,12 @@ import json
 import logging
 
 
+_booklist_book_table = db.Table(
+    'booklist_book',
+    db.Column('booklist_id', db.Integer, db.ForeignKey('booklist.id'), primary_key=True),
+    db.Column('book_id', db.Integer, db.ForeignKey('book.id'), primary_key=True)
+)
+
 class DB_Book(db.Model):
     __tablename__ = 'book'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -31,6 +37,7 @@ class DB_booklist(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     introduction = db.Column(db.String(256))
     cover = db.Column(db.String(40))
+    books = db.relationship('DB_Book', secondary=_booklist_book_table, backref=db.backref('booklists', lazy='dynamic'))
 
     def __repr__(self):
         return 'Booklist %s created by user %s:%s' % (self.name, self.user_id, self.introduction)
@@ -42,13 +49,13 @@ class DB_booklist_tag(db.Model):
     tag_name = db.Column(db.String(16), db.ForeignKey("tags.name"), primary_key=True)
 
 
-class DB_booklist_book(db.Model):
-    __tablename__ = 'booklist_book'
-    booklist_id = db.Column(db.Integer, db.ForeignKey("booklist.id"), primary_key=True)
-    book_id = db.Column(db.Integer, db.ForeignKey("book.id"), primary_key=True)
-
-    def __repr__(self):
-        return 'Book %s in booklist %s' % (self.book_id, self.booklist_id)
+# class DB_booklist_book(db.Model):
+#     __tablename__ = 'booklist_book'
+#     booklist_id = db.Column(db.Integer, db.ForeignKey("booklist.id"), primary_key=True)
+#     book_id = db.Column(db.Integer, db.ForeignKey("book.id"), primary_key=True)
+#
+#     def __repr__(self):
+#         return 'Book %s in booklist %s' % (self.book_id, self.booklist_id)
 
 
 def get_book(book_id):
@@ -166,9 +173,14 @@ def get_books_in_booklist(booklist_id):
     :return: If success, return book objects list in json format, else None.
     """
     try:
-        booklist_books = DB_booklist_book.query.filter_by(booklist_id=booklist_id).all()
-        book_ids = [item.book_id for item in booklist_books]
-        return json.dumps(book_ids)
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one()
+        if booklist is None:
+            return None
+        return json.dumps([b.id for b in booklist.books])
+
+        # booklist_books = DB_booklist_book.query.filter_by(booklist_id=booklist_id).all()
+        # book_ids = [item.book_id for item in booklist_books]
+        # return json.dumps(book_ids)
     except Exception as e:
         logging.error(booklist_id)
         logging.error(e)
@@ -246,8 +258,12 @@ def add_book_to_booklist(booklist_id, book_id):
     :return: If success, return True else False.
     """
     try:
-        booklist_book = DB_booklist_book(booklist_id=booklist_id, book_id=book_id)
-        db.session.add(booklist_book)
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one_or_404()
+        if booklist is None:
+            return False
+        booklist.books.append(DB_Book.query.filter_by(id=book_id).one_or_404())
+        # booklist_book = DB_booklist_book(booklist_id=booklist_id, book_id=book_id)
+        # db.session.add(booklist_book)
         db.session.commit()
         return True
     except Exception as e:
@@ -265,15 +281,20 @@ def move_book_from_booklist(booklist_id, book_id):
     :return:
     """
     try:
-        booklist_book = DB_booklist_book.query.filter_by(booklist_id=booklist_id, book_id=book_id).first()
-        if booklist_book is None:
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one_or_404()
+        if booklist is None:
             return False
-        db.session.delete(booklist_book)
+        booklist.books.remove(DB_Book.query.filter_by(id=book_id).one_or_404())
+        # booklist_book = DB_booklist_book.query.filter_by(booklist_id=booklist_id, book_id=book_id).first()
+        # if booklist_book is None:
+        #     return False
+        # db.session.delete(booklist_book)
         db.session.commit()
         return True
     except Exception as e:
         logging.error("move book false at %s %s " % (booklist_id, book_id))
         logging.error(e)
+        db.session.rollback()
         return None
 
 
