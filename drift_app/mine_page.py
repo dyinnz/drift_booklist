@@ -266,9 +266,12 @@ def vote_book():
         true = db_user_remark.user_vote_book(data['book_id'], user_id, 'netural')
     else:
         true = db_user_remark.user_vote_book(data['book_id'], user_id, data['attitude'])
+
+    vote=json.loads(db_user_remark.get_book_vote_num(data['book_id']))
     jsondata = {
         'OK': true,
-        'attitude': json.loads(db_user_remark.get_user_book_opinion(user_id, data['book_id']))[0]
+        'up_number':vote['up'],
+        'down_number':vote['down']
     }
     return jsonify(jsondata)
 
@@ -290,9 +293,12 @@ def vote_booklist():
         true = db_user_remark.user_vote_booklist(data['booklist_id'], user_id, 'netural')
     else:
         true = db_user_remark.user_vote_booklist(data['booklist_id'], user_id, data['attitude'])
+
+    vote=json.loads(db_user_remark.get_book_vote_num(data['book_id']))
     jsondata = {
         'OK': true,
-        'attitude': json.loads(db_user_remark.get_user_booklist_opinion(user_id, data['booklist_id']))[0]
+        'up_number':vote['up'],
+        'down_number':vote['down']
     }
     return jsonify(jsondata)
 
@@ -328,7 +334,7 @@ def follow_book():
         else:
             db_book.move_book_from_booklist(my_favorite_booklist, data['book_id'])
     return jsonify({'OK': true,
-                    'is_follow': json.loads(db_user_remark.get_user_book_opinion(user_id, data['book_id']))[1]
+                    'follow_number':db_user_remark.get_book_follower_num(data['book_id'])
                     })
 
 
@@ -351,7 +357,7 @@ def follow_booklist():
         true = db_user_remark.set_booklist_follow(user_id, data['booklist_id'], False)
 
     return jsonify({'OK': true,
-                    'is_follow': json.loads(db_user_remark.get_user_booklist_opinion(user_id, data['booklist_id']))[1]
+                    'follow_number':db_user_remark.get_booklist_follower_num(data['booklist_id'])
                     })
 
 
@@ -415,16 +421,21 @@ def vote_remark():
             true = db_user_remark.user_vote_book_remark(user_id, data['book_remark_id'], 'netural')
         else:
             true = db_user_remark.user_vote_book_remark(user_id, data['book_remark_id'], data['attitude'])
+
+        vote=json.loads(db_user_remark.get_book_remark_vote_num(data['book_remark_id']))
         return jsonify({
             'OK': true,
-            'attitude': db_user_remark.get_user_book_remark_opinion(user_id, data['book_remark_id'])
+            'up_number':vote['up'],
+            'down_number':vote['down']
         })
     else:
         if db_user_remark.get_user_booklist_remark_opinion(user_id, data['booklist_remark_id']) == data['attitude']:
             true = db_user_remark.user_vote_booklist_remark(user_id, data['booklist_remark_id'], 'netural')
         else:
             true = db_user_remark.user_vote_booklist_remark(user_id, data['booklist_remark_id'], data['attitude'])
+        vote=json.loads(db_user_remark.get_booklist_remark_vote_num(data['booklist_remark_id']))
         return jsonify({
             'OK': true,
-            'attitude': db_user_remark.get_user_booklist_remark_opinion(user_id, data['booklist_remark_id'])
+            'up_number':vote['up'],
+            'down_number':vote['down']
         })
