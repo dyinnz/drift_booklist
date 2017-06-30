@@ -1,0 +1,36 @@
+.book_page {
+    width: 70%;
+}
+
+.flex {
+    display: flex;
+}
+
+
+.book_card {
+    display: flex;
+    padding: 20px;
+}
+
+.book_cover {
+    width: 100px;
+    height: 400px;
+}
+
+.tag_wrapper {
+    padding-left: 20px;
+}
+
+.no_comment {
+    padding-left: 20px;
+}
+
+.comment_header {
+    width: 120px;
+}
+
+.reply_wrapper {
+    padding-left: 20px;
+    padding-bottom: 20px;
+    padding-right: 20px;
+}
