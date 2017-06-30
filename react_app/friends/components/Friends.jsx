@@ -239,7 +239,7 @@ class Friends extends React.Component {
                 })
             })
     }
-    Touchuildetail() {
+    Touchurldetail() {
         fetch(window.location.href, {
             credentials: 'same-origin',
             method: 'POST',
@@ -279,7 +279,7 @@ class Friends extends React.Component {
         if (url.substr(url.lastIndexOf('/')) === '/friends') {
             this.getMydata()
         } else {
-            this.Touchuildetail()
+            this.Touchurldetail()
         }
     }
 

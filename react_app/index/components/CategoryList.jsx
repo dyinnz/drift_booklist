@@ -31,7 +31,7 @@ class Booklist extends React.Component {
 
                 <a className="am_imglist_user">
                     <span className="am_imglist_user_ico">
-                        <img src={item.avatar} alt=""/>
+                        <a href={"user_detail/"+item.user_account}><img src={item.avatar} alt=""/></a>
                     </span>
                     <span className="am_imglist_user_font">{item.user_name}</span>
                 </a>
