@@ -95,7 +95,7 @@ class RecommandList extends React.Component {
                 console.log("main data: ", data);
                 console.log("init state: ", this.state);
                 this.setState({
-                    booklist: data.booklist,
+                    booklist: data,
                 })
             })
     }

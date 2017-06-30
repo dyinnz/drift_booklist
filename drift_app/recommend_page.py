@@ -33,6 +33,7 @@ def recommend():
         logging.info('recommend page for %s', flask_login.current_user.get_id())
     else:
         logging.info('recomemnd page for anonymous')
+        return flask.redirect(flask.url_for('login_bp.login'))
 
     return current_app.send_static_file('react/index.html')
 
@@ -54,12 +55,13 @@ def get_tags():
     else:
         return db_user.get_user_interests(flask_login.current_user.db_id)
 
-@recommend_bp.route('/recommend/boolist_by_tag',methods=['POST','GET'])
+@recommend_bp.route('/recommend/booklist_by_tag',methods=['POST','GET'])
 def booklist_by_tag():
-    if request.method!="POST" :
+    if request.method != 'POST' :
         return jsonify("need post")
 
-    tag=request.get_json['tag']
+    tag=request.get_json()
+    logging.info(tag)
     """get booklist by tag"""
     booklist_ids = json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id))
 

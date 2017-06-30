@@ -322,8 +322,8 @@ def get_booklist_by_id(booklist_id):
     """
     try:
         booklist = DB_booklist.query.filter_by(id=booklist_id).first()
-        logging.debug(booklist_id)
-        logging.debug(booklist)
+        #logging.debug(booklist_id)
+        #logging.debug(booklist)
         if booklist is None:
             return None
         return json.dumps({

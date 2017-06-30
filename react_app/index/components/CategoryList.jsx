@@ -1,4 +1,14 @@
 import React from 'react';
+function fetchPostJson(url, data) {
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(data)
+    })
+}
 
 class Booklist extends React.Component {
 
@@ -57,13 +67,13 @@ class CategoryList extends React.Component {
     }
 
     tagTouch(tag){
-        fetch('/recommend/booklist_by_tag', {tag: tag})
+        fetchPostJson('/recommend/booklist_by_tag', {tag: tag})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
                 console.log("init state: ", this.state);
                 this.setState({
-                    booklist: data.booklist,
+                    booklist: data,
                     tag: tag,
                 });
             })
@@ -76,7 +86,7 @@ class CategoryList extends React.Component {
                 console.log("main data: ", data);
                 console.log("init state: ", this.state);
                 this.setState({
-                    myTaglist: data.my_taglists,
+                    myTaglist: data,
                 });
                 this.tagTouch(this.state.tag)
             })
