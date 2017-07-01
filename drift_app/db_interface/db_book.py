@@ -1,5 +1,6 @@
 from drift_app.db_interface import db
 from .db_user import get_account_by_id
+from drift_app.db_interface import db_user as db_user
 import json
 import logging
 
@@ -406,10 +407,12 @@ def change_booklist_tags(booklist_id, tags):
     :return:
     """
     try:
-        booklist = DB_booklist.query.filter_by(id=booklist_id).first_or_404()
-        del booklist.tags[:]
-        for tag in tags:
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one()
+        if len(booklist.tags)!=0:
+            del booklist.tags[:]
+        for tag_name in tags:
             # booklist_tag = DB_booklist_tag(booklist_id=booklist_id, tag_name=tag)
+            tag = db_user.DB_tags.query.filter_by(name=tag_name).one()
             booklist.tags.append(tag)
             # db.session.add(booklist_tag)
         db.session.commit()
