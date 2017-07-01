@@ -19,6 +19,9 @@ import {blue500} from 'material-ui/styles/colors'
 import Dialog from 'material-ui/Dialog'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
 
 import update from 'immutability-helper'
 
@@ -38,7 +41,7 @@ class Comment extends React.Component {
     // TODO:
     render() {
         return (
-            <div className="flex">
+            <div className="flex_class">
                 <CardHeader title={this.props.details.account}
                             avatar="/static/react/zen.jpg"
                             className="comment_header"
@@ -156,7 +159,7 @@ class BookComment extends React.Component {
     renderHeader() {
         return (
             <div>
-                <div className="flex">
+                <div className="flex_class">
                     <Subheader> COMMENTS </Subheader>
                     <FlatButton
                         label="NEW"
@@ -213,6 +216,9 @@ class BookDetails extends React.Component {
             upNumber: 0,
             downNumber: 0,
             followNumber: 0,
+            addOpen: false,
+            anchorEl: undefined,
+            myLists: [],
         }
     }
 
@@ -222,6 +228,18 @@ class BookDetails extends React.Component {
             downNumber: {$set: next.details.down_number},
             followNumber: {$set: next.details.follower_number},
         }))
+    }
+
+    componentWillMount() {
+        fetch('/get_my_lists', {
+            credentials: 'same-origin',
+        }).then(
+            resp => resp.json()
+        ).then( (data) => {
+            this.setState(update(this.state, {
+                myLists: {$set: data}
+            }))
+        })
     }
 
     handleUpDown(attitude) {
@@ -257,6 +275,69 @@ class BookDetails extends React.Component {
         })
     }
 
+    handlePopoverOpen(e) {
+        e.preventDefault()
+
+        this.setState(update(this.state, {
+            addOpen: {$set: true},
+            anchorEl: {$set: e.currentTarget}
+        }))
+    }
+
+    handlePopoverClose() {
+        this.setState(update(this.state, {
+            addOpen: {$set: false}
+        }))
+    }
+
+    handleAddToList(listId) {
+        console.log("click ", listId)
+
+        this.setState(update(this.state, {
+            addOpen: {$set: false}
+        }))
+
+        fetchPostJson('/add_to_list', {
+            booklist_id: listId,
+            book_id: this.props.details.book_id,
+        }).then(
+            resp => resp.json()
+        ).then( (data)=> {
+            console.log(data)
+        })
+    }
+
+    renderAddToBooklist() {
+        return (
+            <div className="add_book">
+                <FloatingActionButton
+                    mini={true}
+                    onClick={(e) => this.handlePopoverOpen(e) }
+                >
+                    <ContentAdd />
+                </FloatingActionButton>
+
+                <Popover
+                    open={this.state.addOpen}
+                    onRequestClose={this.handlePopoverClose.bind(this)}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                >
+                    <Menu>
+                        {this.state.myLists.map((item) => {
+                            return <MenuItem
+                                key={item[1]}
+                                primaryText={item[0]}
+                                onClick={() => this.handleAddToList(item[1])}
+                            />
+                        })}
+                    </Menu>
+                </Popover>
+            </div>
+        )
+    }
+
     render() {
         const styleBookCover = {
             width: 300,
@@ -281,11 +362,14 @@ class BookDetails extends React.Component {
         return (
             <div>
                 <Card>
-                    <Subheader> BOOK DETAILS </Subheader>
+                    <div className="flex_class">
+                        <Subheader> BOOK DETAILS </Subheader>
+                        {this.renderAddToBooklist()}
+                    </div>
 
                     <div className="book_card">
                         <CardMedia className="card_media">
-                            <img src="/static/react/default.png"
+                            <img src={details.book_cover}
                                  style={styleBookCover}
                             />
                         </CardMedia>

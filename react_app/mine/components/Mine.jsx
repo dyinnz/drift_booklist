@@ -65,7 +65,8 @@ class BooklistEdit extends React.Component {
             tags: props.tags,
             cover: props.cover,
             id: props.id,
-            result: ""
+            result: "",
+            allTags: [],
         };
 
         console.log("booklist edit: ", props)
@@ -78,8 +79,19 @@ class BooklistEdit extends React.Component {
             tags: props.tags,
             cover: props.cover,
             id: props.id,
-            result: ""
+            result: "",
+            allTags: this.state.allTags,
         };
+    }
+
+    componentWillMount() {
+        fetch('/get_tags').then(
+            resp => resp.json()
+        ).then( (data) => {
+            this.setState(update(this.state, {
+                allTags: {$set: data},
+            }))
+        })
     }
 
     handleUpdate() {
@@ -89,7 +101,7 @@ class BooklistEdit extends React.Component {
             booklist_name: document.getElementById("edit_list_name").value,
             introduction: document.getElementById("edit_list_intro").value,
             booklist_cover: state.cover,
-            tags: []
+            tags: state.tags,
         }).then(
             resp => resp.json()
         ).then((data) => {
@@ -194,13 +206,14 @@ class BooklistEdit extends React.Component {
                                    floatingLabelText="Introduction"
                                    floatingLabelFixed={true}
                                    id="edit_list_intro"
+                                   multiLine={true}
                         />
                         <br/>
                         <AutoComplete
                             id='tag_adder'
                             floatingLabelText="New tags"
                             floatingLabelFixed={true}
-                            dataSource={["tag1", "tag2"]}
+                            dataSource={this.state.allTags}
                             filter={AutoComplete.fuzzyFilter}
                             onKeyDown={this.handleTagKeyDown.bind(this)}
                             openOnFocus={true}

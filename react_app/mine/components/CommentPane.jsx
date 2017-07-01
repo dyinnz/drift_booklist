@@ -68,11 +68,8 @@ class CommentBox extends React.Component {
         return (
             <div className="reply_wrapper">
                 <TextField
-                    floatingLabelText="Add new comment here"
-                    floatingLabelStyle={labelStyle}
+                    hintText="Add new comment here"
                     multiLine={true}
-                    rows={2}
-                    rowsMax={5}
                     fullWidth={true}
                     id="comment_box"
                 />

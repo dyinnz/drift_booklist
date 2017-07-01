@@ -27,7 +27,7 @@ class ListItems extends React.Component {
     renderItem(item) {
         return <ListItem
             key={item.booklist_id}
-            leftAvatar={<Avatar src="/static/react/small_avatar.jpg"/>}
+            leftAvatar={<Avatar src={item.booklist_cover}/>}
 
             primaryText={
                 <span>
