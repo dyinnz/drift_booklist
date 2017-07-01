@@ -19,6 +19,7 @@ import {blue500} from 'material-ui/styles/colors'
 import Dialog from 'material-ui/Dialog'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import AutoComplete from 'material-ui/AutoComplete';
 
 import update from 'immutability-helper'
 
@@ -97,7 +98,7 @@ class BooklistEdit extends React.Component {
                 this.props.handleTouch(state.id, true)
             } else {
                 this.setState(update(this.state, {
-                    result: "update failed"
+                    result: {$set: "update failed"}
                 }))
             }
         })
@@ -124,6 +125,37 @@ class BooklistEdit extends React.Component {
             this.setState(new_state)
             console.log(this.state)
         })
+    }
+
+    handleTagKeyDown(e) {
+        if (e.key === 'Enter') {
+            console.log("tags: ", this.state.tags)
+
+            let tagAdder = document.getElementById('tag_adder')
+            if (this.state.tags.indexOf(tagAdder.value) === -1) {
+                this.setState(update(this.state, {
+                    tags: {$push: [tagAdder.value]}
+                }));
+            }
+            tagAdder.value = ""
+        }
+    }
+
+    handleItemTouchTap(e, item, index) {
+        if (this.state.tags.indexOf(item.props.value) === -1) {
+            this.setState(update(this.state, {
+                tags: {$push: [item.props.value]}
+            }));
+            console.log("after touch: ", this.state.tags)
+        }
+    }
+
+    handleItemDelete(key) {
+        let index = this.state.tags.indexOf(key);
+        this.setState(update(this.state, {
+            tags: {$splice: [[index, 1]]}
+        }));
+        console.log("after delete: ", this.state.tags)
     }
 
     render() {
@@ -164,6 +196,28 @@ class BooklistEdit extends React.Component {
                                    id="edit_list_intro"
                         />
                         <br/>
+                        <AutoComplete
+                            id='tag_adder'
+                            floatingLabelText="New tags"
+                            floatingLabelFixed={true}
+                            dataSource={["tag1", "tag2"]}
+                            filter={AutoComplete.fuzzyFilter}
+                            onKeyDown={this.handleTagKeyDown.bind(this)}
+                            openOnFocus={true}
+                            menuProps={{
+                                onItemTouchTap: this.handleItemTouchTap.bind(this)
+                            }}
+                        />
+                        <div className="tags_wrapper">
+                            {this.state.tags.map((tag) => {
+                                return <Chip
+                                    key={tag}
+                                    onRequestDelete={() => this.handleItemDelete(tag)}
+                                >{tag}
+                                </Chip>
+                            })}
+                        </div>
+
                         <FlatButton label="Update"
                                     onClick={() => this.handleUpdate()}
                                     primary={true}
@@ -172,6 +226,7 @@ class BooklistEdit extends React.Component {
                                     onClick={() => this.props.updateEditState(false)}
                                     secondary={true}
                         />
+                        <p>{this.state.result}</p>
                     </div>
                 </div>
             </Card>
@@ -425,7 +480,7 @@ class Mine extends React.Component {
                     favoriteBooksID: {$set: data.favorite_books_id},
                 }));
 
-                this.touchBooklist(data.favorite_books_id)
+                this.touchBooklist(data.favorite_books_id, true)
             })
     }
 
