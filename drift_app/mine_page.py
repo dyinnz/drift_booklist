@@ -367,6 +367,7 @@ def change_booklist_commit():
         return 'need POST'
 
     data = request.get_json()
+    logging.info('data:%s'%data)
     true = db_book.change_booklist(data['booklist_id'], data['booklist_name'], data['booklist_cover'],
                                    data['introduction'])
     if true:

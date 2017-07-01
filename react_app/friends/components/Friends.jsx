@@ -5,11 +5,11 @@ import Paper from "material-ui/Paper";
 import Subheader from "material-ui/Subheader";
 import FloatingActionButton from "material-ui/FloatingActionButton";
 import FlatButton from "material-ui/FlatButton";
+import RaisedButton from "material-ui/RaisedButton";
+
 import Chip from "material-ui/Chip";
 
-import BooklistShow from 'friends/components/BooklistShow'
-
-
+import BooklistShow from "friends/components/BooklistShow";
 
 
 function fetchPostJson(url, data) {
@@ -26,7 +26,9 @@ function fetchPostJson(url, data) {
 class RelationButton extends React.Component {
     render() {
         if (this.props.relationship == 'self')
-            return (<div></div>)
+            return (<div style={{marginLeft: "auto"}}>
+                <RaisedButton href={"/settings"} label='编辑个人资料'/>
+            </div>)
         else {
             return (
                 <div style={{paddingTop: "6px", paddingLeft: "16px"}}>
@@ -79,7 +81,7 @@ class TopContainer extends React.Component {
                         <br/><br/>
                         <div className="tags">
                             {this.props.detail.tags.map((tag) => (
-                                <Chip>
+                                <Chip key={tag}>
                                     {tag}
                                 </Chip>
                             ))}
@@ -112,24 +114,26 @@ class GridHeader extends React.Component {
     }
 }
 
-class FriendCard extends React.Component{
-    render(){
-        return(
+class FriendCard extends React.Component {
+    render() {
+        return (
             <Card>
                 <div className="clearfix2">
-                    <CardMedia className="card_media_">
-                        <FloatingActionButton
-                            onTouchTap={event => this.props.click(this.props.friend.account)}
-                            style={{height: 0}}
-                        >
-                            <img src={this.props.friend.avatar}/>
-                        </FloatingActionButton>
+                    <CardMedia className="card_media2">
+                        <div>
+                            <FloatingActionButton
+                                href={"/user/"+this.props.friend.account}
+                                style={{height: 0}}
+                            >
+                                <img src={this.props.friend.avatar}/>
+                            </FloatingActionButton>
+                        </div>
                     </CardMedia>
                     <div className="card_right">
                         <CardActions >
                             <FlatButton
                                 label={this.props.friend.name}
-                                onTouchTap={event => this.props.click(this.props.friend.account)}
+                                href={"/user/"+this.props.friend.account}
                             />
                         </CardActions>
                         <label className="label1">关注:{this.props.friend.following_number}</label>
@@ -185,24 +189,11 @@ class Friends extends React.Component {
             },
             friends: [],
             type: 'following',
-            booklists:{
-                booklist_created:[],
-                booklist_followed:[],
+            booklists: {
+                booklist_created: [],
+                booklist_followed: [],
             }
         };
-    }
-
-    fetchBooklistData(account) {
-        var data = {account: account}
-
-        fetchPostJson("/get_user_booklist", data)
-            .then(resp => resp.json())
-            .then((data) => {
-                console.log("user_booklist: ", data)
-                this.setState({
-                    booklists:data,
-                })
-            })
     }
 
     followe_user(account) {
@@ -213,13 +204,27 @@ class Friends extends React.Component {
             .then(resp => resp.json())
             .then((data) => {
                 console.log("relationship: ", data)
-                if(data.OK){
+                if (data.OK) {
                     this.touchUserDetail(this.state.userInfo.account)
                 }
             })
     }
 
-    touchFriendsList(account, type) {
+    fetchBooklistData(account) {
+        var data = {account: account}
+
+        fetchPostJson("/get_user_booklist", data)
+            .then(resp => resp.json())
+            .then((data) => {
+                console.log("user_booklist: ", data)
+                this.setState({
+                    booklists: data,
+                })
+            })
+    }
+
+
+    fetchFriendsListData(account, type) {
         console.log("account: ", account);
         console.log("type: ", type);
 
@@ -227,6 +232,10 @@ class Friends extends React.Component {
             account: account,
             type: type
         }
+
+        let url = window.location.href;
+        if (url.substr(url.lastIndexOf('/')) != '/friends')
+            window.history.pushState({}, 0, 'friends');
 
         fetchPostJson("/get_friends_list", data)
             .then(resp => resp.json())
@@ -249,12 +258,9 @@ class Friends extends React.Component {
             .then(resp => resp.json())
             .then((data) => {
                 console.log("user_info: ", data)
-                var type=this.state.type
-                if (this.state.userInfo.account!=data.account) {
-                    type = 'following'
-                    this.fetchBooklistData(data.account)
-                }
-                this.touchFriendsList(data.account,type)
+                let url = window.location.href;
+                if (url.substr(url.lastIndexOf('/')) === '/friends')
+                    this.fetchFriendsListData(data.account, this.state.type)
                 this.setState({
                     friends: this.state.friends,
                     userInfo: data,
@@ -262,14 +268,14 @@ class Friends extends React.Component {
                 })
             })
     }
-    Touchurldetail() {
+
+    getUserData() {
         fetch(window.location.href, {
             credentials: 'same-origin',
             method: 'POST',
 
         }).then(
             resp => resp.json()
-
         ).then((data) => {
             console.log("main data: ", data)
             console.log("init state: ", this.state)
@@ -278,12 +284,11 @@ class Friends extends React.Component {
                 friends: this.state.friends,
                 type: 'following',
             })
-            this.touchFriendsList(this.state.userInfo.account, this.state.type)
             this.fetchBooklistData(this.state.userInfo.account)
         })
     }
 
-    getMydata() {
+    getFriendData() {
         fetch('/get_friend_detail', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
@@ -294,17 +299,35 @@ class Friends extends React.Component {
                     friends: this.state.friends,
                     type: 'following'
                 })
-                this.touchFriendsList(this.state.userInfo.account, this.state.type)
-                this.fetchBooklistData(this.state.userInfo.account)
+                this.fetchFriendsListData(this.state.userInfo.account, this.state.type)
             })
     }
 
     componentWillMount() {
         let url = window.location.href;
         if (url.substr(url.lastIndexOf('/')) === '/friends') {
-            this.getMydata()
+            this.getFriendData()
         } else {
-            this.Touchurldetail()
+            this.getUserData()
+        }
+    }
+
+    renderBotton() {
+        let url = window.location.href;
+        if (url.substr(url.lastIndexOf('/')) === '/friends') {
+            return (
+                <FriendsGrid
+                    type={this.state.type}
+                    items={this.state.friends}
+                />
+            )
+        } else {
+            return (
+                <BooklistShow
+                    name={this.state.userInfo.name}
+                    booklists={this.state.booklists}
+                />
+            )
         }
     }
 
@@ -313,19 +336,10 @@ class Friends extends React.Component {
             <div id="home">
                 <TopContainer
                     detail={this.state.userInfo}
-                    click={this.touchFriendsList.bind(this)}
+                    click={this.fetchFriendsListData.bind(this)}
                     clickr={this.followe_user.bind(this)}
                 />
-                <FriendsGrid
-                    type={this.state.type}
-                    items={this.state.friends}
-                    click={this.touchUserDetail.bind(this)}
-                />
-                <BooklistShow
-                    account={this.state.userInfo.account}
-                    name={this.state.userInfo.name}
-                    booklists={this.state.booklists}
-                />
+                {this.renderBotton()}
             </div>
         )
     }

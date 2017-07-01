@@ -85,8 +85,6 @@ def user_detail(account):
 
     return jsonify(get_information_by_account(account))
 
-
-
 @friends_bp.route('/get_friends_list', methods=['POST', 'GET'])
 def get_friends_list():
     if request.method != 'POST':

@@ -406,7 +406,8 @@ def change_booklist_tags(booklist_id, tags):
     :return:
     """
     try:
-        booklist = DB_booklist.query.filter_by(id=booklist_id).one_or_404()
+        booklist = DB_booklist.query.filter_by(id=booklist_id).first_or_404()
+        del booklist.tags[:]
         for tag in tags:
             # booklist_tag = DB_booklist_tag(booklist_id=booklist_id, tag_name=tag)
             booklist.tags.append(tag)
