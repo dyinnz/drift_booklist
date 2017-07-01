@@ -1,46 +1,44 @@
 /**
  * Created by mein-fuhrer on 17-6-28.
  */
-import React from 'react';
-import Paper from 'material-ui/Paper'
+import React from "react";
+import Paper from "material-ui/Paper";
 //import MobileTearSheet from '../../../MobileTearSheet';
-import {List, ListItem} from 'material-ui/List';
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card'
-import Divider from 'material-ui/Divider';
-import Subheader from 'material-ui/Subheader';
-import Avatar from 'material-ui/Avatar';
-import {grey400, darkBlack, lightBlack} from 'material-ui/styles/colors';
-import IconButton from 'material-ui/IconButton';
-import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
-import IconMenu from 'material-ui/IconMenu';
-import MenuItem from 'material-ui/MenuItem';
+import {List, ListItem} from "material-ui/List";
+import Subheader from "material-ui/Subheader";
+import Avatar from "material-ui/Avatar";
+import {darkBlack, grey400} from "material-ui/styles/colors";
+import IconButton from "material-ui/IconButton";
+import MoreVertIcon from "material-ui/svg-icons/navigation/more-vert";
+import IconMenu from "material-ui/IconMenu";
+import MenuItem from "material-ui/MenuItem";
 
 const iconButtonElement = (
-  <IconButton
-    touch={true}
-    tooltip="more"
-    tooltipPosition="bottom-left"
-  >
-    <MoreVertIcon color={grey400} />
-  </IconButton>
+    <IconButton
+        touch={true}
+        tooltip="more"
+        tooltipPosition="bottom-left"
+    >
+        <MoreVertIcon color={grey400}/>
+    </IconButton>
 );
 
 const rightIconMenu = (
-  <IconMenu iconButtonElement={iconButtonElement}>
-    <MenuItem>Reply</MenuItem>
-    <MenuItem>Forward</MenuItem>
-    <MenuItem>Delete</MenuItem>
-  </IconMenu>
+    <IconMenu iconButtonElement={iconButtonElement}>
+        <MenuItem>Reply</MenuItem>
+        <MenuItem>Forward</MenuItem>
+        <MenuItem>Delete</MenuItem>
+    </IconMenu>
 );
 
 class ListContainer extends React.Component {
     renderListItem(item) {
-        return <a href={item.href}> <ListItem
-            leftAvatar={<Avatar src={item.avatar}/>}
+        return <a href={item.href}><ListItem
+            leftAvatar={<a href={"/user/"+item.account}><Avatar src={item.avatar}/></a>}
 
-            primaryText= {<span>
+            primaryText={<a href={"/user/"+item.account}><span>
                 {item.account} &nbsp;&nbsp;
-            </span>}
+            </span></a>}
             secondaryText={
                 <p>
                     <span style={{color: darkBlack}}>{item.timestamp}</span> --
@@ -82,10 +80,10 @@ class Explore extends React.Component {
                 console.log("main data: ", typeof(data))
                 console.log("init state: ", this.state)
                 this.setState({
-                    events: data,
-                    // myBooklist: data.my_booklists,
-                    // followerBooklist: data.followed_booklists,
-                    // showBooklist: this.state.showBooklist,
+                        events: data,
+                        // myBooklist: data.my_booklists,
+                        // followerBooklist: data.followed_booklists,
+                        // showBooklist: this.state.showBooklist,
                     }
                 )
             })

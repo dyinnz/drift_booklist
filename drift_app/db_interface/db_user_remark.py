@@ -1,7 +1,9 @@
 from drift_app.db_interface import db
-from drift_app.db_interface.db_user import get_account_by_id, get_user_infos, DB_user, get_following
-from drift_app.db_interface.db_book import get_book_name, get_booklist_name
+from drift_app.db_interface.db_user import get_account_by_id, get_user_infos, DB_user, get_following, DB_tags
+from drift_app.db_interface.db_book import get_book_name, get_booklist_name, DB_booklist, DB_Book
+from drift_app.recommender import fm_recommender, tag_recommender
 import logging
+import numpy as np
 from datetime import datetime
 from flask import json
 
@@ -19,7 +21,7 @@ class DB_user_book_remark(db.Model):
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.remark_time)
         book_name = get_book_name(self.book_id)
-        content = '评论了书 %s : %s' % (book_name, self.remark)
+        content = '评论了书: %s : %s' % (book_name, self.remark)
         href = 'book/%s' % self.book_id
         return dict({
             'avatar': avatar,
@@ -44,7 +46,7 @@ class DB_user_book_opinion(db.Model):
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.last_vote_time)
         book_name = get_book_name(self.book_id)
-        content = '顶了书 %s' % book_name if self.vote == 'up' else '踩了书 %s' % book_name
+        content = '顶了书: %s' % book_name if self.vote == 'up' else '踩了书 %s' % book_name
         href = 'book/%s' % self.book_id
         return dict({
             'avatar': avatar,
@@ -59,7 +61,7 @@ class DB_user_book_opinion(db.Model):
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.last_vote_time)
         book_name = get_book_name(self.book_id)
-        content = '关注了书 %s' % book_name if self.is_follow else '取关了书 %s' % book_name
+        content = '关注了书: %s' % book_name if self.is_follow else '取关了书 %s' % book_name
         href = 'book/%s' % self.book_id
         return dict({
             'avatar': avatar,
@@ -83,7 +85,7 @@ class DB_user_booklist_remark(db.Model):
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.remark_time)
         booklist_name = get_booklist_name(self.booklist_id)
-        content = '评论了书单 %s : %s' % (booklist_name, self.remark)
+        content = '评论了书单: %s : %s' % (booklist_name, self.remark)
         href = 'booklist/%s' % self.booklist_id
         return dict({
             'avatar': avatar,
@@ -108,7 +110,7 @@ class DB_user_booklist_opinion(db.Model):
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.last_vote_time)
         booklist_name = get_booklist_name(self.booklist_id)
-        content = '顶了书单 %s' % booklist_name if self.vote == 'up' else '踩了书单 %s' % booklist_name
+        content = '顶了书单: %s' % booklist_name if self.vote == 'up' else '踩了书单 %s' % booklist_name
         href = 'booklist/%s' % self.booklist_id
         return dict({
             'avatar': avatar,
@@ -123,7 +125,7 @@ class DB_user_booklist_opinion(db.Model):
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.last_vote_time)
         booklist_name = get_booklist_name(self.booklist_id)
-        content = '关注了书单 %s' % booklist_name if self.is_follow else '取关了书单 %s' % booklist_name
+        content = '关注了书单: %s' % booklist_name if self.is_follow else '取关了书单 %s' % booklist_name
         href = 'booklist/%s' % self.booklist_id
         return dict({
             'avatar': avatar,
@@ -145,8 +147,8 @@ class DB_user_book_remark_opinion(db.Model):
         account = get_account_by_id(self.user_id)
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.last_vote_time)
-        remark = get_book_remark_by_id(self.book_remark_id)
-        content = '顶了书评 %s' % remark if self.vote == 'up' else '踩了书评 %s' % remark
+        remark = json.loads(get_book_remark_by_id(self.book_remark_id))['remark']
+        content = '顶了书评: %s' % remark if self.vote == 'up' else '踩了书评 %s' % remark
         href = 'book/%s' % get_book_id_from_remark(self.book_remark_id)
         return dict({
             'avatar': avatar,
@@ -168,8 +170,8 @@ class DB_user_booklist_remark_opinion(db.Model):
         account = get_account_by_id(self.user_id)
         avatar = json.loads(get_user_infos(account))['pic_src']
         timestamp = str(self.last_vote_time)
-        remark = get_booklist_remark_by_id(self.booklist_remark_id)
-        content = '顶了书单评论 %s' % remark if self.vote == 'up' else '踩了书单评论 %s' % remark
+        remark = json.loads(get_booklist_remark_by_id(self.booklist_remark_id))['remark']
+        content = '顶了书单评论: %s' % remark if self.vote == 'up' else '踩了书单评论 %s' % remark
         href = 'booklist/%s' % get_booklist_id_from_remark(self.booklist_remark_id)
         return dict({
             'avatar': avatar,
@@ -266,7 +268,7 @@ def get_book_remark_by_id(id):
                 'account': get_account_by_id(remark.user_id),
                 'remark': remark.remark,
                 'remark_time': remark.remark_time,
-            }
+            }, ensure_ascii=False
             )
         return None
     except Exception as e:
@@ -277,7 +279,7 @@ def get_book_remark_by_id(id):
 
 def get_book_id_from_remark(remark_id):
     try:
-        remark = DB_user_book_remark.query.filter_by(id=remark_id).one_or_404()
+        remark = DB_user_book_remark.query.filter_by(id=remark_id).one()
         if remark is None:
             return None
         return remark.book_id
@@ -303,7 +305,7 @@ def get_book_remark(book_id, page=1, per_page=10):
               'avatar': json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],
               'account': get_account_by_id(user_book.user_id),
               'remark': user_book.remark,
-              'remark_time': user_book.remark_time} for user_book in user_books]
+              'remark_time': user_book.remark_time} for user_book in user_books], ensure_ascii=False
         )
     except Exception as e:
         logging.error(book_id)
@@ -313,7 +315,7 @@ def get_book_remark(book_id, page=1, per_page=10):
 
 def get_booklist_id_from_remark(remark_id):
     try:
-        remark = DB_user_booklist_remark.query.filter_by(id=remark_id).one_or_404()
+        remark = DB_user_booklist_remark.query.filter_by(id=remark_id).one()
         if remark is None:
             return None
         return remark.booklist_id
@@ -333,7 +335,7 @@ def get_booklist_remark_by_id(id):
                 'account': get_account_by_id(remark.user_id),
                 'remark': remark.remark,
                 'remark_time': remark.remark_time,
-            }
+            }, ensure_ascii=False
             )
     except Exception as e:
         logging.error(id)
@@ -358,7 +360,7 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
               'avatar': json.loads(get_user_infos(get_account_by_id(user_booklist.user_id)))['pic_src'],
               'account': get_account_by_id(user_booklist.user_id),
               'remark': user_booklist.remark,
-              'remark_time': user_booklist.remark_time} for user_booklist in user_booklists]
+              'remark_time': user_booklist.remark_time} for user_booklist in user_booklists], ensure_ascii=False
         )
     except Exception as e:
         logging.error("get_booklist_remark(): %s", booklist_id)
@@ -419,7 +421,7 @@ def get_book_followers(book_id, page=1, per_page=10):
     try:
         user_books = DB_user_book_opinion.query.filter_by(book_id=book_id, is_follow=1).paginate(page, per_page).query
         return json.dumps(dict(
-            [(get_account_by_id(user_book.user_id)) for user_book in user_books]
+            [(get_account_by_id(user_book.user_id)) for user_book in user_books], ensure_ascii=False
         ))
     except Exception as e:
         logging.error(book_id)
@@ -439,7 +441,7 @@ def get_booklist_followers(booklist_id, page=1, per_page=10):
         user_booklists = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, is_follow=1).paginate(page,
                                                                                                                  per_page).query
         return json.dumps(dict(
-            [(get_account_by_id(user_booklist.user_id)) for user_booklist in user_booklists]
+            [(get_account_by_id(user_booklist.user_id)) for user_booklist in user_booklists], ensure_ascii=False
         ))
     except Exception as e:
         logging.error(booklist_id)
@@ -456,9 +458,8 @@ def user_vote_book(book_id, user_id, attitude):
     :return: If success, return True, else False.
     """
     try:
-        user_vote = DB_user_book_opinion.query.filter_by(book_id=book_id, user_id=user_id)
+        user_vote = DB_user_book_opinion.query.filter_by(book_id=book_id, user_id=user_id).first()
         if user_vote is not None:
-            user_vote = user_vote.first()
             user_vote.vote = attitude
             user_vote.last_vote_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
@@ -486,9 +487,8 @@ def user_vote_booklist(booklist_id, user_id, attitude):
     :return: If success, return True, else False.
     """
     try:
-        user_vote = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, user_id=user_id)
+        user_vote = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, user_id=user_id).first()
         if user_vote is not None:
-            user_vote = user_vote.first()
             user_vote.vote = attitude
             user_vote.last_vote_time = datetime.strftime(datetime.now(), '%Y-%m-%d %H:%M:%S')
             db.session.commit()
@@ -768,35 +768,43 @@ def get_user_moments(user_id, page=1, per_page=10):
         for u_id in following:
             book_remark = DB_user_book_remark.query.filter_by(user_id=u_id).order_by(
                 DB_user_book_remark.remark_time).paginate(page, per_page).query
-            results.extend([(x.remark_info(), x.remark_time) for x in book_remark])
+            results.extend([(x.remark_info(), x.remark_time) for x in book_remark if x is not None])
+            logging.info("fuck1")
 
             booklist_remark = DB_user_booklist_remark.query.filter_by(user_id=u_id).order_by(
                 DB_user_booklist_remark.remark_time).paginate(page, per_page).query
-            results.extend([(x.remark_info(), x.remark_time) for x in booklist_remark])
+            results.extend([(x.remark_info(), x.remark_time) for x in booklist_remark if x is not None])
+            logging.info("fuck2")
 
             book_vote = DB_user_book_opinion.query.filter_by(user_id=u_id).order_by(
                 DB_user_book_opinion.last_vote_time).paginate(page, per_page).query
-            results.extend([(x.vote_info(), x.last_vote_time) for x in book_vote])
+            results.extend([(x.vote_info(), x.last_vote_time) for x in book_vote if x is not None])
+            logging.info("fuck3")
 
             booklist_vote = DB_user_booklist_opinion.query.filter_by(user_id=u_id).order_by(
                 DB_user_booklist_opinion.last_vote_time).paginate(page, per_page).query
-            results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_vote])
+            results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_vote if x is not None])
+            logging.info("fuck4")
 
-            book_follow = DB_user_book_opinion.query.filter_by(user_id=u_id).order_by(
+            book_follow = DB_user_book_opinion.query.filter_by(user_id=u_id, is_follow=1).order_by(
                 DB_user_book_opinion.last_follow_time).paginate(page, per_page).query
-            results.extend([(x.follow_info(), x.last_follow_time) for x in book_follow])
+            results.extend([(x.follow_info(), x.last_follow_time) for x in book_follow if x is not None])
+            logging.info("fuck5")
 
-            booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=u_id).order_by(
+            booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=u_id, is_follow=1).order_by(
                 DB_user_booklist_opinion.last_follow_time).paginate(page, per_page).query
-            results.extend([(x.follow_info(), x.last_follow_time) for x in booklist_follow])
+            results.extend([(x.follow_info(), x.last_follow_time) for x in booklist_follow if x is not None])
+            logging.info("fuck6")
 
             book_remark_vote = DB_user_book_remark_opinion.query.filter_by(user_id=u_id).order_by(
                 DB_user_book_remark_opinion.last_vote_time).paginate(page, per_page).query
-            results.extend([(x.vote_info(), x.last_vote_time) for x in book_remark_vote])
+            results.extend([(x.vote_info(), x.last_vote_time) for x in book_remark_vote if x is not None])
+            logging.info("fuck7")
 
             booklist_remark_vote = DB_user_booklist_remark_opinion.query.filter_by(user_id=u_id).order_by(
                 DB_user_booklist_remark_opinion.last_vote_time).paginate(page, per_page).query
-            results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_remark_vote])
+            results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_remark_vote if x is not None])
+            logging.info("fuck8")
 
         results = [x[0] for x in
                    sorted(results, key=lambda x: x[1], reverse=True)[(page - 1) * per_page:page * per_page]]
@@ -811,5 +819,31 @@ def get_user_moments(user_id, page=1, per_page=10):
 
 
 
-def get_book_recommendation(user_id, K=10):
-    pass
+def get_recommend_booklists(user_id, K=10):
+    user = DB_user.query.filter_by(id=user_id).one()
+    follow_books = DB_user_book_opinion.query.filter_by(user_id=user_id, is_follow=1)
+
+    if follow_books.count() <= 5:
+        # tags
+        booklists = DB_booklist.query.order_by(DB_booklist.id).all()
+        books = DB_Book.query.order_by(DB_Book.id).all()
+        tags = DB_tags.query.all()
+
+        booklist_book = np.zeros((len(booklists), len(books)))
+        book_tags = np.zeros((len(books), len(tags)))
+        user_tags = np.zeros(len(tags))
+
+        for i, bl in enumerate(booklists):
+            for b in bl.books:
+                booklist_book[i, books.index(b)] = 1
+        for i, b in enumerate(books):
+            for t in b.tags:
+                book_tags[i, tags.index(t)] = 1
+        for t in user.interests:
+            user_tags[tags.index(t)] = 1
+
+        recommend_booklists = tag_recommender.topK_booklists(book_tags, user_tags, booklist_book, k=2)
+        logging.info(recommend_booklists)
+        return recommend_booklists
+    return None
+
