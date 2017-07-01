@@ -9,6 +9,8 @@ import CircularProgress from 'material-ui/CircularProgress'
 import Paper from 'material-ui/Paper'
 import Subheader from 'material-ui/Subheader'
 import DatePicker from 'material-ui/DatePicker'
+import AutoComplete from 'material-ui/AutoComplete';
+import Chip from 'material-ui/Chip'
 
 import update from 'immutability-helper'
 
@@ -108,35 +110,52 @@ class Settings extends React.Component {
             birthday: "",
             introduction: "",
             gender: "",
+            tags: [],
             pic_src: "",
             info_result: "",
             avatar_result: "",
+            allTags: [],
         }
     }
 
     componentWillMount() {
-        fetch("/settings/get", {credentials: 'same-origin'})
-            .then(resp => resp.json())
-            .then((data) => {
-                let date = new Date(data.birthday)
-                date = date.toISOString().substr(0, 10)
+        fetch("/settings/get", {
+            credentials: 'same-origin'
+        }).then(
+            resp => resp.json()
+        ).then((data) => {
+            console.log(data)
+            let date = new Date(data.birthday)
+            date = date.toISOString().substr(0, 10)
 
-                this.setState({
-                    name: data.name,
-                    birthday: date,
-                    introduction: data.introduction,
-                    gender: data.gender,
-                    pic_src: data.pic_src,
-                    info_result: "",
-                    avatar_result: "",
-                })
+            this.setState({
+                name: data.name,
+                birthday: date,
+                introduction: data.introduction,
+                gender: data.gender,
+                tags: data.tags,
+                pic_src: data.pic_src,
+                info_result: "",
+                avatar_result: "",
+                allTags: this.state.allTags,
             })
+        })
+
+        fetch('/get_tags').then(
+            resp => resp.json()
+        ).then((data) => {
+            console.log("allTags: ", data)
+            this.setState(update(this.state, {
+                allTags: {$set: data}
+            }))
+        })
     }
 
+
     handleUpdate() {
-        let name=  $("#name").val();
-        let birthday =  $("#birthday").val();
-        let introduction =  $("#introduction").val();
+        let name = $("#name").val();
+        let birthday = $("#birthday").val();
+        let introduction = $("#introduction").val();
         let gender = $("input[name=gender]:checked").val();
 
         fetchPostJson("/settings/update", {
@@ -145,6 +164,7 @@ class Settings extends React.Component {
             introduction: introduction,
             gender: gender,
             pic_src: this.state.pic_src,
+            tags: this.state.tags,
         })
             .then(resp => resp.text())
             .then((data) => {
@@ -157,7 +177,9 @@ class Settings extends React.Component {
                     gender: gender,
                     pic_src: this.state.pic_src,
                     info_result: data,
-                    avatar_result: this.state.avatar_result
+                    avatar_result: this.state.avatar_result,
+                    tags: this.state.tags,
+                    allTags: this.state.allTags,
                 })
             })
     }
@@ -196,7 +218,8 @@ class Settings extends React.Component {
                         label="Choose Avatar..."
                         containerElement="label"
                         primary={true}>
-                        <input type="file" id="file" className="upload_input" name="file" onChange={()=>this.handleUpload()}/>
+                        <input type="file" id="file" className="upload_input" name="file"
+                               onChange={() => this.handleUpload()}/>
                     </FlatButton>
                 </form>
                 <br/>
@@ -205,8 +228,37 @@ class Settings extends React.Component {
         )
     }
 
+    handleTagKeyDown(e) {
+        if (e.key === 'Enter') {
+            let tagAdder = document.getElementById('tag_adder')
+            if (this.state.tags.indexOf(tagAdder.value) === -1) {
+                this.setState(update(this.state, {
+                    tags: {$push: [tagAdder.value]}
+                }));
+            }
+            tagAdder.value = ""
+        }
+    }
+
+    handleItemTouchTap(e, item, index) {
+        if (this.state.tags.indexOf(item.props.value) === -1) {
+            this.setState(update(this.state, {
+                tags: {$push: [item.props.value]}
+            }));
+            console.log("after touch: ", this.state.tags)
+        }
+    }
+
+    handleItemDelete(key) {
+        let index = this.state.tags.indexOf(key);
+        this.setState(update(this.state, {
+            tags: {$splice: [[index, 1]]}
+        }));
+        console.log("after delete: ", this.state.tags)
+    }
+
     renderUpdateInfo() {
-        console.log(this.state.gender);
+        console.log("before tags: ", this.state.allTags)
         return (
             <Paper className="update_info">
                 {this.renderAvatar()}
@@ -227,11 +279,33 @@ class Settings extends React.Component {
                     <TextField
                         floatingLabelText="Introduction"
                         floatingLabelFixed={true}
-                        rows={2}
-                        rowsMax={5}
+                        multiLine={true}
                         id="introduction"
                         defaultValue={this.state.introduction}
                     /> <br/>
+
+                    <AutoComplete
+                        id='tag_adder'
+                        floatingLabelText="New tags"
+                        floatingLabelFixed={true}
+                        dataSource={this.state.allTags}
+                        filter={AutoComplete.fuzzyFilter}
+                        onKeyDown={this.handleTagKeyDown.bind(this)}
+                        openOnFocus={true}
+                        menuProps={{
+                            onItemTouchTap: this.handleItemTouchTap.bind(this)
+                        }}
+                    />
+
+                    <div className="tags_wrapper">
+                        {this.state.tags.map((tag) => {
+                            return <Chip
+                                key={tag}
+                                onRequestDelete={() => this.handleItemDelete(tag)}
+                            >{tag}
+                            </Chip>
+                        })}
+                    </div>
 
                     <div className="radio_group">
                         <RadioButtonGroup
@@ -243,6 +317,7 @@ class Settings extends React.Component {
                             <RadioButton value="male" id="male" label="male"/>
                         </RadioButtonGroup>
                     </div>
+
                     <FlatButton label="Update" primary={true} onClick={() => this.handleUpdate()}/>
                     <p>{this.state.info_result}</p>
                 </div>
@@ -260,10 +335,11 @@ class Settings extends React.Component {
         return (
             <div>
                 {this.renderUpdateInfo()}
-                <UpdatePassword/>
             </div>
         )
     }
 }
+
+// <UpdatePassword/>
 
 export default Settings;
