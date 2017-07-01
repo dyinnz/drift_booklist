@@ -42,6 +42,15 @@ class DB_tags(db.Model):
         return '%s' % self.name
 
 
+def get_all_tags():
+    try:
+        tags=DB_tags.query.all()
+        return json.dumps([tag.name for tag in tags],ensure_ascii=False)
+
+    except Exception as e:
+        logging.error('get all tags false')
+        logging.error(e)
+        return None
 
 def get_user_interests(user_id):
     try:

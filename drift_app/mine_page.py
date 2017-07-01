@@ -439,3 +439,4 @@ def vote_remark():
             'up_number':vote['up'],
             'down_number':vote['down']
         })
+

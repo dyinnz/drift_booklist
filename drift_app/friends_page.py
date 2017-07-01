@@ -134,3 +134,7 @@ def get_user_booklist():
         'booklist_followed':get_booklists_by_ids(booklist_followed_ids)
     }
     return jsonify(jsondata)
+
+@friends_bp.route('/get_tags')
+def get_tags():
+    return db_user.get_all_tags()

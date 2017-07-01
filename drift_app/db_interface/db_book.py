@@ -63,7 +63,6 @@ class DB_booklist(db.Model):
 
 
 
-
 # class DB_booklist_book(db.Model):
 #     __tablename__ = 'booklist_book'
 #     booklist_id = db.Column(db.Integer, db.ForeignKey("booklist.id"), primary_key=True)
@@ -71,6 +70,7 @@ class DB_booklist(db.Model):
 #
 #     def __repr__(self):
 #         return 'Book %s in booklist %s' % (self.book_id, self.booklist_id)
+
 
 
 def get_book(book_id):
