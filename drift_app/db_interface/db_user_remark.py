@@ -1,5 +1,5 @@
 from drift_app.db_interface import db
-from drift_app.db_interface.db_user import get_account_by_id, get_user_infos, DB_user, get_following, DB_tags
+from drift_app.db_interface.db_user import get_account_by_id, get_user_infos, DB_user, get_following, DB_tags, DB_user
 from drift_app.db_interface.db_book import get_book_name, get_booklist_name, DB_booklist, DB_Book
 from drift_app.recommender import fm_recommender, tag_recommender
 import logging
@@ -40,6 +40,7 @@ class DB_user_book_opinion(db.Model):
     is_follow = db.Column(db.Boolean, default=False)
     last_vote_time = db.Column(db.DateTime)
     last_follow_time = db.Column(db.DateTime)
+    click_time = db.Column(db.Integer, default=0)
 
     def vote_info(self):
         account = get_account_by_id(self.user_id)
@@ -823,19 +824,30 @@ def get_recommend_booklists(user_id, K=10):
     user = DB_user.query.filter_by(id=user_id).one()
     follow_books = DB_user_book_opinion.query.filter_by(user_id=user_id, is_follow=1)
 
-    if follow_books.count() <= 5:
+    booklists = DB_booklist.query.order_by(DB_booklist.id)
+    n_booklists = booklists.count()
+    booklists = booklists.all()
+    # booklist_dic = dict(zip(range(booklists.count()), [t.id for t in booklists]))
+    booklist_dic = dict(zip([t.id for t in booklists], range(n_booklists)))
+    books = DB_Book.query.order_by(DB_Book.id)
+    n_books = books.count()
+    books = books.all()
+    # book_dic = dict(zip(range(books.count()), [t.id for t in books]))
+    book_dic = dict(zip([t.id for t in books], range(n_books)))
+    del booklists, books
+
+    booklist_book = np.zeros((booklists.count(), books.count()))
+    for i, bl in enumerate(booklists):
+        for b in bl.books:
+            booklist_book[i, book_dic[b.id]] = 1
+
+    if follow_books.count() <= 5 and len(user.interests) > 0:
         # tags
-        booklists = DB_booklist.query.order_by(DB_booklist.id).all()
-        books = DB_Book.query.order_by(DB_Book.id).all()
         tags = DB_tags.query.all()
 
-        booklist_book = np.zeros((len(booklists), len(books)))
         book_tags = np.zeros((len(books), len(tags)))
         user_tags = np.zeros(len(tags))
 
-        for i, bl in enumerate(booklists):
-            for b in bl.books:
-                booklist_book[i, books.index(b)] = 1
         for i, b in enumerate(books):
             for t in b.tags:
                 book_tags[i, tags.index(t)] = 1
@@ -845,5 +857,25 @@ def get_recommend_booklists(user_id, K=10):
         recommend_booklists = tag_recommender.topK_booklists(book_tags, user_tags, booklist_book, k=2)
         logging.info(recommend_booklists)
         return recommend_booklists
-    return None
+    else:
+        users = DB_user.query.all()
+        n_users = len(users)
+        user_books = np.zeros((n_users, n_books))
+        user_dc = dict(zip([t.id for t in users], range(n_users)))
+        del users
+        for i, u in enumerate(users):
+            u_books = DB_user_book_opinion.query.filter_by(user_id=u.id)
+            for ub in u_books:
+                if ub.is_follow:
+                    user_books[i, book_dic[ub.book_id]] += 5
+                if ub.vote == 'up':
+                    user_books[i, book_dic[ub.book_id]] += 10
+                elif ub.vote == 'down':
+                    user_books[i, book_dic[ub.book_id]] -= 10
+                user_books[i, book_dic[ub.book_id]] += ub.click_time
 
+        user_books += np.min(user_books)
+        user_books = 1.0 / (1 + np.exp(-0.1 * user_books))
+
+        fm_recommender.fit(user_books)
+        return fm_recommender.topK_booklists(user_dc[user_id], booklist_book, 2)

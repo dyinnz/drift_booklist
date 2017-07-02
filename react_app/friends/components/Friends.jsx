@@ -51,7 +51,9 @@ class TopContainer extends React.Component {
             <Card className="show_information">
                 <div className="clearfix">
                     <CardMedia className="card_media">
+                        <a href={"/user/"+this.props.detail.account}>
                         <img src={this.props.detail.pic_src}/>
+                        </a>
                     </CardMedia>
                     <div className="card_rhs">
                         <div style={{display: "flex"}}>
@@ -234,8 +236,8 @@ class Friends extends React.Component {
         }
 
         let url = window.location.href;
-        if (url.substr(url.lastIndexOf('/')) != '/friends')
-            window.history.pushState({}, 0, 'friends');
+        if (url.indexOf('/user/') != -1)
+            window.history.pushState({}, 0, url.substring(0,url.indexOf('/user/'))+'/friends');
 
         fetchPostJson("/get_friends_list", data)
             .then(resp => resp.json())
@@ -259,7 +261,7 @@ class Friends extends React.Component {
             .then((data) => {
                 console.log("user_info: ", data)
                 let url = window.location.href;
-                if (url.substr(url.lastIndexOf('/')) === '/friends')
+                if (url.indexOf('/user/') === -1)
                     this.fetchFriendsListData(data.account, this.state.type)
                 this.setState({
                     friends: this.state.friends,
@@ -305,7 +307,7 @@ class Friends extends React.Component {
 
     componentWillMount() {
         let url = window.location.href;
-        if (url.substr(url.lastIndexOf('/')) === '/friends') {
+        if (url.indexOf('/user/')===-1) {
             this.getFriendData()
         } else {
             this.getUserData()
@@ -314,7 +316,8 @@ class Friends extends React.Component {
 
     renderBotton() {
         let url = window.location.href;
-        if (url.substr(url.lastIndexOf('/')) === '/friends') {
+        console.log("url",url.indexOf('/user/'))
+        if (url.indexOf('/user/') === -1) {
             return (
                 <FriendsGrid
                     type={this.state.type}
