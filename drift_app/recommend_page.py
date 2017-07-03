@@ -84,3 +84,17 @@ def get_popular_user():
         }
         user_infos.append(user_info)
     return jsonify(user_infos)
+
+@recommend_bp.route('/recommend/islogin')
+def islogin():
+    jsondata={}
+    if flask_login.current_user.is_anonymous:
+        jsondata['isLogIn']=0
+        jsondata['user_cover']=''
+        jsondata['user_name']=''
+        return jsonify(jsondata)
+    user_data=json.loads(db_user.get_user_infos(flask_login.current_user.id))
+    jsondata['isLogIn']=1
+    jsondata['user_cover']=user_data['pic_src']
+    jsondata['user_name']=user_data['name']
+    return jsonify(jsondata)

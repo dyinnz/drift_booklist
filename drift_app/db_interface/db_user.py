@@ -57,6 +57,7 @@ def get_user_interests(user_id):
         user = DB_user.query.filter_by(id=user_id).first()
         if user is None:
             return None
+        logging.error(user.interests)
         return json.dumps([x.name for x in user.interests])
     except Exception as e:
         logging.error(user_id)

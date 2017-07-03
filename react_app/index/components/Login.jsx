@@ -12,7 +12,7 @@ class Login extends React.Component {
     }
 
     componentWillMount(){
-        fetchData()
+        this.fetchData()
     }
 
     fetchData() {
