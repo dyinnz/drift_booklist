@@ -1,16 +1,13 @@
+/**
+ * Created by lpq_user on 17-6-30.
+ */
 import ReactDOM from 'react-dom';
 import React from 'react';
-
-import RecommandList from 'index/components/RecommandList';
-import CategoryList from 'index/components/CategoryList';
+import Search from 'search/components/Search';
 import Login from 'index/components/Login';
 
 const App = () => (
-    <RecommandList/>
-);
-
-const App2 = () => (
-    <CategoryList/>
+    <Search/>
 );
 
 const App3 = () => (
@@ -23,13 +20,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('user')
     );
 
+
     ReactDOM.render(
         <App/>,
         document.getElementById('root')
-    );
-
-    ReactDOM.render(
-        <App2/>,
-        document.getElementById('root2')
     );
 });

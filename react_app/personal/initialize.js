@@ -1,16 +1,14 @@
+/**
+ * Created by lpq_user on 17-6-30.
+ */
 import ReactDOM from 'react-dom';
 import React from 'react';
 
-import RecommandList from 'index/components/RecommandList';
-import CategoryList from 'index/components/CategoryList';
+import Tag from 'personal/components/Tag';
 import Login from 'index/components/Login';
 
 const App = () => (
-    <RecommandList/>
-);
-
-const App2 = () => (
-    <CategoryList/>
+    <Tag/>
 );
 
 const App3 = () => (
@@ -18,6 +16,7 @@ const App3 = () => (
 );
 
 document.addEventListener('DOMContentLoaded', () => {
+
     ReactDOM.render(
         <App3/>,
         document.getElementById('user')
@@ -26,10 +25,5 @@ document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <App/>,
         document.getElementById('root')
-    );
-
-    ReactDOM.render(
-        <App2/>,
-        document.getElementById('root2')
     );
 });

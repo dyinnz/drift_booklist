@@ -103,11 +103,13 @@ class RecommandList extends React.Component {
 
     upperPanel(){
         return (
-            <div className="s-bar">推荐
+            <div className="portlet-title">
+                <div className="caption font-green bold">
+                    推荐
+                </div>
                 <a className="am-badge am-badge-danger am-round">小清新</a>
                 <a className="am-badge am-badge-danger am-round">文艺范</a>
-                <a className="i-load-more-item-shadow" href="#">
-                    <i className="am-icon-refresh am-icon-fw"></i>换一组</a>
+                <a className="i-load-more-item-shadow" href="#"><i className="am-icon-refresh am-icon-fw"></i>换一组</a>
             </div>
         )
     }
@@ -115,7 +117,7 @@ class RecommandList extends React.Component {
 
     listPanel () {
         return (
-            <div className="s-content_1">
+            <div className="s-content">
                 <ul data-am-widget="gallery" className="am-gallery am-avg-sm-2 am-avg-lg-4 am-avg-md-3 am-gallery-default">
                     <li className="li1">
                         <Booklist items={this.state.booklist}/>
