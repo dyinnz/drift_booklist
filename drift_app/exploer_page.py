@@ -19,11 +19,10 @@ def explore():
 
 @explore_bp.route('/test_explore')
 def test_explore():
-    db_user_remark.get_recommend_booklists(flask_login.current_user.db_id)
-    if flask_login.current_user.is_anonymous:
-        return flask.redirect(flask.url_for('login_bp.login'))
-    else:
-        return flask.current_app.send_static_file('react/explore.html')
+    # result = db_user_remark.get_recommend_booklists(flask_login.current_user.db_id)
+    result = db_user_remark.get_user_moments(flask_login.current_user.db_id)
+    logging.debug('test explore: %s' % result)
+    return flask.current_app.send_static_file('react/login.html')
 
 
 @explore_bp.route('/get_moment', methods=['GET', 'POST'])

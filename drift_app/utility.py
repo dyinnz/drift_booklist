@@ -6,6 +6,7 @@ import flask_login
 from flask_login import current_user
 from flask import Blueprint, current_app, jsonify, request
 from werkzeug.utils import secure_filename
+from drift_app.db_interface import db_book
 
 UPLOAD_FOLDER = './static/uploads'
 
@@ -62,3 +63,9 @@ def upload_file():
         'path:': ''
     })
 
+
+@utility_bp.route('/search/<keyword>')
+def search(keyword):
+    ret = db_book.search_keyword(keyword)
+    print(ret)
+    return jsonify(ret)
