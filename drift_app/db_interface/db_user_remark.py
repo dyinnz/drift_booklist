@@ -765,6 +765,8 @@ def user_vote_booklist_remark(user_id, booklist_remark_id, attitude):
 def get_user_moments(user_id, page=1, per_page=10):
     try:
         following = [f[0] for f in json.loads(get_following(user_id))]
+        if len(following) == 0:
+            return json.dumps([])
         # logging.debug(following)
         # sql = r"(SELECT 'u_b_r' as type, remark_time as thetime from user_book_remark WHERE remark_time IS NOT NULL UNION) " \
         #       r"(SELECT 'u_bl_r' as type, remark_time as thetime from user_booklist_remark WHERE remark_time IS NOT NULL) UNION " \
@@ -778,6 +780,7 @@ def get_user_moments(user_id, page=1, per_page=10):
         # for r in results:
         #     logging.info(r)
         # return None
+        logging.debug("following: %s" % following)
         results = []
         for u_id in following:
             book_remark = DB_user_book_remark.query.filter_by(user_id=u_id).order_by(
