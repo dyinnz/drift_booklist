@@ -19,6 +19,7 @@ import {blue500} from 'material-ui/styles/colors'
 import Dialog from 'material-ui/Dialog'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
+import AutoComplete from 'material-ui/AutoComplete';
 
 import update from 'immutability-helper'
 
@@ -64,10 +65,33 @@ class BooklistEdit extends React.Component {
             tags: props.tags,
             cover: props.cover,
             id: props.id,
-            result: ""
+            result: "",
+            allTags: [],
         };
 
         console.log("booklist edit: ", props)
+    }
+
+    componentWillReciveProps(props) {
+        this.state = {
+            name: props.name,
+            introduction: props.introduction,
+            tags: props.tags,
+            cover: props.cover,
+            id: props.id,
+            result: "",
+            allTags: this.state.allTags,
+        };
+    }
+
+    componentWillMount() {
+        fetch('/get_tags').then(
+            resp => resp.json()
+        ).then( (data) => {
+            this.setState(update(this.state, {
+                allTags: {$set: data},
+            }))
+        })
     }
 
     handleUpdate() {
@@ -77,20 +101,19 @@ class BooklistEdit extends React.Component {
             booklist_name: document.getElementById("edit_list_name").value,
             introduction: document.getElementById("edit_list_intro").value,
             booklist_cover: state.cover,
-            tags: []
+            tags: state.tags,
         }).then(
             resp => resp.json()
-
-        ).then( (data) => {
+        ).then((data) => {
             if (data.OK) {
                 this.props.updateEditState(false)
-                this.props.handleTouch(state.id)
+                this.props.handleTouch(state.id, true)
             } else {
                 this.setState(update(this.state, {
-                    result: "update failed"
+                    result: {$set: "update failed"}
                 }))
             }
-        } )
+        })
     }
 
     handleUpload() {
@@ -116,6 +139,37 @@ class BooklistEdit extends React.Component {
         })
     }
 
+    handleTagKeyDown(e) {
+        if (e.key === 'Enter') {
+            console.log("tags: ", this.state.tags)
+
+            let tagAdder = document.getElementById('tag_adder')
+            if (this.state.tags.indexOf(tagAdder.value) === -1) {
+                this.setState(update(this.state, {
+                    tags: {$push: [tagAdder.value]}
+                }));
+            }
+            tagAdder.value = ""
+        }
+    }
+
+    handleItemTouchTap(e, item, index) {
+        if (this.state.tags.indexOf(item.props.value) === -1) {
+            this.setState(update(this.state, {
+                tags: {$push: [item.props.value]}
+            }));
+            console.log("after touch: ", this.state.tags)
+        }
+    }
+
+    handleItemDelete(key) {
+        let index = this.state.tags.indexOf(key);
+        this.setState(update(this.state, {
+            tags: {$splice: [[index, 1]]}
+        }));
+        console.log("after delete: ", this.state.tags)
+    }
+
     render() {
         return (
             <Card>
@@ -136,7 +190,7 @@ class BooklistEdit extends React.Component {
                                            id="file"
                                            className="upload_input"
                                            name="file"
-                                           onChange={()=>this.handleUpload()}/>
+                                           onChange={() => this.handleUpload()}/>
                                 </FlatButton>
                             </div>
                         </form>
@@ -152,8 +206,31 @@ class BooklistEdit extends React.Component {
                                    floatingLabelText="Introduction"
                                    floatingLabelFixed={true}
                                    id="edit_list_intro"
+                                   multiLine={true}
                         />
                         <br/>
+                        <AutoComplete
+                            id='tag_adder'
+                            floatingLabelText="New tags"
+                            floatingLabelFixed={true}
+                            dataSource={this.state.allTags}
+                            filter={AutoComplete.fuzzyFilter}
+                            onKeyDown={this.handleTagKeyDown.bind(this)}
+                            openOnFocus={true}
+                            menuProps={{
+                                onItemTouchTap: this.handleItemTouchTap.bind(this)
+                            }}
+                        />
+                        <div className="tags_wrapper">
+                            {this.state.tags.map((tag) => {
+                                return <Chip
+                                    key={tag}
+                                    onRequestDelete={() => this.handleItemDelete(tag)}
+                                >{tag}
+                                </Chip>
+                            })}
+                        </div>
+
                         <FlatButton label="Update"
                                     onClick={() => this.handleUpdate()}
                                     primary={true}
@@ -162,6 +239,7 @@ class BooklistEdit extends React.Component {
                                     onClick={() => this.props.updateEditState(false)}
                                     secondary={true}
                         />
+                        <p>{this.state.result}</p>
                     </div>
                 </div>
             </Card>
@@ -178,6 +256,7 @@ class ShowContainer extends React.Component {
             downNumber: 0,
             followNumber: 0,
             isEdit: false,
+            modifiable: true,
         }
     }
 
@@ -186,6 +265,8 @@ class ShowContainer extends React.Component {
             upNumber: {$set: next.details.up_number},
             downNumber: {$set: next.details.down_number},
             followNumber: {$set: next.details.follower_number},
+            isEdit: {$set: false},
+            modifiable: {$set: next.modifiable},
         }))
     }
 
@@ -196,8 +277,7 @@ class ShowContainer extends React.Component {
 
         }).then(
             resp => resp.json()
-
-        ).then( (data) => {
+        ).then((data) => {
             console.log(data);
             if (data.OK) {
                 this.setState(update(this.state, {
@@ -205,7 +285,7 @@ class ShowContainer extends React.Component {
                     downNumber: {$set: data.down_number},
                 }))
             }
-        } )
+        })
     }
 
     handleStar() {
@@ -214,8 +294,7 @@ class ShowContainer extends React.Component {
             booklist_id: this.props.details.booklist_id
         }).then(
             resp => resp.json()
-
-        ).then( (data) => {
+        ).then((data) => {
             console.log(data);
             if (data.OK) {
                 this.setState(update(this.state, {
@@ -256,6 +335,32 @@ class ShowContainer extends React.Component {
         }))
     }
 
+    renderModify() {
+        console.log("modifiable: ", this.state.modifiable)
+        if (this.state.modifiable) {
+            return (
+                <div className="flex_class">
+                    <Subheader> BOOKLIST DETAILS </Subheader>
+                    <FlatButton label="Edit"
+                                primary={true}
+                                onClick={() => this.updateEditState(true)}
+                    />
+                    <FlatButton
+                        label="Delete"
+                        secondary={true}
+                        onClick={() => this.props.deleteList(this.props.details.booklist_id)}
+                    />
+                </div>
+            )
+        } else {
+            return (
+                <div className="flex_class">
+                    <Subheader> BOOKLIST DETAILS </Subheader>
+                </div>
+            )
+        }
+    }
+
     renderShow() {
         const badgeStyle = {
             top: 35,
@@ -268,15 +373,7 @@ class ShowContainer extends React.Component {
         console.log("show: ", this.props.details)
         return (
             <Card>
-
-                <div className="flex_class">
-                <Subheader> BOOKLIST DETAILS </Subheader>
-                    <FlatButton label="Edit"
-                                primary={true}
-                                onClick={() => this.updateEditState(true)}
-                    />
-                </div>
-
+                {this.renderModify()}
                 <div className="flex_class">
                     <CardMedia style={cardMediaStyle}>
                         <img style={cardImgStyle} src={this.props.details.booklist_cover}/>
@@ -379,6 +476,7 @@ class Mine extends React.Component {
             myListItems: [],
             favoriteListItems: [],
             currBooklist: {},
+            favoriteBooksID: undefined,
         }
     }
 
@@ -388,13 +486,14 @@ class Mine extends React.Component {
             .then((data) => {
                 console.log("main data: ", data)
                 console.log("init state: ", this.state)
-                this.setState({
-                    myListItems: data.my_booklists,
-                    favoriteListItems: data.followed_booklists,
-                    currBooklist: this.state.currBooklist,
-                })
 
-                this.touchBooklist(data.favorite_books_id)
+                this.setState(update(this.state, {
+                    myListItems: {$set: data.my_booklists},
+                    favoriteListItems: {$set: data.followed_booklists},
+                    favoriteBooksID: {$set: data.favorite_books_id},
+                }));
+
+                this.touchBooklist(data.favorite_books_id, true)
             })
     }
 
@@ -408,11 +507,11 @@ class Mine extends React.Component {
         ).then((data) => {
             console.log("main data: ", data)
             console.log("init state: ", this.state)
-            this.setState({
-                myListItems: data.my_booklists,
-                favoriteListItems: data.followed_booklists,
-                currBooklist: this.state.currBooklist,
-            })
+
+            this.setState(update(this.state, {
+                myListItems: {$set: data.my_booklists},
+                favoriteListItems: {$set: data.followed_booklists},
+            }));
 
             this.touchBooklist(data.booklist_id)
         })
@@ -448,7 +547,7 @@ class Mine extends React.Component {
             return (
                 <BooklistPane myListItems={this.state.myListItems}
                               favoriteListItems={this.state.favoriteListItems}
-                              handleTouch={(i) => this.touchBooklist(i)}
+                              handleTouch={this.touchBooklist.bind(this)}
                               updateBooklist={this.updateBookList.bind(this)}
                 />
             )
@@ -457,8 +556,9 @@ class Mine extends React.Component {
         }
     }
 
-    touchBooklist(currListID) {
+    touchBooklist(currListID, modifiable) {
         console.log("currListID: ", currListID);
+        console.log("modifiable in touchBooklist: ", modifiable);
 
         fetchPostJson("/booklist_detail", {
             booklist_id: currListID
@@ -466,12 +566,23 @@ class Mine extends React.Component {
             resp => resp.json()
         ).then((data) => {
             console.log("booklist_detail: ", data)
-            this.setState({
-                myListItems: this.state.myListItems,
-                favoriteListItems: this.state.favoriteListItems,
-                currBooklist: data,
-                currListID: currListID,
-            })
+
+            this.setState(update(this.state, {
+                currBooklist: {$set: data},
+                currListID: {$set: currListID},
+                modifiable: {$set: modifiable},
+            }))
+        })
+    }
+
+    deleteList(i) {
+        fetchPostJson('/delete_booklist', {
+            booklist_id: i
+        }).then(
+            resp => resp.json()
+        ).then((data) => {
+            console.log(data)
+            this.fetchMyData()
         })
     }
 
@@ -480,7 +591,9 @@ class Mine extends React.Component {
         return (
             <div className="right_pane">
                 <ShowContainer details={this.state.currBooklist}
-                               handleTouch={(i) => this.touchBooklist(i)}
+                               handleTouch={this.touchBooklist.bind(this)}
+                               deleteList={(i) => this.deleteList(i)}
+                               modifiable={this.state.modifiable}
                 />
                 <BookGrid items={this.state.currBooklist.books}/>
                 <CommentPane items={this.state.currBooklist.remarks}

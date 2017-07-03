@@ -223,20 +223,17 @@ def add_book_remark():
     return jsonify({'OK': true, 'remarks': remarks})
 
 
-@mine_bp.route('/add_to', methods=['POST', 'GET'])
+@mine_bp.route('/get_my_lists')
 def add_to():
-    if request.method != 'POST':
-        return 'need POST'
-    else:
-        if flask_login.current_user.is_anonymous:
-            return flask.redirect(flask.url_for('login_bp.login'))
+    if flask_login.current_user.is_anonymous:
+        return flask.redirect(flask.url_for('login_bp.login'))
 
-        user_id = flask_login.current_user.db_id
-        my_booklist_ids = json.loads(db_book.get_user_created_booklist(user_id))
-        booklist_names = []
-        for my_booklist_id in my_booklist_ids:
-            booklist_info = json.loads(db_book.get_booklist_by_id(my_booklist_id))
-            booklist_names.append((booklist_info['booklist_name'], my_booklist_id))
+    user_id = flask_login.current_user.db_id
+    my_booklist_ids = json.loads(db_book.get_user_created_booklist(user_id))
+    booklist_names = []
+    for my_booklist_id in my_booklist_ids:
+        booklist_info = json.loads(db_book.get_booklist_by_id(my_booklist_id))
+        booklist_names.append((booklist_info['booklist_name'], my_booklist_id))
 
     return jsonify(booklist_names)
 
@@ -367,6 +364,7 @@ def change_booklist_commit():
         return 'need POST'
 
     data = request.get_json()
+    logging.info('data:%s'%data)
     true = db_book.change_booklist(data['booklist_id'], data['booklist_name'], data['booklist_cover'],
                                    data['introduction'])
     if true:
@@ -439,3 +437,4 @@ def vote_remark():
             'up_number':vote['up'],
             'down_number':vote['down']
         })
+

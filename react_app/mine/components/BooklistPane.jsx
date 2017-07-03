@@ -27,7 +27,7 @@ class ListItems extends React.Component {
     renderItem(item) {
         return <ListItem
             key={item.booklist_id}
-            leftAvatar={<Avatar src="/static/react/small_avatar.jpg"/>}
+            leftAvatar={<Avatar src={item.booklist_cover}/>}
 
             primaryText={
                 <span>
@@ -35,7 +35,7 @@ class ListItems extends React.Component {
             </span>
             }
 
-            onTouchTap={() => this.props.handleTouch(item.booklist_id)}
+            onTouchTap={() => this.props.finalTouch(item.booklist_id)}
         />
     }
 
@@ -101,7 +101,7 @@ class MyList extends React.Component {
                 this.props.updateBooklist({
                     myListItems: data.my_booklists
                 })
-                this.props.handleTouch(data.new_id)
+                this.props.handleTouch(data.new_id, true)
                 this.setState(state)
                 this.newListClose();
             }
@@ -161,7 +161,7 @@ class MyList extends React.Component {
                     </div>
                 </div>
                 <ListItems items={this.props.items}
-                           handleTouch={this.props.handleTouch}
+                           finalTouch={(i) => this.props.handleTouch(i, true)}
                 />
             </List>
         )
@@ -174,7 +174,7 @@ class FavoriteList extends React.Component {
             <List>
                 <Subheader>{this.props.listName}</Subheader>
                 <ListItems items={this.props.items}
-                           handleTouch={this.props.handleTouch}
+                           finalTouch={(i) => this.props.handleTouch(i, false)}
                 />
             </List>
         )

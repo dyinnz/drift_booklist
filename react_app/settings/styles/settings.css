@@ -42,3 +42,15 @@
 .ps_div {
     padding: 20px;
 }
+
+.tags_wrapper {
+    display: flex;
+}
+
+.circle_wrapper {
+    margin: 20px;
+}
+
+.settings_tab {
+    width: 70%;
+}

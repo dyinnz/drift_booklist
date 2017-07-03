@@ -1,5 +1,6 @@
 from drift_app.db_interface import db
 from .db_user import get_account_by_id
+from drift_app.db_interface import db_user as db_user
 import json
 import logging
 
@@ -63,7 +64,6 @@ class DB_booklist(db.Model):
 
 
 
-
 # class DB_booklist_book(db.Model):
 #     __tablename__ = 'booklist_book'
 #     booklist_id = db.Column(db.Integer, db.ForeignKey("booklist.id"), primary_key=True)
@@ -71,6 +71,7 @@ class DB_booklist(db.Model):
 #
 #     def __repr__(self):
 #         return 'Book %s in booklist %s' % (self.book_id, self.booklist_id)
+
 
 
 def get_book(book_id):
@@ -299,10 +300,10 @@ def move_book_from_booklist(booklist_id, book_id):
     :return:
     """
     try:
-        booklist = DB_booklist.query.filter_by(id=booklist_id).one_or_404()
+        booklist = DB_booklist.query.filter_by(id=booklist_id).first_or_404()
         if booklist is None:
             return False
-        booklist.books.remove(DB_Book.query.filter_by(id=book_id).one_or_404())
+        booklist.books.remove(DB_Book.query.filter_by(id=book_id).first_or_404())
         # booklist_book = DB_booklist_book.query.filter_by(booklist_id=booklist_id, book_id=book_id).first()
         # if booklist_book is None:
         #     return False
@@ -406,9 +407,12 @@ def change_booklist_tags(booklist_id, tags):
     :return:
     """
     try:
-        booklist = DB_booklist.query.filter_by(id=booklist_id).one_or_404()
-        for tag in tags:
+        booklist = DB_booklist.query.filter_by(id=booklist_id).first_or_404()
+        if len(booklist.tags)!=0:
+            del booklist.tags[:]
+        for tag_name in tags:
             # booklist_tag = DB_booklist_tag(booklist_id=booklist_id, tag_name=tag)
+            tag = db_user.DB_tags.query.filter_by(name=tag_name).first_or_404()
             booklist.tags.append(tag)
             # db.session.add(booklist_tag)
         db.session.commit()

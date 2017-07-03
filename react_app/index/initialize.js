@@ -1,9 +1,16 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
+import injectTapEventPlugin from 'react-tap-event-plugin'
+
 import RecommandList from 'index/components/RecommandList';
 import CategoryList from 'index/components/CategoryList';
+
 import Login from 'index/components/Login';
+
+import UserList from "index/components/UserList";
+
 
 const App = () => (
     <RecommandList/>
@@ -32,4 +39,5 @@ document.addEventListener('DOMContentLoaded', () => {
         <App2/>,
         document.getElementById('root2')
     );
+
 });
