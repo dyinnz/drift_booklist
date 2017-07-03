@@ -289,6 +289,7 @@ def get_book_id_from_remark(remark_id):
         logging.error(e)
         return None
 
+
 def get_book_remark(book_id, page=1, per_page=10):
     """
     get remarks of one book, remarks are organized in pages format for display convinence.
@@ -764,52 +765,63 @@ def user_vote_booklist_remark(user_id, booklist_remark_id, attitude):
 def get_user_moments(user_id, page=1, per_page=10):
     try:
         following = [f[0] for f in json.loads(get_following(user_id))]
-        logging.debug(following)
+        # logging.debug(following)
+        # sql = r"(SELECT 'u_b_r' as type, remark_time as thetime from user_book_remark WHERE remark_time IS NOT NULL UNION) " \
+        #       r"(SELECT 'u_bl_r' as type, remark_time as thetime from user_booklist_remark WHERE remark_time IS NOT NULL) UNION " \
+        #       r"(SELECT 'u_b_v' as type, last_vote_time as thetime from user_book_opinion WHERE remark_time IS NOT NULL) UNION " \
+        #       r"(SELECT 'u_b_f' as type, last_follow_time as thetime from user_book_opinion WHERE remark_time IS NOT NULL) UNION " \
+        #       r"(SELECT 'u_bl_v ' as type, last_vote_time as thetime from user_booklist_opinion WHERE remark_time IS NOT NULL) UNION " \
+        #       r"(SELECT 'u_bl_f' as type, last_follow_time as thetime from user_booklist_opinion WHERE remark_time IS NOT NULL) " \
+        #       r"ORDER BY thetime"
+        # results = db.engine.execute(sql)
+        # logging.info("raw sql results:")
+        # for r in results:
+        #     logging.info(r)
+        # return None
         results = []
         for u_id in following:
             book_remark = DB_user_book_remark.query.filter_by(user_id=u_id).order_by(
-                DB_user_book_remark.remark_time).paginate(page, per_page).query
+                DB_user_book_remark.remark_time.desc()).paginate(page, per_page).query
             results.extend([(x.remark_info(), x.remark_time) for x in book_remark if x is not None])
             logging.info("fuck1")
 
             booklist_remark = DB_user_booklist_remark.query.filter_by(user_id=u_id).order_by(
-                DB_user_booklist_remark.remark_time).paginate(page, per_page).query
+                DB_user_booklist_remark.remark_time.desc()).paginate(page, per_page).query
             results.extend([(x.remark_info(), x.remark_time) for x in booklist_remark if x is not None])
             logging.info("fuck2")
 
             book_vote = DB_user_book_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_book_opinion.last_vote_time).paginate(page, per_page).query
+                DB_user_book_opinion.last_vote_time.desc()).paginate(page, per_page).query
             results.extend([(x.vote_info(), x.last_vote_time) for x in book_vote if x is not None])
             logging.info("fuck3")
 
             booklist_vote = DB_user_booklist_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_booklist_opinion.last_vote_time).paginate(page, per_page).query
+                DB_user_booklist_opinion.last_vote_time.desc()).paginate(page, per_page).query
             results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_vote if x is not None])
             logging.info("fuck4")
 
             book_follow = DB_user_book_opinion.query.filter_by(user_id=u_id, is_follow=1).order_by(
-                DB_user_book_opinion.last_follow_time).paginate(page, per_page).query
+                DB_user_book_opinion.last_follow_time.desc()).paginate(page, per_page).query
             results.extend([(x.follow_info(), x.last_follow_time) for x in book_follow if x is not None])
             logging.info("fuck5")
 
             booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=u_id, is_follow=1).order_by(
-                DB_user_booklist_opinion.last_follow_time).paginate(page, per_page).query
+                DB_user_booklist_opinion.last_follow_time.desc()).paginate(page, per_page).query
             results.extend([(x.follow_info(), x.last_follow_time) for x in booklist_follow if x is not None])
             logging.info("fuck6")
 
             book_remark_vote = DB_user_book_remark_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_book_remark_opinion.last_vote_time).paginate(page, per_page).query
+                DB_user_book_remark_opinion.last_vote_time.desc()).paginate(page, per_page).query
             results.extend([(x.vote_info(), x.last_vote_time) for x in book_remark_vote if x is not None])
             logging.info("fuck7")
 
             booklist_remark_vote = DB_user_booklist_remark_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_booklist_remark_opinion.last_vote_time).paginate(page, per_page).query
+                DB_user_booklist_remark_opinion.last_vote_time.desc()).paginate(page, per_page).query
             results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_remark_vote if x is not None])
             logging.info("fuck8")
 
         results = [x[0] for x in
                    sorted(results, key=lambda x: x[1], reverse=True)[(page - 1) * per_page:page * per_page]]
-        logging.debug(results)
         return json.dumps(results, ensure_ascii=False)
 
     except Exception as e:
@@ -819,63 +831,68 @@ def get_user_moments(user_id, page=1, per_page=10):
         return None
 
 
-
 def get_recommend_booklists(user_id, K=10):
-    user = DB_user.query.filter_by(id=user_id).one()
-    follow_books = DB_user_book_opinion.query.filter_by(user_id=user_id, is_follow=1)
+    try:
+        user = DB_user.query.filter_by(id=user_id).one()
+        tmp = DB_user_book_opinion.query.filter_by(user_id=user_id, is_follow=1).count()
+        tmp += DB_user_book_opinion.query.filter(DB_user_book_opinion.user_id == user_id).filter(DB_user_book_opinion.vote != 'neutral').count()
 
-    booklists = DB_booklist.query.order_by(DB_booklist.id)
-    n_booklists = booklists.count()
-    booklists = booklists.all()
-    # booklist_dic = dict(zip(range(booklists.count()), [t.id for t in booklists]))
-    booklist_dic = dict(zip([t.id for t in booklists], range(n_booklists)))
-    books = DB_Book.query.order_by(DB_Book.id)
-    n_books = books.count()
-    books = books.all()
-    # book_dic = dict(zip(range(books.count()), [t.id for t in books]))
-    book_dic = dict(zip([t.id for t in books], range(n_books)))
-    del booklists, books
+        booklists = DB_booklist.query.order_by(DB_booklist.id)
+        n_booklists = booklists.count()
+        booklists = booklists.all()
+        booklist_dic = dict(zip([t.id for t in booklists], range(n_booklists)))
+        books = DB_Book.query.order_by(DB_Book.id)
+        n_books = books.count()
+        books = books.all()
+        book_dic = dict(zip([t.id for t in books], range(n_books)))
 
-    booklist_book = np.zeros((booklists.count(), books.count()))
-    for i, bl in enumerate(booklists):
-        for b in bl.books:
-            booklist_book[i, book_dic[b.id]] = 1
+        booklist_book = np.zeros((n_booklists, n_books))
+        for i, bl in enumerate(booklists):
+            for b in bl.books:
+                booklist_book[booklist_dic[bl.id], book_dic[b.id]] = 1
+        del booklists
 
-    if follow_books.count() <= 5 and len(user.interests) > 0:
-        # tags
-        tags = DB_tags.query.all()
+        if tmp < 5:
+            logging.info("Using tag recommender")
+            # tags
+            tags = DB_tags.query.all()
+            tag_dic = dict(zip((t.name for t in tags), range(len(tags))))
 
-        book_tags = np.zeros((len(books), len(tags)))
-        user_tags = np.zeros(len(tags))
+            book_tags = np.zeros((n_books, len(tags)))
+            user_tags = np.zeros(len(tags))
+            del tags
 
-        for i, b in enumerate(books):
-            for t in b.tags:
-                book_tags[i, tags.index(t)] = 1
-        for t in user.interests:
-            user_tags[tags.index(t)] = 1
+            for i, b in enumerate(books):
+                for t in b.tags:
+                    book_tags[i, tag_dic[t.name]] = 1
+            for t in user.interests:
+                user_tags[tag_dic[t.name]] = 1
 
-        recommend_booklists = tag_recommender.topK_booklists(book_tags, user_tags, booklist_book, k=2)
-        logging.info(recommend_booklists)
-        return recommend_booklists
-    else:
-        users = DB_user.query.all()
-        n_users = len(users)
-        user_books = np.zeros((n_users, n_books))
-        user_dc = dict(zip([t.id for t in users], range(n_users)))
-        del users
-        for i, u in enumerate(users):
-            u_books = DB_user_book_opinion.query.filter_by(user_id=u.id)
-            for ub in u_books:
-                if ub.is_follow:
-                    user_books[i, book_dic[ub.book_id]] += 5
-                if ub.vote == 'up':
-                    user_books[i, book_dic[ub.book_id]] += 10
-                elif ub.vote == 'down':
-                    user_books[i, book_dic[ub.book_id]] -= 10
-                user_books[i, book_dic[ub.book_id]] += ub.click_time
+            recommend_booklists = tag_recommender.topK_booklists(book_tags, user_tags, booklist_book, k=2)
+            logging.info(recommend_booklists)
+            return recommend_booklists
+        else:
+            logging.info("Using fm recommender")
+            users = [t.id for t in DB_user.query.order_by(DB_user.id).all()]
+            n_users = len(users)
+            user_books = np.zeros((n_users, n_books))
+            user_dic = dict(zip(users, range(n_users)))
+            for i, u in enumerate(users):
+                u_books = DB_user_book_opinion.query.filter_by(user_id=u)
+                for ub in u_books:
+                    if ub.is_follow:
+                        user_books[i, book_dic[ub.book_id]] += 5
+                    if ub.vote == 'up':
+                        user_books[i, book_dic[ub.book_id]] += 10
+                    elif ub.vote == 'down':
+                        user_books[i, book_dic[ub.book_id]] -= 10
+                    user_books[i, book_dic[ub.book_id]] += ub.click_time
 
-        user_books += np.min(user_books)
-        user_books = 1.0 / (1 + np.exp(-0.1 * user_books))
+            user_books += np.min(user_books)
+            user_books = 1.0 / (1 + np.exp(-0.1 * user_books))
 
-        fm_recommender.fit(user_books)
-        return fm_recommender.topK_booklists(user_dc[user_id], booklist_book, 2)
+            fm_recommender.fit(user_books)
+            return fm_recommender.topK_booklists(user_dic[user_id], booklist_book, 2, exclude=[1])
+    except Exception as e:
+        logging.error(e)
+        return None

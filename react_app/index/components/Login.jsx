@@ -37,9 +37,9 @@ class Login extends React.Component {
                     <span className="tpl-header-list-user-ico"> <img src={this.state.user_cover}/></span>
                 </a>
                 <ul className="am-dropdown-content">
-                    <li><a href="#"><span class="am-icon-bell"></span> 资料</a></li>
-                    <li><a href="#"><span class="am-icon-cog"></span> 设置</a></li>
-                    <li><a href="#"><span class="am-icon-power-off"></span> 退出</a></li>
+                    <li><a href="#"><span className="am-icon-bell"></span> 资料</a></li>
+                    <li><a href="#"><span className="am-icon-cog"></span> 设置</a></li>
+                    <li><a href="#"><span className="am-icon-power-off"></span> 退出</a></li>
                 </ul>
             </div>
         )

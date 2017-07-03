@@ -3,6 +3,7 @@ from .db_user import get_account_by_id
 from drift_app.db_interface import db_user as db_user
 import json
 import logging
+from flask import jsonify
 
 
 _booklist_book_table = db.Table(
@@ -40,8 +41,7 @@ class DB_Book(db.Model):
     tags = db.relationship('DB_tags', secondary=_book_tag_table, backref=db.backref('books', lazy='dynamic'))
 
     def __repr__(self):
-        return "Book:%s\nIntroduction:%s" % (self.name, self.introductionn)
-
+        return "Book:%s\nIntroduction:%s" % (self.name, self.introduction)
 
 # class DB_book_tag(db.Model):
 #     __tablename__ = 'book_tag'
@@ -421,3 +421,41 @@ def change_booklist_tags(booklist_id, tags):
         logging.error("change tags false at %s" % (booklist_id))
         logging.error(e)
         return None
+
+
+def book_to_dict(book):
+    return dict(
+        id=book.id,
+        name=book.name,
+        ISBN=book.ISBN,
+        author=book.author,
+        publisher=book.publisher,
+        introduction=book.introduction,
+        cover=book.cover,
+        tags=[t.name for t in book.tags]
+    )
+
+
+def booklist_to_dict(booklist):
+    return dict(
+        id=booklist.id,
+        name=booklist.name,
+        user_id=booklist.user_id,
+        introduction=booklist.introduction,
+        cover=booklist.cover,
+        books=booklist.books,
+        tags=[t.name for t in booklist.tags],
+    )
+
+
+def search_keyword(keyword):
+    try:
+        books = DB_Book.query.filter(DB_Book.name.like('%%%s%%' % keyword)).all()
+        lists = DB_booklist.query.filter(DB_booklist.name.like('%%%s%%' % keyword)).all()
+        return {
+            'books': [book_to_dict(b) for b in books],
+            'lists': [booklist_to_dict(l) for l in lists],
+        }
+    except Exception as e:
+        logging.error("search_book() error: %s", e)
+
