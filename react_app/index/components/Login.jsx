@@ -67,7 +67,7 @@ class Login extends React.Component {
 
     render() {
         console.log("Test: ", this.state);
-        if(this.state.isLogIn === 0){
+        if(this.state.isLogIn != 0){
             return this.userInfo();
         }else{
             return this.login();
