@@ -12,8 +12,7 @@ import update from 'immutability-helper'
 import $ from 'jquery'
 
 function fetchPostJson(url, data) {
-    console.log("fetchPostJson: ", data);
-    return fetch(url, {
+        return fetch(url, {
         method: "POST",
         headers: {
             'Content-Type': 'application/json'
@@ -40,8 +39,7 @@ class ListItems extends React.Component {
     }
 
     render() {
-        console.log(this.props.items)
-        return (
+                return (
             <div>
                 {this.props.items.map((item) => {
                     return this.renderItem(item)
@@ -97,8 +95,7 @@ class MyList extends React.Component {
                 this.setState(state)
 
             } else {
-                console.log(this.props)
-                this.props.updateBooklist({
+                                this.props.updateBooklist({
                     myListItems: data.my_booklists
                 })
                 this.props.handleTouch(data.new_id, true)

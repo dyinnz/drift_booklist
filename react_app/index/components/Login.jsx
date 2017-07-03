@@ -45,7 +45,6 @@ class IconMenuExampleSimple extends React.Component {
 
                         </FlatButton>
                     }
-                    useLayerForClickAway={true}
                 >
                     <MenuItem primaryText="Settings" href="/settings"/>
                     <MenuItem primaryText="HomePage" href={"/user/" + this.props.account}/>
@@ -128,4 +127,38 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+class Header extends React.Component {
+    render() {
+        return (
+            <div className="am-container">
+                <h1 className="am-topbar-brand">
+                    <a href="#">BookFlow</a>
+                </h1>
+
+                <div className="am-collapse am-topbar-collapse" id="collapse-head">
+                    <ul className="am-nav am-nav-pills am-topbar-nav">
+                        <li className="am-active"><a href="#">推荐</a></li>
+                        <li><a href="/explore">发现</a></li>
+                        <li><a href="/mine">我的</a></li>
+                        <li><a href="/friends">朋友</a></li>
+                    </ul>
+
+
+                    <ul className="am-nav am-navbar-nav am-navbar-right">
+                        <li className="hidden-xs am-hide-sm-only">
+                            <form role="search" className="app-search">
+                                <input type="text" placeholder="Search..." className="form-control"/>
+                                <a href=""><img src="/static/assets/i/search.png"/></a>
+                            </form>
+                        </li>
+                    </ul>
+                    <div className="am-topbar-nav am-topbar-right">
+                        <Login/>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+}
+
+export default Header;
