@@ -1,29 +1,54 @@
 import React from "react";
 import IconMenu from "material-ui/IconMenu";
 import MenuItem from "material-ui/MenuItem";
-import IconButton from "material-ui/IconButton";
-import FlatButton from 'material-ui/FlatButton';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
+import FlatButton from "material-ui/FlatButton";
 
 /**
  * Simple Icon Menus demonstrating some of the layouts possible using the `anchorOrigin` and
  * `targetOrigin` properties.
  */
 class IconMenuExampleSimple extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            open: false,
+        };
+    }
+
+    handleTouchTap = (event) => {
+        // This prevents ghost click.
+        event.preventDefault();
+
+        this.setState({
+            open: true,
+            anchorEl: event.currentTarget,
+        });
+    };
+
+    handleRequestClose = () => {
+        this.setState({
+            open: false,
+        });
+    };
+
+
     render() {
         return (
-            <div style={{display:'flex',paddingTop:'5px'}}>
+            <div style={{display: 'flex', paddingTop: '5px'}}>
                 <IconMenu
                     iconButtonElement={
-                        <FlatButton label={this.props.name} primary={true} labelPosition="before" style={{height:'40px'}}>
+                        <FlatButton label={this.props.name} primary={true} labelPosition="before"
+                                    style={{height: '40px'}}>
 
-                        <img src={this.props.avatar} style={{borderRadius:'50%',height:'40px'}}/>
+                            <img src={this.props.avatar} style={{borderRadius: '50%', height: '40px'}}/>
 
                         </FlatButton>
-                            }
+                    }
+                    useLayerForClickAway={true}
                 >
                     <MenuItem primaryText="Settings" href="/settings"/>
-                    <MenuItem primaryText="HomePage" href={"/user/"+this.props.account}/>
+                    <MenuItem primaryText="HomePage" href={"/user/" + this.props.account}/>
                     <MenuItem primaryText="Sign out" href="/logout"/>
                 </IconMenu>
             </div>
@@ -39,7 +64,7 @@ class Login extends React.Component {
             isLogIn: 0,
             user_cover: "",
             user_name: "",
-            user_account:""
+            user_account: ""
         }
     }
 
@@ -57,7 +82,7 @@ class Login extends React.Component {
                     isLogIn: data.isLogIn,
                     user_cover: data.user_cover,
                     user_name: data.user_name,
-                    user_account:data.user_account,
+                    user_account: data.user_account,
                 })
             })
     }
