@@ -179,7 +179,7 @@ class Explore extends React.Component {
                             <time>{moment(item.timestamp, "YYYY-MM-DD HH:mm:ss").fromNow()}</time>
                         </div>
                     </header>
-                    <div className="am-comment-bd"><p>{item.content}</p>
+                    <div className="am-comment-bd"><p><a href={item.href}> {item.content}</a></p>
                     </div>
                 </div>
             </li>

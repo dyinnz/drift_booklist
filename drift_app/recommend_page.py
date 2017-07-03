@@ -97,4 +97,5 @@ def islogin():
     jsondata['isLogIn']=1
     jsondata['user_cover']=user_data['pic_src']
     jsondata['user_name']=user_data['name']
+    jsondata['user_account']=flask_login.current_user.id
     return jsonify(jsondata)

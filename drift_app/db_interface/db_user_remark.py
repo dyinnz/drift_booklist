@@ -300,7 +300,7 @@ def get_book_remark(book_id, page=1, per_page=10):
     :return: If success, return json key-value format user-remark datas, else None.
     """
     try:
-        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('remark_time').paginate(page,
+        user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page,
                                                                                                            per_page).query
         return json.dumps(
             [{'id': user_book.id,
