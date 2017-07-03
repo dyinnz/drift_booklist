@@ -38,6 +38,7 @@ class FM_Recommender():
         self.bu = np.random.random((n_user))
         self.bm = np.random.random((n_book))
         self.overall_mean = 0.1 * np.random.random()
+        self.error = ''
         return self
 
     def updata_shape(self, n_user, n_book):
@@ -58,6 +59,7 @@ class FM_Recommender():
         :param X: np.ndarray, shape:(n_user, n_book), user-book rating matrix, whose value from 0 to 1
         :return: self
         """
+        self.error = ''
         self.n_user, self.n_book = X.shape
         if not hasattr(self, 'U') or not hasattr(self, 'M') or not hasattr(self, 'bu') or \
                 not hasattr(self, 'bm') or not hasattr(self, 'overall_mean'):
@@ -80,6 +82,7 @@ class FM_Recommender():
                 print('Iter %d:' % it, np.sum(mask * delta_E))
             if it > 0 and abs(np.sum(mask * delta_E)) > 1000000:
                 print('Iter %d:boom!' % it, np.sum(mask * delta_E))
+                self.error = 'Graident Boom!'
                 break
 
             self.U = self.U + self.eta * delta_U
@@ -97,6 +100,8 @@ class FM_Recommender():
         return self
 
     def topK_books(self, user_id, k=10, exclude=None):
+        if len(self.error) > 0:
+            return []
         if not hasattr(self, 'V'):
             print("The model hasn't been trained yet.")
             return None
@@ -151,8 +156,8 @@ class Item_CF_Recommender():
         pass
 
 
-fm_recommender = FM_Recommender(20)
-tag_recommender = Tag_Based_Recommender()
+fm_recommender = None
+tag_recommender = None
 
 
 def init_recommender():

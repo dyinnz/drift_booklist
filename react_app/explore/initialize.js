@@ -11,9 +11,7 @@ import Explore from 'explore/components/Explore'
 injectTapEventPlugin();
 
 const App = () => (
-    <MuiThemeProvider>
-        <Explore/>
-    </MuiThemeProvider>
+    <Explore/>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
