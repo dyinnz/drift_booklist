@@ -10,6 +10,7 @@ import CategoryList from 'index/components/CategoryList';
 import Login from 'index/components/Login';
 
 import UserList from "index/components/UserList";
+injectTapEventPlugin();
 
 
 const App = () => (
@@ -21,7 +22,9 @@ const App2 = () => (
 );
 
 const App3 = () => (
+    <MuiThemeProvider>
     <Login/>
+    </MuiThemeProvider>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
