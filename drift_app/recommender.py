@@ -3,13 +3,12 @@ from drift_app.db_interface import db
 import drift_app.db_interface.db_user_remark
 
 
-
 class FM_Recommender():
     """
     Recommender based on Factorize Matrix method.
     """
 
-    def __init__(self, n_components, eta=0.01, alpha=0.01, beta=0.01, max_iter=-1, epsilon=0.1):
+    def __init__(self, n_components, eta=1e-3, alpha=0.01, beta=0.01, max_iter=-1, epsilon=0.1):
         """
         init the model.
         :param n_components: components(latent factor) count.
@@ -101,7 +100,7 @@ class FM_Recommender():
         if not hasattr(self, 'V'):
             print("The model hasn't been trained yet.")
             return None
-        sort_indices = self.V[user_id].argsort()
+        sort_indices = list(self.V[user_id].argsort())
         if exclude is not None:
             for t in exclude:
                 sort_indices.remove(t)
@@ -113,7 +112,7 @@ class FM_Recommender():
             return None
         user_books = self.V[user_id]
         user_booklists = booklist_book.dot(user_books.T)
-        sort_indices = user_booklists.argsort()
+        sort_indices = list(user_booklists.argsort())
         if exclude is not None:
             for t in exclude:
                 sort_indices.remove(t)
