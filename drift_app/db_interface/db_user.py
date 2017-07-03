@@ -306,3 +306,26 @@ def add_user_interest(account, tag):
         return False
 
     return True
+
+def update_user_tags(account,tags):
+    """
+
+    :param account:
+    :param tags:
+    :return:
+    """
+    try:
+        user = DB_user.query.filter_by(account=account).first_or_404()
+        if len(user.interests)!=0:
+            del user.interests[:]
+
+        for tag in tags:
+            tag = DB_tags.query.filter_by(name=tag).first_or_404()
+            user.interests.append(tag)
+        logging.info(user.interests)
+        db.session().commit()
+        return True
+    except Exception as e:
+        logging.error("update tags for user false at %s"%account)
+        logging.error(e)
+        return None

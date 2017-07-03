@@ -32,9 +32,9 @@ def update_account_settings():
     new_settings = request.get_json()
     logging.info("new_settings: %s", new_settings)
 
+    true= db_user.update_user_tags(current_user.account,new_settings['tags'])
 
-
-    if db_user.update_user_infos(current_user.account, new_settings):
+    if db_user.update_user_infos(current_user.account, new_settings) and true:
         return 'Succeed!'
     else:
         return 'Failed!'
