@@ -2,17 +2,162 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width">
     <title>Explore</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="stylesheet" href="/static/react/css/amazeui.min.css"/>
     <link rel="stylesheet" href="/static/react/css/explore.css">
     <script src="/static/react/js/vendor.js"></script>
     <script src="/static/react/js/explore.js"></script>
     <script>require('explore/initialize');</script>
+
+    <style>
+        .footer p {
+            color: #7f8c8d;
+            margin: 0;
+            padding: 15px 0;
+            text-align: center;
+            background: #2d3e50;
+        }
+    </style>
 </head>
 
-<body>
+<body style="background: #e9ecf3 ;">
 
-<div id="root">test explore page</div>
+<header class="am-topbar am-topbar-fixed-top">
+    <div class="am-container">
+        <h1 class="am-topbar-brand">
+            <a href="#">BookFlow</a>
+        </h1>
+
+        <div class="am-collapse am-topbar-collapse" id="collapse-head">
+            <ul class="am-nav am-nav-pills am-topbar-nav">
+                <li class="am-active"><a href="#">推荐</a></li>
+                <li><a href="/explore">发现</a></li>
+                <li><a href="/mine">我的</a></li>
+                <li><a href="/friends">朋友</a></li>
+            </ul>
+
+
+            <ul class="am-nav am-navbar-nav am-navbar-right">
+                <li class="hidden-xs am-hide-sm-only">
+                    <form role="search" class="app-search">
+                        <input type="text" placeholder="Search..." class="form-control">
+                        <a href=""><img src="/static/assets/i/search.png"></a>
+                    </form>
+                </li>
+            </ul>
+
+
+            <div class="am-topbar-nav am-topbar-right" id="user">
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<div style="padding-left: 10%;padding-right: 10%;">
+    <div class="tpl-page-container tpl-page-header-fixed">
+
+        <div class="tpl-left-nav tpl-left-nav-hover">
+            <div class="tpl-left-nav-title">
+                相关用户
+                <a class="i-load-more-item-shadow" href="#"><i class="am-icon-refresh am-icon-fw"></i>更多</a>
+            </div>
+            <div class="tpl-left-nav-list">
+                <ul class="tpl-left-nav-menu">
+                    <li class="tpl-left-nav-item">
+                        <a href="index.html" class="nav-link widget-user">
+                            <img src="/static/assets/i/user.png" class="img-responsive img-circle" alt="user">
+                            <span>XXXX</span>
+                        </a>
+                    </li>
+
+                    <li class="tpl-left-nav-item">
+                        <a href="login.html" class="nav-link widget-user">
+                            <img src="/static/assets/i/user02.png" class="img-responsive img-circle" alt="user">
+                            <span>XXXX</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+
+        <div class="tpl-content-wrapper">
+
+            <div id="explore"></div>
+            <div class="tpl-portlet-components">
+                <div class="portlet-title">
+                    <div class="caption font-green bold">
+                        好友动态
+                    </div>
+                </div>
+
+                <div class="am-panel-bd am-collapse am-in am-cf" id="collapse-panel-3">
+                    <ul class="am-comments-list admin-content-comment">
+                        <div id="root"></div>
+                        <!--li class="am-comment">
+                            <a href="#"><img src="http://s.amazeui.org/media/i/demos/bw-2014-06-19.jpg?imageView/1/w/96/h/96" alt="" class="am-comment-avatar" width="48" height="48"></a>
+                            <div class="am-comment-main">
+                                <header class="am-comment-hd">
+                                    <div class="am-comment-meta"><a href="#" class="am-comment-author">某人</a> 评论于 <time>2014-7-12 15:30</time></div>
+                                </header>
+                                <div class="am-comment-bd"><p>东临碣石以观沧海水何澹澹山岛崧峙树木丛生百草风茂秋风萧瑟洪波涌起日月之行若出其中星汉灿烂若出其里幸甚至哉歌以咏志</p>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li class="am-comment">
+                            <a href="#"><img src="http://s.amazeui.org/media/i/demos/bw-2014-06-19.jpg?imageView/1/w/96/h/96" alt="" class="am-comment-avatar" width="48" height="48"></a>
+                            <div class="am-comment-main">
+                                <header class="am-comment-hd">
+                                    <div class="am-comment-meta"><a href="#" class="am-comment-author">某人</a> 评论于 <time>2014-7-12 15:30</time></div>
+                                </header>
+                                <div class="am-comment-bd"><p>东临碣石以观沧海水何澹澹山岛崧峙树木丛生百草风茂秋风萧瑟洪波涌起日月之行若出其中星汉灿烂若出其里幸甚至哉歌以咏志</p>
+                                </div>
+                            </div>
+                        </li-->
+
+                    </ul>
+                    <!--ul class="am-pagination am-fr admin-content-pagination">
+                        <li class="am-disabled"><a href="#">&laquo;</a></li>
+                        <li class="am-active"><a href="#">1</a></li>
+                        <li><a href="#">2</a></li>
+                        <li><a href="#">3</a></li>
+                        <li><a href="#">4</a></li>
+                        <li><a href="#">5</a></li>
+                        <li><a href="#">&raquo;</a></li>
+                    </ul-->
+                </div>
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+<!--div id="root"></div-->
+
+
+<script src="/static/react/js/jquery.min.js"></script>
+<script src="/static/react/js/amazeui.min.js"></script>
 
 </body>
 
