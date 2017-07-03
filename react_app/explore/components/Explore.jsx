@@ -175,9 +175,7 @@ class Explore extends React.Component {
                 <div className="am-comment-main">
                     <header className="am-comment-hd">
                         <div className="am-comment-meta">
-                            <a href={"/user/" + item.account} className="am-comment-author">某人</a> 评论<a href={item.href}
-                                                                                                        className="am-comment-author">
-                            书单</a>于
+                            <a href={"/user/" + item.account} className="am-comment-author">{item.account}</a> 于
                             <time>{moment(item.timestamp, "YYYY-MM-DD HH:mm:ss").fromNow()}</time>
                         </div>
                     </header>
