@@ -192,10 +192,6 @@ class Explore extends React.Component {
     message() {
         return (
             <div>
-                /*<ListContainer
-                 listName="New moments"
-                 items={this.state.events}
-                 />*/
                 {
                     this.state.events.map(
                         (item) => {
