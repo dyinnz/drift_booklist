@@ -44,7 +44,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background: #e9ecf3 ;">
 
 <header class="am-topbar am-topbar-fixed-top">
     <div class="am-container">
@@ -70,9 +70,10 @@
                 </li>
             </ul>
 
-            <ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list tpl-header-list"
+            <!--ul class="am-nav am-nav-pills am-topbar-nav am-topbar-right admin-header-list tpl-header-list"
                 style="margin-top: 0;">
-                <li class="am-dropdown" data-am-dropdown data-am-dropdown-toggle>
+
+                <!--li class="am-dropdown" data-am-dropdown data-am-dropdown-toggle>
                     <a class="am-dropdown-toggle tpl-header-list-link" href="javascript:;">
                         <span class="am-icon-bell-o"></span> 提醒 <span
                             class="am-badge tpl-badge-success am-round">5</span></span>
@@ -131,6 +132,7 @@
 
 
                 <li class="am-dropdown dropbar" data-am-dropdown>
+
                     <a class="am-dropdown-toggle tpl-header-list-link" data-am-dropdown-toggle href="javascript:;">
                         <span class="tpl-header-list-user-nick">用户</span>
                         <span class="tpl-header-list-user-ico"> <img src="/static/assets/i/user.png"></span>
@@ -141,8 +143,32 @@
                         <li><a href="/logout"><span class="am-icon-power-off"></span> 退出</a></li>
                     </ul>
                 </li>
+            </ul-->
 
-            </ul>
+            <div class="am-topbar-nav am-topbar-right" id="user">
+                <!--div class="am-dropdown dropbar" data-am-dropdown>
+                    <a class="am-dropdown-toggle tpl-header-list-link" data-am-dropdown-toggle href="javascript:;">
+                        <span class="tpl-header-list-user-nick">用户</span>
+                        <span class="tpl-header-list-user-ico"> <img src="/static/assets/i/user.png"></span>
+                    </a>
+                    <ul class="am-dropdown-content">
+                        <li><a href="#"><span class="am-icon-bell"></span> 资料</a></li>
+                        <li><a href="#"><span class="am-icon-cog"></span> 设置</a></li>
+                        <li><a href="#"><span class="am-icon-power-off"></span> 退出</a></li>
+                    </ul>
+                </div>
+
+
+                <div class="am-topbar-right">
+                    <button class="am-btn am-btn-secondary am-topbar-btn am-btn-sm"><span class="am-icon-pencil"></span> 注册</button>
+                </div>
+
+                <div class="am-topbar-right">
+                    <button class="am-btn am-btn-primary am-topbar-btn am-btn-sm"><span class="am-icon-user"></span> 登录</button>
+                </div-->
+            </div>
+
+
 
         </div>
 
@@ -167,12 +193,109 @@
 </div>
 
 <div style="padding-left: 10%; padding-right: 10%;">
-    <div class="you-like" id="root">
-        <!--div class="s-bar">推荐
+    <div class="tpl-page-container tpl-page-header-fixed">
+
+        <div class="tpl-left-nav tpl-left-nav-hover">
+            <div class="tpl-left-nav-title">
+                相关用户
+                <a class="i-load-more-item-shadow" href="#"><i class="am-icon-refresh am-icon-fw"></i>更多</a>
+            </div>
+            <div class="tpl-left-nav-list">
+                <ul class="tpl-left-nav-menu">
+                    <li class="tpl-left-nav-item">
+                        <a href="index.html" class="nav-link widget-user">
+                            <img src="/static/assets/i/user.png" class="img-responsive img-circle" alt="user">
+                            <span>XXXX</span>
+                        </a>
+                    </li>
+
+                    <li class="tpl-left-nav-item">
+                        <a href="login.html" class="nav-link widget-user">
+                            <img src="/static/assets/i/user02.png" class="img-responsive img-circle" alt="user">
+                            <span>XXXX</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="tpl-content-wrapper">
+
+            <div class="tpl-portlet-components">
+                <div id="root"></div>
+                <!--div class="portlet-title">
+                    <div class="caption font-green bold">
+                        推荐
+                    </div>
+                    <a class="am-badge am-badge-danger am-round">小清新</a>
+                    <a class="am-badge am-badge-danger am-round">文艺范</a>
+                    <a class="i-load-more-item-shadow" href="#"><i class="am-icon-refresh am-icon-fw"></i>换一组</a>
+                </div>
+
+                <div class="s-content">
+                    <ul data-am-widget="gallery" class="am-gallery am-avg-sm-2 am-avg-lg-4 am-avg-md-3 am-gallery-default">
+                        <li class="li1">
+                            <div class="am-gallery-item am_list_block">
+                                <a href="###" class="am_img_bg">
+                                    <img src="/static/assets/i/01.jpg"/>
+                                </a>
+
+                                <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
+                                        class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
+
+                            </div>
+                            <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
+                                                                                              alt=""></span><span
+                                    class="am_imglist_user_font">路见不平Eason吼</span></a>
+                        </li>
+                    </ul>
+                </div-->
+            </div>
+
+
+            <div class="tpl-portlet-components">
+                <div id="root2"></div>
+                <!--div class="portlet-title">
+                    <div class="caption font-green bold">
+                        推荐
+                    </div>
+                    <a class="am-badge am-badge-danger am-round">小清新</a>
+                    <a class="am-badge am-badge-danger am-round">文艺范</a>
+                    <a class="i-load-more-item-shadow" href="#"><i class="am-icon-refresh am-icon-fw"></i>换一组</a>
+                </div>
+
+                <div class="s-content">
+                    <ul data-am-widget="gallery" class="am-gallery am-avg-sm-2 am-avg-lg-4 am-avg-md-3 am-gallery-default">
+                        <li class="li1">
+                            <div class="am-gallery-item am_list_block">
+                                <a href="###" class="am_img_bg">
+                                    <img src="/static/assets/i/01.jpg"/>
+                                </a>
+
+                                <div class="am_listimg_info"><span class="am-icon-heart"> 132</span><span
+                                        class="am-icon-comments"> 67</span><span class="am_imglist_time">15分钟前</span></div>
+
+                            </div>
+                            <a class="am_imglist_user"><span class="am_imglist_user_ico"><img src="/static/assets/i/kj.png"
+                                                                                              alt=""></span><span
+                                    class="am_imglist_user_font">路见不平Eason吼</span></a>
+                        </li>
+                    </ul>
+                </div-->
+
+            </div>
+
+        </div>
+
+
+    </div>
+
+    <!--div class="you-like">
+            <div class="s-bar">推荐
             <a class="am-badge am-badge-danger am-round">小清新</a>
             <a class="am-badge am-badge-danger am-round">文艺范</a>
             <a class="i-load-more-item-shadow" href="#"><i class="am-icon-refresh am-icon-fw"></i>换一组</a>
-        </div>
+            </div>
 
         <div class="s-content" style="border-top: 1px solid #E8EEF2;">
             <ul data-am-widget="gallery" class="am-gallery am-avg-sm-2 am-avg-lg-4 am-avg-md-3 am-gallery-default">
@@ -192,10 +315,12 @@
                 </li>
 
             </ul>
-        </div-->
+        </div>
+
     </div>
 
-    <div class="you-like" style="width: 23%; float: right;" id="root3"><!--
+    <div class="you-like" style="width: 23%; float: right;">
+
         <div class="s-bar">热门用户
             <a class="i-load-more-item-shadow" href="#"><i class="am-icon-refresh am-icon-fw"></i>更多</a>
         </div>
@@ -243,7 +368,7 @@
                     </div>
                 </div>
             </div>
-        </div>-->
+        </div>
     </div>
 
     <div class="you-like" id="root2">
@@ -270,8 +395,8 @@
                             class="am_imglist_user_font">路见不平Eason吼</span></a>
                 </li>
             </ul>
-        </div-->
-    </div>
+        </div>
+    </div-->
 </div>
 
 

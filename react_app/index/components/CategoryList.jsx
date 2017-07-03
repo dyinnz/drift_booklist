@@ -80,7 +80,7 @@ class CategoryList extends React.Component {
     }
 
     fetchData() {
-        fetch('/recommend/get_tags', {credentials: 'same-origin'})
+        fetch('/get_tags', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
@@ -104,14 +104,14 @@ class CategoryList extends React.Component {
     tagPanel(){
         console.log("items: ", this.props.items);
         return (
-            <div className="s-bar">分类
-
+            <div className="portlet-title">
+                <div className="caption font-green bold">
+                    分类
+                </div>
                 {this.state.myTaglist.map(
                     (tag) => {return this.renderTagPanel(tag)}
                 )}
-
-                <a className="i-load-more-item-shadow" href="#">
-                    <i className="am-icon-refresh am-icon-fw"></i>换一组</a>
+                <a className="i-load-more-item-shadow" href="#"><i className="am-icon-refresh am-icon-fw"></i>换一组</a>
             </div>
 
         )

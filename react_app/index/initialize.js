@@ -6,9 +6,11 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 
 import RecommandList from 'index/components/RecommandList';
 import CategoryList from 'index/components/CategoryList';
+
+import Login from 'index/components/Login';
+
 import UserList from "index/components/UserList";
 
-injectTapEventPlugin();
 
 const App = () => (
     <RecommandList/>
@@ -19,12 +21,15 @@ const App2 = () => (
 );
 
 const App3 = () => (
-    <MuiThemeProvider>
-    <UserList/>
-    </MuiThemeProvider>
+    <Login/>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
+    ReactDOM.render(
+        <App3/>,
+        document.getElementById('user')
+    );
+
     ReactDOM.render(
         <App/>,
         document.getElementById('root')
@@ -34,8 +39,5 @@ document.addEventListener('DOMContentLoaded', () => {
         <App2/>,
         document.getElementById('root2')
     );
-    ReactDOM.render(
-        <App3/>,
-        document.getElementById('root3')
-    );
+
 });

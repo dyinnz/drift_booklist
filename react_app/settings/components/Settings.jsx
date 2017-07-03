@@ -320,6 +320,7 @@ class Settings extends React.Component {
         }
 
         return (
+            <div className="settings_tab">
             <Tabs>
                 <Tab label="Basic Information">
                     {this.renderUpdateInfo()}
@@ -328,6 +329,7 @@ class Settings extends React.Component {
                     <UpdatePassword/>
                 </Tab>
             </Tabs>
+            </div>
         )
     }
 }

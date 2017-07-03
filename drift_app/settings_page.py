@@ -20,7 +20,7 @@ def settings():
 def get_account_settings():
     logging.info('Get settings of %s', current_user.account)
     ret = json.loads(db_user.get_user_infos(current_user.account))
-    ret['tags'] = db_user.get_user_interests(current_user.account)
+    ret['tags'] = json.loads(db_user.get_user_interests(current_user.account))
     if not ret['tags']:
         ret['tags'] = []
     return json.dumps(ret)
@@ -32,9 +32,9 @@ def update_account_settings():
     new_settings = request.get_json()
     logging.info("new_settings: %s", new_settings)
 
+    true= db_user.update_user_tags(current_user.account,new_settings['tags'])
 
-
-    if db_user.update_user_infos(current_user.account, new_settings):
+    if db_user.update_user_infos(current_user.account, new_settings) and true:
         return 'Succeed!'
     else:
         return 'Failed!'
