@@ -50,7 +50,7 @@ def get_relationship(user_id):
 def get_information_by_account(user_account):
     user_information = json.loads(db_user.get_user_infos(user_account))
     user_information['account'] = user_account
-    user_information['tags'] = json.loads(db_user.get_user_interests(db_user.get_id_by_account(user_account)))
+    user_information['tags'] = json.loads(db_user.get_user_interests(user_account))
     user_information['following_number'] = len(
         json.loads(db_user.get_following(db_user.get_id_by_account(user_account))))
     user_information['followers_number'] = len(
@@ -75,6 +75,7 @@ def get_friend_detail():
     else:
         user_account = flask_login.current_user.id
 
+    logging.info("user account %s"%user_account)
     return jsonify(
          get_information_by_account(user_account))
 
