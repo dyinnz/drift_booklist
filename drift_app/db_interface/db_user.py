@@ -52,15 +52,15 @@ def get_all_tags():
         logging.error(e)
         return None
 
-def get_user_interests(user_id):
+def get_user_interests(account):
     try:
-        user = DB_user.query.filter_by(id=user_id).first()
+        user = DB_user.query.filter_by(account=account).first()
         if user is None:
             return None
         logging.error(user.interests)
         return json.dumps([x.name for x in user.interests])
     except Exception as e:
-        logging.error(user_id)
+        logging.error(account)
         logging.error(e)
         return None
 

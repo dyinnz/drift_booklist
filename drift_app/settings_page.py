@@ -20,7 +20,7 @@ def settings():
 def get_account_settings():
     logging.info('Get settings of %s', current_user.account)
     ret = json.loads(db_user.get_user_infos(current_user.account))
-    ret['tags'] = db_user.get_user_interests(current_user.account)
+    ret['tags'] = json.loads(db_user.get_user_interests(current_user.account))
     if not ret['tags']:
         ret['tags'] = []
     return json.dumps(ret)
