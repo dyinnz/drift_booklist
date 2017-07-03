@@ -28,7 +28,6 @@ import BooklistPane from 'mine/components/BooklistPane'
 
 
 function fetchPostJson(url, data) {
-    console.log(data)
     return fetch(url, {
         method: "POST",
         headers: {
@@ -69,7 +68,6 @@ class BooklistEdit extends React.Component {
             allTags: [],
         };
 
-        console.log("booklist edit: ", props)
     }
 
     componentWillReciveProps(props) {
@@ -87,7 +85,7 @@ class BooklistEdit extends React.Component {
     componentWillMount() {
         fetch('/get_tags').then(
             resp => resp.json()
-        ).then( (data) => {
+        ).then((data) => {
             this.setState(update(this.state, {
                 allTags: {$set: data},
             }))
@@ -135,13 +133,11 @@ class BooklistEdit extends React.Component {
                 });
             }
             this.setState(new_state)
-            console.log(this.state)
         })
     }
 
     handleTagKeyDown(e) {
         if (e.key === 'Enter') {
-            console.log("tags: ", this.state.tags)
 
             let tagAdder = document.getElementById('tag_adder')
             if (this.state.tags.indexOf(tagAdder.value) === -1) {
@@ -158,7 +154,6 @@ class BooklistEdit extends React.Component {
             this.setState(update(this.state, {
                 tags: {$push: [item.props.value]}
             }));
-            console.log("after touch: ", this.state.tags)
         }
     }
 
@@ -167,7 +162,6 @@ class BooklistEdit extends React.Component {
         this.setState(update(this.state, {
             tags: {$splice: [[index, 1]]}
         }));
-        console.log("after delete: ", this.state.tags)
     }
 
     render() {
@@ -278,7 +272,6 @@ class ShowContainer extends React.Component {
         }).then(
             resp => resp.json()
         ).then((data) => {
-            console.log(data);
             if (data.OK) {
                 this.setState(update(this.state, {
                     upNumber: {$set: data.up_number},
@@ -295,7 +288,6 @@ class ShowContainer extends React.Component {
         }).then(
             resp => resp.json()
         ).then((data) => {
-            console.log(data);
             if (data.OK) {
                 this.setState(update(this.state, {
                     followNumber: {$set: data.follow_number},
@@ -336,7 +328,6 @@ class ShowContainer extends React.Component {
     }
 
     renderModify() {
-        console.log("modifiable: ", this.state.modifiable)
         if (this.state.modifiable) {
             return (
                 <div className="flex_class">
@@ -370,7 +361,6 @@ class ShowContainer extends React.Component {
         if (!("booklist_name" in this.props.details)) {
             return (<p>Empty Content!</p>)
         }
-        console.log("show: ", this.props.details)
         return (
             <Card>
                 {this.renderModify()}
@@ -439,7 +429,6 @@ class BookGrid extends React.Component {
         if ("undefined" === typeof(this.props.items)) {
             return <p>No Content</p>
         }
-        console.log("books grid: ", this.props.items)
         return (
             <div><Paper>
                 <Subheader> BOOKS </Subheader>
@@ -481,20 +470,22 @@ class Mine extends React.Component {
     }
 
     fetchMyData() {
-        fetch('/get_mydata', {credentials: 'same-origin'})
-            .then(resp => resp.json())
-            .then((data) => {
-                console.log("main data: ", data)
-                console.log("init state: ", this.state)
+        fetch('/get_mydata', {
+            credentials: 'same-origin'
+        }).then(
+            resp => resp.json()
+        ).then((mineData) => {
 
-                this.setState(update(this.state, {
-                    myListItems: {$set: data.my_booklists},
-                    favoriteListItems: {$set: data.followed_booklists},
-                    favoriteBooksID: {$set: data.favorite_books_id},
-                }));
+            this.setState(update(this.state, {
+                myListItems: {$set: mineData.my_booklists},
+                favoriteListItems: {$set: mineData.followed_booklists},
+                favoriteBooksID: {$set: mineData.favorite_books_id},
+            }));
 
-                this.touchBooklist(data.favorite_books_id, true)
-            })
+            this.touchBooklist(mineData.favorite_books_id, true);
+
+            console.log('/get_mydata: ', mineData);
+        })
     }
 
     fetchListData() {
@@ -504,16 +495,16 @@ class Mine extends React.Component {
 
         }).then(
             resp => resp.json()
-        ).then((data) => {
-            console.log("main data: ", data)
-            console.log("init state: ", this.state)
+        ).then((mineData) => {
 
             this.setState(update(this.state, {
-                myListItems: {$set: data.my_booklists},
-                favoriteListItems: {$set: data.followed_booklists},
+                myListItems: {$set: mineData.my_booklists},
+                favoriteListItems: {$set: mineData.followed_booklists},
             }));
 
-            this.touchBooklist(data.booklist_id)
+            this.touchBooklist(mineData.booklist_id);
+
+            console.log(window.location.href, ' ', mineData);
         })
     }
 
@@ -557,21 +548,20 @@ class Mine extends React.Component {
     }
 
     touchBooklist(currListID, modifiable) {
-        console.log("currListID: ", currListID);
-        console.log("modifiable in touchBooklist: ", modifiable);
 
         fetchPostJson("/booklist_detail", {
             booklist_id: currListID
         }).then(
             resp => resp.json()
-        ).then((data) => {
-            console.log("booklist_detail: ", data)
+        ).then((listData) => {
 
             this.setState(update(this.state, {
-                currBooklist: {$set: data},
+                currBooklist: {$set: listData},
                 currListID: {$set: currListID},
                 modifiable: {$set: modifiable},
             }))
+
+            console.log("touchBooklist() /booklist_detail :", listData);
         })
     }
 
@@ -580,14 +570,14 @@ class Mine extends React.Component {
             booklist_id: i
         }).then(
             resp => resp.json()
-        ).then((data) => {
-            console.log(data)
-            this.fetchMyData()
+        ).then((result) => {
+            console.log('/delete_booklist: ', result);
+
+            this.fetchMyData();
         })
     }
 
     renderRightPane() {
-        console.log("mine : ", this.state.currListID)
         return (
             <div className="right_pane">
                 <ShowContainer details={this.state.currBooklist}
