@@ -15,24 +15,6 @@ class IconMenuExampleSimple extends React.Component {
             open: false,
         };
     }
-
-    handleTouchTap = (event) => {
-        // This prevents ghost click.
-        event.preventDefault();
-
-        this.setState({
-            open: true,
-            anchorEl: event.currentTarget,
-        });
-    };
-
-    handleRequestClose = () => {
-        this.setState({
-            open: false,
-        });
-    };
-
-
     render() {
         return (
             <div style={{display: 'flex', paddingTop: '5px'}}>
@@ -42,7 +24,6 @@ class IconMenuExampleSimple extends React.Component {
                                     style={{height: '40px'}}>
 
                             <img src={this.props.avatar} style={{borderRadius: '50%', height: '40px'}}/>
-
                         </FlatButton>
                     }
                 >
@@ -129,6 +110,11 @@ class Login extends React.Component {
 
 class Header extends React.Component {
     render() {
+        let url = window.location.href;
+        var name1=''
+        var name2=''
+        var name3=''
+        var name4=''
         return (
             <div className="am-container">
                 <h1 className="am-topbar-brand">
@@ -137,10 +123,10 @@ class Header extends React.Component {
 
                 <div className="am-collapse am-topbar-collapse" id="collapse-head">
                     <ul className="am-nav am-nav-pills am-topbar-nav">
-                        <li className="am-active"><a href="#">推荐</a></li>
-                        <li><a href="/explore">发现</a></li>
-                        <li><a href="/mine">我的</a></li>
-                        <li><a href="/friends">朋友</a></li>
+                        <li className={name1}><a href="/recommend">推荐</a></li>
+                        <li className={name2}><a href="/explore">发现</a></li>
+                        <li className={name3}><a href="/mine">我的</a></li>
+                        <li className={name4}><a href="/friends">朋友</a></li>
                     </ul>
 
 
