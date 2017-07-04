@@ -4,20 +4,23 @@
 import ReactDOM from 'react-dom';
 import React from 'react';
 import Search from 'search/components/Search';
-import Login from 'index/components/Login';
+import Header from 'index/components/Login';
 
 const App = () => (
     <Search/>
 );
 
-const App3 = () => (
-    <Login/>
+const HeaderWrapper = () => (
+    <MuiThemeProvider>
+        <Header/>
+    </MuiThemeProvider>
 );
+
 
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
-        <App3/>,
-        document.getElementById('user')
+        <HeaderWrapper/>,
+        document.getElementById('header')
     );
 
 
