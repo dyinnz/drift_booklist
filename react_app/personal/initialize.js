@@ -3,7 +3,7 @@
  */
 import ReactDOM from 'react-dom';
 import React from 'react';
-
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Tag from 'personal/components/Tag';
 import Header from 'index/components/Login';
 
