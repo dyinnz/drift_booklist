@@ -258,6 +258,14 @@ def get_booklist_vote(booklist_id):
         logging.error(e)
         return None
 
+def get_book_remark_num(book_id):
+    try:
+        return DB_user_book_remark.query.filter_by(book_id=book_id).count()
+    except Exception as e:
+        logging.error(book_id)
+        logging.error(e)
+        return None
+
 
 def get_book_remark_by_id(id):
     try:
@@ -302,6 +310,7 @@ def get_book_remark(book_id, page=1, per_page=10):
     try:
         user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page,
                                                                                                            per_page).query
+        logging.debug('remark %s' % user_books)
         return json.dumps(
             [{'id': user_book.id,
               'avatar': json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],

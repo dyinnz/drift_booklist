@@ -420,21 +420,42 @@ class BookDetails extends React.Component {
 class Pagination extends React.Component {
     constructor(props) {
         super(props);
+
+        let f = length => Array.from({length}).map((v,k) => k+1);
+
         this.state = {
-            page_num: [1,2,3,4,5],
-            active: 2,
+            page_num: f(props.page),
+            active: props.active,
         }
     }
 
+    componentWillReceiveProps(next) {
+        console.log('next', next)
+        let f = length => Array.from({length}).map((v,k) => k+1);
+        this.setState(update(this.state, {
+            page_num: {$set: f(next.page)},
+        }))
+    }
+
     renderPageNum() {
-        console.log('fuck', this.state.page_num)
+        console.log('fuck', this.state.pages);
         return (
             this.state.page_num.map((num) => {
-                return (
-                    <li class="">
-                        <a href="#" class="">{num}</a>
-                    </li>
-                )
+                if (num !== this.state.active) {
+                    return (
+                        <li class="" onClick={() => this.props.handle_touch(num)}>
+                            <a class="">{num}</a>
+                        </li>
+                    )
+                }
+                else {
+                    return (
+                        <li class="" onClick={() => this.props.handle_touch(num)}>
+                            <a class="am-active">{num}</a>
+                        </li>
+                    )
+
+                }
             })
         )
     }
@@ -475,6 +496,7 @@ class BookPage extends React.Component {
         this.state = {
             details: undefined,
             comments: [],
+            pages: undefined,
         };
 
         let url = window.location.href;
@@ -484,8 +506,26 @@ class BookPage extends React.Component {
 
     componentWillMount() {
         fetchPostJson('/book_detail', {
-            book_id: this.book_id
+            book_id: this.book_id,
+            page: 1,
 
+        }).then(
+            resp => resp.json()
+        ).then((data) => {
+            console.log(data);
+            this.setState(update(this.state, {
+                details: {$set: data},
+                comments: {$set: data.remarks},
+                pages: {$set: data.pages},
+            }))
+        })
+    }
+
+    fetch_comment(page_num) {
+        console.log('fetch comment: ', page_num)
+        fetchPostJson('/book_detail', {
+            book_id: this.book_id,
+            page: page_num,
         }).then(
             resp => resp.json()
         ).then((data) => {
@@ -498,15 +538,13 @@ class BookPage extends React.Component {
     }
 
     render() {
-        let f = length => Array.from({length}).map((v, k) => k+1);
-        console.log(f(4));
         return (
             <div className="book_page">
                 <BookDetails details={this.state.details}/>
                 <BookComment items={this.state.comments}
                              currBookID={this.book_id}
                 />
-                <Pagination />
+                <Pagination page={this.state.pages} active="1" handle_touch={(i) => this.fetch_comment(i)} />
             </div>
         )
     }

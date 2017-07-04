@@ -1,3 +1,4 @@
+from __future__ import division
 import flask
 import json
 import logging
@@ -178,13 +179,16 @@ def bookdetail():
     vote_number = json.loads(db_user_remark.get_book_vote_num(data['book_id']))
     jsondata['up_number'] = vote_number['up']
     jsondata['down_number'] = vote_number['down']
-    remarks = json.loads(db_user_remark.get_book_remark(data['book_id'], 1, 10))
+    logging.debug('page: %s' % data['page'])
+    remarks = json.loads(db_user_remark.get_book_remark(data['book_id'], data['page'], 10))
+    logging.debug(remarks)
     for remark in remarks:
         remark_vote_number = json.loads(db_user_remark.get_book_remark_vote_num(remark['id']))
         remark['up_number'] = remark_vote_number['up']
         remark['down_number'] = remark_vote_number['down']
     jsondata['remarks'] = remarks
     jsondata['tags'] = json.loads(db_book.get_book_tags(data['book_id']))
+    jsondata['pages'] = int(db_user_remark.get_book_remark_num(data['book_id']) / 10 + 0.9)
 
     return jsonify(jsondata)
 
