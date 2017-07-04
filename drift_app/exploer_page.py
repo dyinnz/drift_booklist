@@ -29,5 +29,5 @@ def test_explore():
 def get_moment():
     #data = request.get_json()
     jsondata = db_user_remark.get_user_moments(flask_login.current_user.db_id)
-    # print(jsondata)
+    logging.debug(jsondata)
     return jsondata

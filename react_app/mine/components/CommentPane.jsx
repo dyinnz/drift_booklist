@@ -175,8 +175,7 @@ class CommentPane extends React.Component {
     }
 
     render() {
-        console.log("Render CommentPane of booklist[%d]", this.props.currListID);
-
+        
         return (
             <Paper>
                 {this.renderHeader()}

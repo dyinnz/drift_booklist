@@ -235,7 +235,7 @@ class BookDetails extends React.Component {
             credentials: 'same-origin',
         }).then(
             resp => resp.json()
-        ).then( (data) => {
+        ).then((data) => {
             this.setState(update(this.state, {
                 myLists: {$set: data}
             }))
@@ -302,7 +302,7 @@ class BookDetails extends React.Component {
             book_id: this.props.details.book_id,
         }).then(
             resp => resp.json()
-        ).then( (data)=> {
+        ).then((data) => {
             console.log(data)
         })
     }
@@ -417,6 +417,56 @@ class BookDetails extends React.Component {
     }
 }
 
+class Pagination extends React.Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            page_num: [1,2,3,4,5],
+        }
+    }
+
+    renderPageNum() {
+        console.log('fuck', this.state.page_num)
+        return (
+            this.state.page_num.map((num) => {
+                return (
+                    <li class="">
+                        <a href="#" class="">{num}</a>
+                    </li>
+                )
+            })
+        )
+    }
+
+    render() {
+        return (
+            <div>
+                <ul data-am-widget="pagination" className="am-pagination am-pagination-default">
+
+                    <li className="am-pagination-first ">
+                        <a href="#" className="">第一页</a>
+                    </li>
+
+                    <li className="am-pagination-prev ">
+                        <a href="#" className="">上一页</a>
+                    </li>
+
+                    {this.renderPageNum()}
+
+                    <li className="am-pagination-next">
+                        <a href="#" className="">下一页</a>
+                    </li>
+
+                    <li className="am-pagination-last ">
+                        <a href="#" className="">最末页</a>
+                    </li>
+                </ul>
+
+            </div>
+        )
+    }
+}
+
 class BookPage extends React.Component {
     constructor(props) {
         super(props);
@@ -447,12 +497,15 @@ class BookPage extends React.Component {
     }
 
     render() {
+        let f = length => Array.from({length}).map((v, k) => k+1);
+        console.log(f(4));
         return (
             <div className="book_page">
                 <BookDetails details={this.state.details}/>
                 <BookComment items={this.state.comments}
                              currBookID={this.book_id}
                 />
+                <Pagination />
             </div>
         )
     }

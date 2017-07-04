@@ -5,21 +5,22 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 
 import Tag from 'personal/components/Tag';
-import Login from 'index/components/Login';
+import Header from 'index/components/Login';
 
 const App = () => (
     <Tag/>
 );
 
-const App3 = () => (
-    <Login/>
+const HeaderWrapper = () => (
+    <MuiThemeProvider>
+        <Header/>
+    </MuiThemeProvider>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
-
-    ReactDOM.render(
-        <App3/>,
-        document.getElementById('user')
+     ReactDOM.render(
+        <HeaderWrapper/>,
+        document.getElementById('header')
     );
 
     ReactDOM.render(

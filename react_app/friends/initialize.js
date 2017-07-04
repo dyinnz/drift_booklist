@@ -6,9 +6,15 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 
 import Friends from 'friends/components/Friends'
+import Header from 'index/components/Login'
 
 injectTapEventPlugin();
 
+const HeaderWrapper = () => (
+    <MuiThemeProvider>
+        <Header/>
+    </MuiThemeProvider>
+);
 
 const App = () => (
     <MuiThemeProvider>
@@ -17,6 +23,11 @@ const App = () => (
 );
 
 document.addEventListener('DOMContentLoaded', () => {
+    ReactDOM.render(
+        <HeaderWrapper/>,
+        document.getElementById('header')
+    );
+
     ReactDOM.render(
         <App/>,
         document.getElementById('root')

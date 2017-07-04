@@ -7,9 +7,10 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import RecommandList from 'index/components/RecommandList';
 import CategoryList from 'index/components/CategoryList';
 
-import Login from 'index/components/Login';
+import Header from 'index/components/Login';
 
 import UserList from "index/components/UserList";
+injectTapEventPlugin();
 
 
 const App = () => (
@@ -21,13 +22,15 @@ const App2 = () => (
 );
 
 const App3 = () => (
-    <Login/>
+    <MuiThemeProvider>
+    <Header/>
+    </MuiThemeProvider>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <App3/>,
-        document.getElementById('user')
+        document.getElementById('header')
     );
 
     ReactDOM.render(
