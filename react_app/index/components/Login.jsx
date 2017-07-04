@@ -67,7 +67,7 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            isLogIn: 0,
+            isLogIn: 2,
             user_cover: "",
             user_name: "",
             user_account: ""
@@ -125,11 +125,15 @@ class Login extends React.Component {
 
     render() {
         console.log("Test: ", this.state);
-        if (this.state.isLogIn != 0) {
+        if (this.state.isLogIn ==1) {
             return this.userInfo();
-        } else {
+        } else if(this.state.isLogIn==0){
             return this.login();
         }
+        else{
+            return <div></div>
+        }
+
 
     }
 }
@@ -141,6 +145,14 @@ class Header extends React.Component {
         var name2 = ''
         var name3 = ''
         var name4 = ''
+        if (url.indexOf('/recommend')!=-1)
+            name1='am-active'
+        else if(url.indexOf('/explore')!=-1)
+            name2='am-active'
+        else if(url.indexOf('/friends')!=-1)
+            name4='am-active'
+        else if(url.indexOf('/mine')!=-1)
+            name3='am-active'
         return (
             <div className="am-container">
                 <h1 className="am-topbar-brand">

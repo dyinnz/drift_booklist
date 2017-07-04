@@ -80,7 +80,7 @@ class TopContainer extends React.Component {
                         <label>生日:{new Date(this.props.detail.birthday).toISOString().substr(0, 10)}</label>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
                         <label>性别:{this.props.detail.gender}</label>
-                        <br/><br/>
+                        <br/>
                         <div className="tags">
                             {this.props.detail.tags.map((tag) => (
                                 <Chip key={tag}>
