@@ -58,27 +58,39 @@ class Pagination extends React.Component {
         )
     }
 
+    toPrevious() {
+        console.log("in next()", this.state.active)
+        if (this.state.active !== 1)
+            this.props.handle_touch(this.state.active - 1)
+    }
+
+    toNext() {
+        console.log("in next()", this.state.active, this.state.page_num.length)
+        if (this.state.active !== this.state.page_num.length)
+            this.props.handle_touch(this.state.active + 1)
+    }
+
     render() {
         return (
             <div>
                 <ul data-am-widget="pagination" className="am-pagination am-pagination-default">
 
-                    <li className="am-pagination-first ">
-                        <a href="#" className="">第一页</a>
+                    <li className="am-pagination-first " onClick={() => this.props.handle_touch(1)}>
+                        <a className="">第一页</a>
                     </li>
 
-                    <li className="am-pagination-prev ">
-                        <a href="#" className="">上一页</a>
+                    <li className="am-pagination-prev " onClick={() => this.toPrevious()}>
+                        <a className="">上一页</a>
                     </li>
 
                     {this.renderPageNum()}
 
-                    <li className="am-pagination-next">
-                        <a href="#" className="">下一页</a>
+                    <li className="am-pagination-next" onClick={() => this.toNext()}>
+                        <a className="">下一页</a>
                     </li>
 
-                    <li className="am-pagination-last ">
-                        <a href="#" className="">最末页</a>
+                    <li className="am-pagination-last " onClick={() => this.props.handle_touch(this.state.page_num.length)}>
+                        <a className="">最末页</a>
                     </li>
                 </ul>
 
