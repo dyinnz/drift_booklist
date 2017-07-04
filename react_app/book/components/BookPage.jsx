@@ -422,6 +422,7 @@ class Pagination extends React.Component {
         super(props);
         this.state = {
             page_num: [1,2,3,4,5],
+            active: 2,
         }
     }
 
