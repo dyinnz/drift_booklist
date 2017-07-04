@@ -1,11 +1,10 @@
-
 import logging
 import os
-import flask
+
 import flask_login
-from flask_login import current_user
-from flask import Blueprint, current_app, jsonify, request
+from flask import Blueprint, jsonify, request,current_app
 from werkzeug.utils import secure_filename
+
 from drift_app.db_interface import db_book
 
 UPLOAD_FOLDER = './static/uploads'
@@ -64,8 +63,12 @@ def upload_file():
     })
 
 
-@utility_bp.route('/search/<keyword>')
+@utility_bp.route('/search/<keyword>', methods=['POST', 'GET'])
 def search(keyword):
-    ret = db_book.search_keyword(keyword)
-    print(ret)
-    return jsonify(ret)
+    if request.method == 'POST':
+        ret = db_book.search_keyword(keyword)
+        print(ret)
+        return jsonify(ret)
+    else:
+        return current_app.send_static_file('react/search.html')
+

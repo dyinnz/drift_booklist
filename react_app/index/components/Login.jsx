@@ -139,6 +139,20 @@ class Login extends React.Component {
 }
 
 class Header extends React.Component {
+    constructor(props){
+        super(props);
+        this.state={
+            key:''
+        }
+    }
+
+    change(){
+        var h=$("#myinput").val()
+        console.log('change to ',h)
+        this.setState({
+            key:h
+        })
+    }
     render() {
         let url = window.location.href;
         var name1 = ''
@@ -171,8 +185,8 @@ class Header extends React.Component {
                     <ul className="am-nav am-navbar-nav am-navbar-right">
                         <li className="hidden-xs am-hide-sm-only">
                             <form role="search" className="app-search">
-                                <input type="text" placeholder="Search..." className="form-control"/>
-                                <a href=""><img src="/static/assets/i/search.png"/></a>
+                                <input type="text" placeholder="Search..." className="form-control" id="myinput" onChange={this.change.bind(this)} />
+                                <a href={"http://"+window.location.host+"/search/"+this.state.key} id="myhref"><img src="/static/assets/i/search.png"/></a>
                             </form>
                         </li>
                     </ul>

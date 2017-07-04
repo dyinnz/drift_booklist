@@ -440,7 +440,7 @@ def booklist_to_dict(booklist):
     return dict(
         id=booklist.id,
         name=booklist.name,
-        user_id=booklist.user_id,
+        author=db_user.get_account_by_id(booklist.user_id),
         introduction=booklist.introduction,
         cover=booklist.cover,
         books=booklist.books,
