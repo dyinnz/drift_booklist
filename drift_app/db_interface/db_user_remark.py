@@ -309,8 +309,7 @@ def get_book_remark(book_id, page=1, per_page=10):
     """
     try:
         user_books = DB_user_book_remark.query.filter_by(book_id=book_id).order_by('-remark_time').paginate(page,
-                                                                                                           per_page).query
-        logging.debug('remark %s' % user_books)
+                                                                                                           per_page).items
         return json.dumps(
             [{'id': user_book.id,
               'avatar': json.loads(get_user_infos(get_account_by_id(user_book.user_id)))['pic_src'],
@@ -365,7 +364,7 @@ def get_booklist_remark(booklist_id, page=1, per_page=10):
     """
     try:
         user_booklists = DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).order_by(
-            'remark_time').paginate(page, per_page).query
+            'remark_time').paginate(page, per_page).items
         return json.dumps(
             [{'id': user_booklist.id,
               'avatar': json.loads(get_user_infos(get_account_by_id(user_booklist.user_id)))['pic_src'],
@@ -430,7 +429,7 @@ def get_book_followers(book_id, page=1, per_page=10):
     :return: If success, return json format users' account names, else None.
     """
     try:
-        user_books = DB_user_book_opinion.query.filter_by(book_id=book_id, is_follow=1).paginate(page, per_page).query
+        user_books = DB_user_book_opinion.query.filter_by(book_id=book_id, is_follow=1).paginate(page, per_page).items
         return json.dumps(dict(
             [(get_account_by_id(user_book.user_id)) for user_book in user_books], ensure_ascii=False
         ))
@@ -450,7 +449,7 @@ def get_booklist_followers(booklist_id, page=1, per_page=10):
     """
     try:
         user_booklists = DB_user_booklist_opinion.query.filter_by(booklist_id=booklist_id, is_follow=1).paginate(page,
-                                                                                                                 per_page).query
+                                                                                                                 per_page).items
         return json.dumps(dict(
             [(get_account_by_id(user_booklist.user_id)) for user_booklist in user_booklists], ensure_ascii=False
         ))
@@ -793,42 +792,42 @@ def get_user_moments(user_id, page=1, per_page=10):
         results = []
         for u_id in following:
             book_remark = DB_user_book_remark.query.filter_by(user_id=u_id).order_by(
-                DB_user_book_remark.remark_time.desc()).paginate(page, per_page).query
+                DB_user_book_remark.remark_time.desc()).paginate(page, per_page).items
             results.extend([(x.remark_info(), x.remark_time) for x in book_remark if x is not None])
             logging.info("fuck1")
 
             booklist_remark = DB_user_booklist_remark.query.filter_by(user_id=u_id).order_by(
-                DB_user_booklist_remark.remark_time.desc()).paginate(page, per_page).query
+                DB_user_booklist_remark.remark_time.desc()).paginate(page, per_page).items
             results.extend([(x.remark_info(), x.remark_time) for x in booklist_remark if x is not None])
             logging.info("fuck2")
 
             book_vote = DB_user_book_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_book_opinion.last_vote_time.desc()).paginate(page, per_page).query
+                DB_user_book_opinion.last_vote_time.desc()).paginate(page, per_page).items
             results.extend([(x.vote_info(), x.last_vote_time) for x in book_vote if x is not None])
             logging.info("fuck3")
 
             booklist_vote = DB_user_booklist_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_booklist_opinion.last_vote_time.desc()).paginate(page, per_page).query
+                DB_user_booklist_opinion.last_vote_time.desc()).paginate(page, per_page).items
             results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_vote if x is not None])
             logging.info("fuck4")
 
             book_follow = DB_user_book_opinion.query.filter_by(user_id=u_id, is_follow=1).order_by(
-                DB_user_book_opinion.last_follow_time.desc()).paginate(page, per_page).query
+                DB_user_book_opinion.last_follow_time.desc()).paginate(page, per_page).items
             results.extend([(x.follow_info(), x.last_follow_time) for x in book_follow if x is not None])
             logging.info("fuck5")
 
             booklist_follow = DB_user_booklist_opinion.query.filter_by(user_id=u_id, is_follow=1).order_by(
-                DB_user_booklist_opinion.last_follow_time.desc()).paginate(page, per_page).query
+                DB_user_booklist_opinion.last_follow_time.desc()).paginate(page, per_page).items
             results.extend([(x.follow_info(), x.last_follow_time) for x in booklist_follow if x is not None])
             logging.info("fuck6")
 
             book_remark_vote = DB_user_book_remark_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_book_remark_opinion.last_vote_time.desc()).paginate(page, per_page).query
+                DB_user_book_remark_opinion.last_vote_time.desc()).paginate(page, per_page).items
             results.extend([(x.vote_info(), x.last_vote_time) for x in book_remark_vote if x is not None])
             logging.info("fuck7")
 
             booklist_remark_vote = DB_user_booklist_remark_opinion.query.filter_by(user_id=u_id).order_by(
-                DB_user_booklist_remark_opinion.last_vote_time.desc()).paginate(page, per_page).query
+                DB_user_booklist_remark_opinion.last_vote_time.desc()).paginate(page, per_page).items
             results.extend([(x.vote_info(), x.last_vote_time) for x in booklist_remark_vote if x is not None])
             logging.info("fuck8")
 
