@@ -22,6 +22,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import Popover from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
+import Pagination from "book/components/Pagination";
 
 import update from 'immutability-helper'
 
@@ -65,8 +66,8 @@ class CommentList extends React.Component {
         } else {
             return (
                 <div>
-                    {this.props.items.map((item) => {
-                        return <Comment key={item.remark_time} details={item}/>
+                    {this.props.items.map((item, i) => {
+                        return <Comment key={i} details={item}/>
                     })}
                 </div>
             )
@@ -417,77 +418,6 @@ class BookDetails extends React.Component {
     }
 }
 
-class Pagination extends React.Component {
-    constructor(props) {
-        super(props);
-
-        let f = length => Array.from({length}).map((v,k) => k+1);
-
-        this.state = {
-            page_num: f(props.page),
-            active: props.active,
-        }
-    }
-
-    componentWillReceiveProps(next) {
-        console.log('next', next)
-        let f = length => Array.from({length}).map((v,k) => k+1);
-        this.setState(update(this.state, {
-            page_num: {$set: f(next.page)},
-        }))
-    }
-
-    renderPageNum() {
-        console.log('fuck', this.state.pages);
-        return (
-            this.state.page_num.map((num) => {
-                if (num !== this.state.active) {
-                    return (
-                        <li class="" onClick={() => this.props.handle_touch(num)}>
-                            <a class="">{num}</a>
-                        </li>
-                    )
-                }
-                else {
-                    return (
-                        <li class="" onClick={() => this.props.handle_touch(num)}>
-                            <a class="am-active">{num}</a>
-                        </li>
-                    )
-
-                }
-            })
-        )
-    }
-
-    render() {
-        return (
-            <div>
-                <ul data-am-widget="pagination" className="am-pagination am-pagination-default">
-
-                    <li className="am-pagination-first ">
-                        <a href="#" className="">第一页</a>
-                    </li>
-
-                    <li className="am-pagination-prev ">
-                        <a href="#" className="">上一页</a>
-                    </li>
-
-                    {this.renderPageNum()}
-
-                    <li className="am-pagination-next">
-                        <a href="#" className="">下一页</a>
-                    </li>
-
-                    <li className="am-pagination-last ">
-                        <a href="#" className="">最末页</a>
-                    </li>
-                </ul>
-
-            </div>
-        )
-    }
-}
 
 class BookPage extends React.Component {
     constructor(props) {
@@ -497,6 +427,7 @@ class BookPage extends React.Component {
             details: undefined,
             comments: [],
             pages: undefined,
+            active: 1,
         };
 
         let url = window.location.href;
@@ -533,6 +464,7 @@ class BookPage extends React.Component {
             this.setState(update(this.state, {
                 details: {$set: data},
                 comments: {$set: data.remarks},
+                active: {$set: page_num},
             }))
         })
     }
@@ -544,7 +476,7 @@ class BookPage extends React.Component {
                 <BookComment items={this.state.comments}
                              currBookID={this.book_id}
                 />
-                <Pagination page={this.state.pages} active="1" handle_touch={(i) => this.fetch_comment(i)} />
+                <Pagination page={this.state.pages} active={this.state.active} handle_touch={(i) => this.fetch_comment(i)} />
             </div>
         )
     }
