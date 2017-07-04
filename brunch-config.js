@@ -10,6 +10,8 @@ exports.files = {
             'js/settings.js': /^react_app\/settings/,
             'js/explore.js': /^react_app\/explore/,
             'js/book.js': /^react_app\/book/,
+            'js/personal.js': /^react_app\/personal/,
+            'js/search.js':/^react_app\/search/,
         }
     },
     stylesheets: {
@@ -21,6 +23,8 @@ exports.files = {
             'css/settings.css': /^react_app\/settings/,
             'css/explore.css': /^react_app\/explore/,
             'css/book.css': /^react_app\/book/,
+            'css/personal.css': /^react_app\/personal/,
+            'css/search.css':/^react_app\/search/,
         }
     }
 };
