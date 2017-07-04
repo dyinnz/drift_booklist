@@ -8,6 +8,7 @@ import Subheader from "material-ui/Subheader";
 import Avatar from "material-ui/Avatar";
 import {darkBlack, grey400} from "material-ui/styles/colors";
 
+import update from 'immutability-helper'
 import moment from "moment"
 
 {
@@ -107,6 +108,17 @@ import moment from "moment"
     });
 }
 
+function fetchPostJson(url, data) {
+    console.log("fetchPostJson: ", data);
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+    })
+}
 
 class ListContainer extends React.Component {
     renderListItem(item) {
@@ -146,25 +158,28 @@ class Explore extends React.Component {
         this.jsonData = undefined;
         this.state = {
             events: [],
+            pages: undefined,
+            active: 1,
         }
     }
 
 
-    fetchData() {
-        fetch('/get_moment', {credentials: 'same-origin'})
-            .then(resp => resp.json())
+    fetchData(i) {
+        fetchPostJson('/get_moment', {
+            page: i,
+        }).then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", typeof(data));
                 console.log("init state: ", this.state);
-                this.setState({
-                    events: data,
-                })
+                this.setState(update(this.state, {
+                    events: {$set: data},
+                }))
             })
     }
 
 
     componentWillMount() {
-        this.fetchData()
+        this.fetchData(1)
     }
 
     renderMessage(item) {
