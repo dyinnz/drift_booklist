@@ -13,7 +13,7 @@ class Search extends React.Component {
     }
 
     componentWillMount(){
-        fetchData()
+        this.fetchData();
     }
 
     fetchData() {
@@ -76,7 +76,10 @@ class Search extends React.Component {
     result(){
         return(
             <div>
-                {this.state.booklist.map(
+                {this.state.books.map(
+                    (item) => {return this.renderResult(item)}
+                )}
+                {this.state.lists.map(
                     (item) => {return this.renderResult(item)}
                 )}
             </div>
