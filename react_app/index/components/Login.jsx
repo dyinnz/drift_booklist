@@ -1,6 +1,7 @@
 import React from "react";
-import IconMenu from "material-ui/IconMenu";
 import MenuItem from "material-ui/MenuItem";
+import Menu from "material-ui/Menu";
+import Popover from "material-ui/Popover";
 import FlatButton from "material-ui/FlatButton";
 
 /**
@@ -15,22 +16,47 @@ class IconMenuExampleSimple extends React.Component {
             open: false,
         };
     }
-    render() {
-        return (
-            <div style={{display: 'flex', paddingTop: '5px'}}>
-                <IconMenu
-                    iconButtonElement={
-                        <FlatButton label={this.props.name} primary={true} labelPosition="before"
-                                    style={{height: '40px'}}>
 
-                            <img src={this.props.avatar} style={{borderRadius: '50%', height: '40px'}}/>
-                        </FlatButton>
-                    }
-                >
-                    <MenuItem primaryText="Settings" href="/settings"/>
-                    <MenuItem primaryText="HomePage" href={"/user/" + this.props.account}/>
-                    <MenuItem primaryText="Sign out" href="/logout"/>
-                </IconMenu>
+    render() {
+        return (<div>
+                <div>
+                    <FlatButton
+                        label={this.props.name}
+                        primary={true}
+                        labelPosition="before"
+                        style={{height: '50px',margin:'auto'}}
+                        onTouchTap={(event) => {
+                            // This prevents ghost click.
+                            event.preventDefault();
+
+                            this.setState({
+                                open: true,
+                                anchorEl: event.currentTarget,
+                            })
+                        }}
+                    >
+                        <img src={this.props.avatar} style={{borderRadius: '50%', height: '40px'}}/>
+                    </FlatButton>
+                    <Popover
+                        open={this.state.open}
+                        anchorEl={this.state.anchorEl}
+                        anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                        targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                        onRequestClose={() => {
+                            this.setState({
+                                open: false,
+                            });
+                        }}
+                    >
+                        <Menu>
+                            <MenuItem primaryText="Settings" href="/settings"/>
+                            <MenuItem primaryText="HomePage" href={"/user/" + this.props.account}/>
+                            <MenuItem primaryText="Sign out" href="/logout"/>
+                        </Menu>
+                    </Popover>
+                </div>
+
+
             </div>
         )
     }
@@ -111,10 +137,10 @@ class Login extends React.Component {
 class Header extends React.Component {
     render() {
         let url = window.location.href;
-        var name1=''
-        var name2=''
-        var name3=''
-        var name4=''
+        var name1 = ''
+        var name2 = ''
+        var name3 = ''
+        var name4 = ''
         return (
             <div className="am-container">
                 <h1 className="am-topbar-brand">

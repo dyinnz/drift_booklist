@@ -16,6 +16,7 @@ class Booklist extends React.Component {
         console.log("item: ", item);
 
         return (
+            <li className="li1">
             <div>
                 <div className="am-gallery-item am_list_block">
                     <a href="###" className="am_img_bg">
@@ -36,6 +37,7 @@ class Booklist extends React.Component {
                     <span className="am_imglist_user_font">{item.user_name}</span>
                 </a>
             </div>
+            </li>
         )
     }
 
@@ -43,9 +45,11 @@ class Booklist extends React.Component {
         console.log("items: ", this.props.items);
         return (
             <div>
+                <ul data-am-widget="gallery" className="am-gallery am-avg-sm-2 am-avg-lg-4 am-avg-md-3 am-gallery-default">
                 {this.props.items.map(
                     (item) => {return this.renderBooklist(item)}
                 )}
+                </ul>
             </div>
         )
     }
@@ -120,13 +124,9 @@ class CategoryList extends React.Component {
     listPanel () {
         return (
             <div className="s-content_1">
-                <ul data-am-widget="gallery" className="am-gallery am-avg-sm-2 am-avg-lg-4 am-avg-md-3 am-gallery-default">
-                    <li className="li1">
                         <Booklist
                             items={this.state.booklist}
                         />
-                    </li>
-                </ul>
             </div>
         )
     }
