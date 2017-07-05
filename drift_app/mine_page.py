@@ -162,11 +162,24 @@ def booklistdetail():
         jsondata = get_booklist_detail(data['booklist_id'])
         if jsondata is None:
             return None
-        # logging.debug(jsondata)
-        jsondata['pages'] = int((db_user_remark.get_booklist_remark_num(data['booklist_id']) + 9) / 10)
+        logging.debug(jsondata)
+        jsondata['pages'] = int((jsondata['remark_number'] + 9) / 10)
         return jsonify(jsondata)
     else:
         return 'need post request'
+
+
+@mine_bp.route('/booklist_remark', methods=['POST', 'GET'])
+def booklist_remark():
+    if request.method == 'POST':
+        data = request.get_json()
+        remarks = json.loads(db_user_remark.get_booklist_remark(data['booklist_id'], data['page'], 10))
+        json_data = {}
+        json_data['remarks'] = remarks
+        return jsonify(json_data)
+    else:
+        return 'need post request'
+
 
 
 @mine_bp.route('/book_detail', methods=['POST', 'GET'])

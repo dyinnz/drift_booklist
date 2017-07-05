@@ -51,7 +51,6 @@ class CommentList extends React.Component {
         this.state = {
             page_num: f(props.page),
             items: props.items,
-            active: props.active,
         }
     }
 
@@ -73,7 +72,7 @@ class CommentList extends React.Component {
             return (
                 <div>
                     {this.state.items.map((item, i) => {
-                        return this.renderCommentItem();
+                        return this.renderCommentItem(item);
                     })}
                 </div>
             )
@@ -116,8 +115,6 @@ class CommentPane extends React.Component {
         this.state = {
             result: "",
             items: props.items,
-            pages: props.pages,
-            active: props.active,
         }
     }
 
@@ -125,8 +122,6 @@ class CommentPane extends React.Component {
         this.setState({
             result: "",
             items: next.items,
-            pages: next.pages,
-            active: next.active,
         })
     }
 
@@ -186,10 +181,9 @@ class CommentPane extends React.Component {
 
         return (
             <div>
-                <CommentList items={this.state.items}/>
+                <CommentList items={this.state.items} page="1"/>
                 <CommentBox onReply={() => this.onReply()}
                             onCancelReply={() => this.onCancelReply()}/>
-                <Pagination page={this.state.pages} active={this.state.active} handle_touch={(i) => this.fetch_comment(i)} />
                 <div className="comment_result">
                     <p>{this.state.result}</p>
                 </div>
