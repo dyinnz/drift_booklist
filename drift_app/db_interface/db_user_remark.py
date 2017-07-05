@@ -922,17 +922,17 @@ def get_recommend_booklists(user_id, K=10):
 
 
 
-def get_recommend_booklist_by_tags(user_id, K=10):
+def get_recommend_booklist_by_tags(user_id, tag_name, K=10):
     try:
         user = DB_user.query.filter_by(id=user_id).one()
         interests = user.interests
         d = {}
         candidates = []
-        for tag in interests:
-            for bl in tag.booklists:
-                candidates.append(bl.id)
-                up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=bl.id, vote='up').count()
-                d[bl.id] = get_booklist_follower_num(bl.id) + up_num
+        tag = DB_tags.query.filter_by(name=tag_name).one()
+        for bl in tag.booklists:
+            candidates.append(bl.id)
+            up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=bl.id, vote='up').count()
+            d[bl.id] = get_booklist_follower_num(bl.id) + up_num
         return sorted(candidates, key=lambda x: d[x], reverse=True)[:K]
     except Exception as e:
         logging.error("error in get_recommend_booklist_by_tags()")

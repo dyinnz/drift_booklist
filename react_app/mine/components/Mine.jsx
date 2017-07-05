@@ -9,17 +9,22 @@ import Avatar from 'material-ui/Avatar'
 import AppBar from 'material-ui/AppBar'
 import Chip from 'material-ui/Chip'
 import Badge from 'material-ui/Badge'
-import ActionThumbUp from 'material-ui/svg-icons/action/thumb-up'
-import ActionThumbDown from 'material-ui/svg-icons/action/thumb-down'
-import ActionStars from 'material-ui/svg-icons/action/stars'
 import IconButton from 'material-ui/IconButton'
 import FlatButton from 'material-ui/FlatButton'
 import TextField from 'material-ui/TextField'
 import {blue500} from 'material-ui/styles/colors'
 import Dialog from 'material-ui/Dialog'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
 import AutoComplete from 'material-ui/AutoComplete';
+import Popover from 'material-ui/Popover';
+import Menu from 'material-ui/Menu';
+import MenuItem from 'material-ui/MenuItem';
+
+import ActionThumbUp from 'material-ui/svg-icons/action/thumb-up'
+import ActionThumbDown from 'material-ui/svg-icons/action/thumb-down'
+import ActionStars from 'material-ui/svg-icons/action/stars'
+import ActionViewHeadline from 'material-ui/svg-icons/action/view-headline'
+import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import update from 'immutability-helper'
 
@@ -71,7 +76,7 @@ class BooklistEdit extends React.Component {
 
     }
 
-    componentWillReciveProps(props) {
+    componentWillReceiveProps(props) {
         this.state = {
             name: props.name,
             introduction: props.introduction,
@@ -416,7 +421,107 @@ class ShowContainer extends React.Component {
     }
 }
 
+class BookItem extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      moreOpen: false,
+      anchorEl: undefined,
+    }
+  }
+
+  handlePopoverOpen(e) {
+    e.preventDefault()
+
+    this.setState(update(this.state, {
+      moreOpen: {$set: true},
+      anchorEl: {$set: e.currentTarget}
+    }))
+  }
+
+  handlePopoverClose() {
+    this.setState(update(this.state, {
+      moreOpen: {$set: false}
+    }))
+  }
+
+  handleDelete() {
+    this.props.handleDeleteBook(this.props.index);
+    this.handlePopoverClose();
+  }
+
+  renderMoreButton() {
+    return (
+      <IconButton
+        onClick={this.handlePopoverOpen.bind(this)}
+        >
+        <Popover
+          open={this.state.moreOpen}
+          onRequestClose={this.handlePopoverClose.bind(this)}
+          anchorEl={this.state.anchorEl}
+          anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+          targetOrigin={{horizontal: 'left', vertical: 'top'}}
+          >
+          <Menu>
+            <MenuItem primaryText="Delete"
+              onClick={() => this.handleDelete()}
+              />
+          </Menu>
+        </Popover>
+
+        <ActionViewHeadline color="white"/>
+      </IconButton>
+    )
+  }
+
+  render() {
+    const prefix = 'http://' + window.location.host + '/book/'
+    let book = this.props.book;
+
+    return (
+      <GridTile
+        key={book.book_id}
+        title={book.book_name}
+        actionIcon={
+          this.renderMoreButton()
+        }
+        >
+        <a href={prefix + book.book_id}>
+          <img src={book.book_cover}/>
+        </a>
+      </GridTile>
+    )
+  }
+}
+
 class BookGrid extends React.Component {
+  constructor(props) {
+    super(props);
+
+    let items = props.items;
+    if ("undefined" == items) {
+      items = []
+    }
+    this.state = {
+      items: items,
+    }
+  }
+
+  componentWillReceiveProps(next) {
+    this.setState(update(this.state, {
+      items: {$set: next.items},
+    }))
+  }
+
+  handleDeleteBook(index) {
+    console.log("handleDeleteBook, ", index);
+
+    this.setState(update(this.state, {
+      items: {$splice: [[index, 1]]},
+    }))
+  }
+
     render() {
         const newBookStyle = {
             paddingLeft: 40,
@@ -434,14 +539,12 @@ class BookGrid extends React.Component {
             <div><Paper>
                 <Subheader> BOOKS </Subheader>
                 <GridList cols={4} className="grid_wrapper">
-                    {this.props.items.map((book) => (
-                        <GridTile key={book.book_id}
-                                  title={book.book_name}
-                        >
-                            <a href={prefix + book.book_id}>
-                                <img src={book.book_cover}/>
-                            </a>
-                        </GridTile>
+                    {this.state.items.map((book, index) => (
+                      <BookItem
+                        book={book}
+                        index={index}
+                        handleDeleteBook={this.handleDeleteBook.bind(this)}
+                        />
                     ))}
                     <div style={newBookStyle}>
                         <FloatingActionButton
