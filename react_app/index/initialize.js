@@ -28,9 +28,7 @@ const App3 = () => (
 );
 
 const App4 = () => (
-    <MuiThemeProvider>
     <UserList/>
-    </MuiThemeProvider>
 );
 
 document.addEventListener('DOMContentLoaded', () => {
