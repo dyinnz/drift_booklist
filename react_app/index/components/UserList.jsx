@@ -20,7 +20,7 @@ class UserItem extends React.Component{
 
 class UserList extends React.Component {
     constructor(props){
-       super(props)
+       super(props);
         this.state = {
            user_infos:[]
         }
@@ -30,7 +30,7 @@ class UserList extends React.Component {
         fetch('/get_popular_user',{credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
-                console.log('data',data)
+                console.log('data',data);
                 this.setState({
                     user_infos:data,
                 })
@@ -38,18 +38,32 @@ class UserList extends React.Component {
 
     }
 
+    renderUser(user){
+        return(
+            <li className="tpl-left-nav-item">
+                <a href={'/user/'+user.account} className="nav-link widget-user">
+                    <img src={user.avatar} className="img-responsive img-circle" />
+                    <span>{user.name}</span>
+                </a>
+            </li>
+        )
+    }
+
     render() {
-        console.log(this.props.items)
+        console.log(this.props.items);
         return (
-            <div>
-                <Subheader>热门用户：</Subheader>
-                {this.state.user_infos.map((user_info) => {
-                    return (
-                        <UserItem
-                            user={user_info}
-                        />
-                    )
-                })}
+            <div className="tpl-left-nav tpl-left-nav-hover">
+                <div className="tpl-left-nav-title">
+                    相关用户
+                    <a className="i-load-more-item-shadow" href="#"><i className="am-icon-refresh am-icon-fw"></i>更多</a>
+                </div>
+                <div className="tpl-left-nav-list">
+                    <ul className="tpl-left-nav-menu">
+                        {this.state.user_infos.map((user_info) => {
+                            return this.renderUser(user_info)
+                        })}
+                    </ul>
+                </div>
             </div>
         )
     }

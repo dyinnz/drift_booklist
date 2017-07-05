@@ -564,14 +564,12 @@ class BookGrid extends React.Component {
 class Mine extends React.Component {
     constructor(props) {
         super(props);
-        this.jsonData = undefined
+        this.jsonData = undefined;
         this.state = {
             myListItems: [],
             favoriteListItems: [],
             currBooklist: {},
             favoriteBooksID: undefined,
-            pages: undefined,
-            active: 1,
         }
     }
 
@@ -665,7 +663,6 @@ class Mine extends React.Component {
                 currBooklist: {$set: listData},
                 currListID: {$set: currListID},
                 modifiable: {$set: modifiable},
-                pages: {$set: listData.pages},
             }))
 
             console.log("touchBooklist() /booklist_detail :", listData);
@@ -692,9 +689,8 @@ class Mine extends React.Component {
                                deleteList={(i) => this.deleteList(i)}
                                modifiable={this.state.modifiable}
                 />
-                  <BookGrid items={this.state.currBooklist.books}
-                  />
-                <CommentPane items={this.state.currBooklist.remarks} pages={this.state.pages} active={this.state.active}
+                <BookGrid items={this.state.currBooklist.books}/>
+                <CommentPane items={this.state.currBooklist.remarks}
                              currListID={this.state.currListID}/>
             </div>
         )
