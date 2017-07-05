@@ -481,7 +481,6 @@ class BookItem extends React.Component {
 
     return (
       <GridTile
-        key={book.book_id}
         title={book.book_name}
         actionIcon={
           this.renderMoreButton()
@@ -541,6 +540,7 @@ class BookGrid extends React.Component {
                 <GridList cols={4} className="grid_wrapper">
                     {this.state.items.map((book, index) => (
                       <BookItem
+                        key={book.book_id}
                         book={book}
                         index={index}
                         handleDeleteBook={this.handleDeleteBook.bind(this)}

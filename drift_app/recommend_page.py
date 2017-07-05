@@ -98,8 +98,8 @@ def islogin():
 @recommend_bp.route('/get_recommend')
 def get_recommend():
     result = db_user_remark.get_recommend_booklists(flask_login.current_user.db_id, 10)
-    result = [int(x) for x in result]
     logging.debug(result)
+    result = [int(x) for x in result]
     return jsonify(result)
 
 @recommend_bp.route('/interest')
