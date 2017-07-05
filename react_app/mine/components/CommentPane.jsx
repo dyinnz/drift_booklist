@@ -46,18 +46,19 @@ class CommentList extends React.Component {
     constructor(props) {
         super(props)
 
-        let f = length => Array.from({length}).map((v,k) => k+1);
-
         this.state = {
-            page_num: f(props.page),
+            page_num: props.page,
             items: props.items,
+            active: props.active,
         }
     }
 
 
     componentWillReceiveProps(next) {
         this.setState(update(this.state, {
-            items: {$set: next.items}
+            items: {$set: next.items},
+            page_num: {$set: next.page},
+            active: {$set: next.active},
         }))
     }
 
@@ -74,6 +75,7 @@ class CommentList extends React.Component {
                     {this.state.items.map((item, i) => {
                         return this.renderCommentItem(item);
                     })}
+                    <Pagination page={this.state.page_num} active={this.state.active} handle_touch={(i) => this.props.handleTouch(i)} />
                 </div>
             )
         }
@@ -115,6 +117,8 @@ class CommentPane extends React.Component {
         this.state = {
             result: "",
             items: props.items,
+            pages: props.pages,
+            active: props.active,
         }
     }
 
@@ -122,6 +126,8 @@ class CommentPane extends React.Component {
         this.setState({
             result: "",
             items: next.items,
+            pages: next.pages,
+            active: next.active,
         })
     }
 
@@ -181,7 +187,8 @@ class CommentPane extends React.Component {
 
         return (
             <div>
-                <CommentList items={this.state.items} page="1"/>
+                <CommentList items={this.state.items} page={this.state.pages} active={this.state.active}
+                handleTouch={(i) => this.props.handleTouch(i)} />
                 <CommentBox onReply={() => this.onReply()}
                             onCancelReply={() => this.onCancelReply()}/>
                 <div className="comment_result">
