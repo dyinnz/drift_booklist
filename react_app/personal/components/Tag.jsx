@@ -1,4 +1,19 @@
-import React from 'react';
+import React from "react";
+import AutoComplete from "material-ui/AutoComplete";
+import Chip from "material-ui/Chip";
+import update from "immutability-helper";
+
+function fetchPostJson(url, data) {
+    console.log("fetchPostJson: ", data);
+    return fetch(url, {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(data),
+    })
+}
 
 class Tag extends React.Component {
 
@@ -6,89 +21,92 @@ class Tag extends React.Component {
         super(props);
         this.state = {
             taglist: [],
-            userTaglist: [],
-            isLogIn: 0,
+            allTags: [],
         }
     }
 
-    componentWillMount(){
-        fetchData()
+    componentWillMount() {
+        this.fetchData()
     }
 
     fetchData() {
-        fetch('/recommend/get_Tag', {credentials: 'same-origin'})
+        fetch('/recommend/get_tag', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
                 console.log("init state: ", this.state);
                 this.setState({
-                    taglist: data.taglist,
-                    isLogIn: data.isLogIn,
-                    userTaglist: data.userTaglist,
+                    allTags: data.taglist,
+                    taglist: data.userTaglist,
                 })
             })
     }
 
-    UserTaglist() {
+    updatedata() {
 
-        /* TODO minus*/
-
-        return (
-            <div className="am-btn-group" data-am-button>
-                {
-                    this.state.userTaglist.map(
-                        (tag) => { return this.renderUserTaglist(tag)}
-                    )
-                }
-                {
-                    this.state.taglist.map(
-                        (tag) => { return this.renderTaglist(tag)}
-                    )
-                }
-            </div>
-        );
+        fetchPostJson("/tag/update", {'taglist':this.state.taglist})
+            .then(resp => resp.json())
+            .then((data) => {
+                
+            })
     }
 
-    renderUserTaglist(item){
-        return (
-            <div>
-                <label className="am-btn am-btn-default am-btn-xs am-active">
-                    <input type="checkbox"/>{item}
-                </label>
-            </div>
-        )
+    addTag(tag) {
+        if (this.state.taglist.indexOf(tag) === -1) {
+            this.setState(update(this.state, {
+                taglist: {$push: [tag]}
+            }));
+        }
     }
 
-    renderTaglist(item){
-        return (
-            <div>
-                <label className="am-btn am-btn-default am-btn-xs">
-                    <input type="checkbox"/>{item}
-                </label>
-            </div>
-        )
+    handleItemTouchTap(e, item, index) {
+        this.addTag(item.props.value);
+    }
+
+    handleTagKeyDown(e) {
+        if (e.key === 'Enter') {
+            let tagAdder = document.getElementById('tag_adder');
+            this.addTag(tagAdder.value);
+            tagAdder.value = ""
+        }
+    }
+
+    handleItemDelete(key) {
+        console.log('delete key', key)
+        let index = this.state.taglist.indexOf(key);
+        this.setState(update(this.state, {
+            taglist: {$splice: [[index, 1]]}
+        }));
     }
 
     render() {
         console.log("Test: ", this.state);
 
-        if(this.state.isLogIn === 0)
-        {
-            return (
-                <div className="am-btn-group" data-am-button>
-                    {
-                        this.state.taglist.map(
-                            (tag) => { return this.renderTaglist(tag)}
-                        )
-                    }
+        return (<div>
+                <AutoComplete
+                    id='tag_adder'
+                    floatingLabelText="New tags"
+                    floatingLabelFixed={true}
+                    dataSource={this.state.allTags}
+                    filter={AutoComplete.fuzzyFilter}
+                    onKeyDown={this.handleTagKeyDown.bind(this)}
+                    openOnFocus={true}
+                    menuProps={{
+                        onItemTouchTap: this.handleItemTouchTap.bind(this)
+                    }}
+                />
+                <div className="tags_wrapper">
+                    {this.state.taglist.map((tag) => {
+                        return <Chip
+                            key={tag}
+                            onRequestDelete={() => this.handleItemDelete(tag)}
+                        >{tag}
+                        </Chip>
+                    })}
                 </div>
-            );
-        }
-        else
-        {
-            return this.UserTaglist()
-        }
+            </div>
 
+        );
     }
 }
 

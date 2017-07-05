@@ -495,3 +495,7 @@ li {
     content: " ";
     display: table;
 }
+
+.tags_wrapper {
+    display: flex;
+}
