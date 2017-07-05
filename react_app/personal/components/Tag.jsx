@@ -3,6 +3,7 @@ import AutoComplete from "material-ui/AutoComplete";
 import Chip from "material-ui/Chip";
 import update from "immutability-helper";
 
+
 function fetchPostJson(url, data) {
     console.log("fetchPostJson: ", data);
     return fetch(url, {
@@ -30,7 +31,7 @@ class Tag extends React.Component {
     }
 
     fetchData() {
-        fetch('/recommend/get_tag', {credentials: 'same-origin'})
+        fetch('/interest/get_tag', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
@@ -42,12 +43,15 @@ class Tag extends React.Component {
             })
     }
 
-    updatedata() {
-        fetchPostJson("/tag/update", {'taglist':this.state.taglist})
+    commitData() {
+        var data={
+            taglist:this.state.taglist
+        }
+        fetchPostJson("/interest/commit", data)
             .then(resp => resp.json())
             .then((data) => {
+                console.log("post",data)
             })
-        console.log("post")
     }
 
     addTag(tag) {
@@ -83,7 +87,7 @@ class Tag extends React.Component {
 
         return (
             <div>
-                <form className="am-form tpl-form-line-form">
+                <div className="am-form tpl-form-line-form">
                     <div className="am-form-group">
                         <div className="am-u-sm-4 am-u-md-2 am-text-right">类型</div>
                         <div className="am-u-sm-8 am-u-md-10">
@@ -113,10 +117,10 @@ class Tag extends React.Component {
 
                     <div className="am-form-group">
                         <div className="am-u-sm-9 am-u-sm-push-3">
-                            <button type="submit" className="am-btn am-btn-primary" onClick={this.updatedata()}>保存修改</button>
+                            <button type="button" className="am-btn am-btn-primary" onClick={this.commitData.bind(this)}>保存修改</button>
                         </div>
                     </div>
-                </form>
+                </div>
 
 
 
