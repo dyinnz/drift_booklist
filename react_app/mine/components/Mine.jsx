@@ -481,7 +481,6 @@ class BookItem extends React.Component {
 
     return (
       <GridTile
-        key={book.book_id}
         title={book.book_name}
         actionIcon={
           this.renderMoreButton()
@@ -541,6 +540,7 @@ class BookGrid extends React.Component {
                 <GridList cols={4} className="grid_wrapper">
                     {this.state.items.map((book, index) => (
                       <BookItem
+                        key={book.book_id}
                         book={book}
                         index={index}
                         handleDeleteBook={this.handleDeleteBook.bind(this)}
@@ -569,7 +569,10 @@ class Mine extends React.Component {
             myListItems: [],
             favoriteListItems: [],
             currBooklist: {},
+            remarks: [],
             favoriteBooksID: undefined,
+            pages: undefined,
+            active: 1,
         }
     }
 
@@ -663,9 +666,26 @@ class Mine extends React.Component {
                 currBooklist: {$set: listData},
                 currListID: {$set: currListID},
                 modifiable: {$set: modifiable},
+                pages: {$set: listData.pages},
+                remarks: {$set: listData.remarks},
             }))
 
             console.log("touchBooklist() /booklist_detail :", listData);
+        })
+    }
+
+    updateComment(p) {
+        console.log("update comment ", p)
+        fetchPostJson("/booklist_remark", {
+            booklist_id: this.state.currListID,
+            page: p,
+        }).then(
+            resp => resp.json()
+        ).then((listData) => {
+            this.setState(update(this.state, {
+                remarks: {$set: listData.remarks},
+                active: {$set: p},
+            }))
         })
     }
 
@@ -690,8 +710,8 @@ class Mine extends React.Component {
                                modifiable={this.state.modifiable}
                 />
                 <BookGrid items={this.state.currBooklist.books}/>
-                <CommentPane items={this.state.currBooklist.remarks}
-                             currListID={this.state.currListID}/>
+                <CommentPane items={this.state.remarks} pages={this.state.pages} active={this.state.active}
+                             currListID={this.state.currListID} handleTouch={(p) => this.updateComment(p)}/>
             </div>
         )
     }
