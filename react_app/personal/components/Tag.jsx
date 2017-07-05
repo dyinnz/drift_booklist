@@ -43,12 +43,11 @@ class Tag extends React.Component {
     }
 
     updatedata() {
-
         fetchPostJson("/tag/update", {'taglist':this.state.taglist})
             .then(resp => resp.json())
             .then((data) => {
-                
             })
+        console.log("post")
     }
 
     addTag(tag) {
@@ -82,28 +81,45 @@ class Tag extends React.Component {
     render() {
         console.log("Test: ", this.state);
 
-        return (<div>
-                <AutoComplete
-                    id='tag_adder'
-                    floatingLabelText="New tags"
-                    floatingLabelFixed={true}
-                    dataSource={this.state.allTags}
-                    filter={AutoComplete.fuzzyFilter}
-                    onKeyDown={this.handleTagKeyDown.bind(this)}
-                    openOnFocus={true}
-                    menuProps={{
-                        onItemTouchTap: this.handleItemTouchTap.bind(this)
-                    }}
-                />
-                <div className="tags_wrapper">
-                    {this.state.taglist.map((tag) => {
-                        return <Chip
-                            key={tag}
-                            onRequestDelete={() => this.handleItemDelete(tag)}
-                        >{tag}
-                        </Chip>
-                    })}
-                </div>
+        return (
+            <div>
+                <form className="am-form tpl-form-line-form">
+                    <div className="am-form-group">
+                        <div className="am-u-sm-4 am-u-md-2 am-text-right">类型</div>
+                        <div className="am-u-sm-8 am-u-md-10">
+                            <AutoComplete
+                                id='tag_adder'
+                                floatingLabelText="New tags"
+                                floatingLabelFixed={true}
+                                dataSource={this.state.allTags}
+                                filter={AutoComplete.fuzzyFilter}
+                                onKeyDown={this.handleTagKeyDown.bind(this)}
+                                openOnFocus={true}
+                                menuProps={{
+                                    onItemTouchTap: this.handleItemTouchTap.bind(this)
+                                }}
+                            />
+                            <div className="tags_wrapper">
+                                {this.state.taglist.map((tag) => {
+                                    return <Chip
+                                        key={tag}
+                                        onRequestDelete={() => this.handleItemDelete(tag)}
+                                    >{tag}
+                                    </Chip>
+                                })}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="am-form-group">
+                        <div className="am-u-sm-9 am-u-sm-push-3">
+                            <button type="submit" className="am-btn am-btn-primary" onClick={this.updatedata()}>保存修改</button>
+                        </div>
+                    </div>
+                </form>
+
+
+
             </div>
 
         );
