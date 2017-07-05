@@ -266,6 +266,13 @@ def get_book_remark_num(book_id):
         logging.error(e)
         return None
 
+def get_booklist_remark_num(booklist_id):
+    try:
+        return DB_user_booklist_remark.query.filter_by(booklist_id=booklist_id).count()
+    except Exception as e:
+        logging.error(booklist_id)
+        logging.error(e)
+        return None
 
 def get_book_remark_by_id(id):
     try:

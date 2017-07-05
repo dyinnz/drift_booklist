@@ -8,6 +8,7 @@ import TextField from "material-ui/TextField";
 import CircularProgress from "material-ui/CircularProgress";
 import Divider from 'material-ui/Divider';
 
+import Pagination from 'mine/components/Pagination'
 import update from 'immutability-helper'
 
 import {blue500} from "material-ui/styles/colors";
@@ -44,6 +45,25 @@ class Comment extends React.Component {
 }
 
 class CommentList extends React.Component {
+    constructor(props) {
+        super(props)
+
+        let f = length => Array.from({length}).map((v,k) => k+1);
+
+        this.state = {
+            page_num: f(props.page),
+            items: props.items,
+            active: props.active,
+        }
+    }
+
+
+    componentWillReceiveProps(next) {
+        this.setState(update(this.state, {
+            items: {$set: next.items}
+        }))
+    }
+
     render() {
         if (0 === this.props.items.length) {
             return (
@@ -54,8 +74,8 @@ class CommentList extends React.Component {
         } else {
             return (
                 <div>
-                    {this.props.items.map((item) => {
-                        return <Comment key={item.remark_time} details={item}/>
+                    {this.state.items.map((item, i) => {
+                        return <Comment key={i} details={item}/>
                     })}
                 </div>
             )
