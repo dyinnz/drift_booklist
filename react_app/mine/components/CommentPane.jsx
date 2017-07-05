@@ -25,26 +25,24 @@ function fetchPostJson(url, data) {
     })
 }
 
-class Comment extends React.Component {
-    render() {
+class CommentList extends React.Component {
+    renderCommentItem(item) {
         return (
             <div className="clearfix">
                 <CardHeader
                     className="comment_person"
-                    title={this.props.details.account}
+                    title={item.account}
                     // TODO:
                     avatar="/static/react/zen.jpg"
                 />
 
                 <CardText className="comment_content">
-                    {this.props.details.remark}
+                    {item.remark}
                 </CardText>
             </div>
         )
     }
-}
 
-class CommentList extends React.Component {
     constructor(props) {
         super(props)
 
@@ -75,7 +73,7 @@ class CommentList extends React.Component {
             return (
                 <div>
                     {this.state.items.map((item, i) => {
-                        return <Comment key={i} details={item}/>
+                        return this.renderCommentItem();
                     })}
                 </div>
             )
