@@ -26,9 +26,11 @@ function fetchPostJson(url, data) {
 }
 
 class CommentList extends React.Component {
-    renderCommentItem(item) {
+    renderCommentItem(item, i) {
         return (
-            <div className="clearfix">
+            <div className="clearfix"
+              key = {i}
+              >
                 <CardHeader
                     className="comment_person"
                     title={item.account}
@@ -72,7 +74,7 @@ class CommentList extends React.Component {
             return (
                 <div>
                     {this.state.items.map((item, i) => {
-                        return this.renderCommentItem(item);
+                        return this.renderCommentItem(item, i);
                     })}
                 </div>
             )
@@ -192,7 +194,7 @@ class CommentPane extends React.Component {
     }
 
     render() {
-        
+
         return (
             <Paper>
                 {this.renderHeader()}
