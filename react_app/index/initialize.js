@@ -27,6 +27,12 @@ const App3 = () => (
     </MuiThemeProvider>
 );
 
+const App4 = () => (
+    <MuiThemeProvider>
+    <UserList/>
+    </MuiThemeProvider>
+);
+
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <App3/>,
@@ -41,6 +47,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <App2/>,
         document.getElementById('root2')
+    );
+
+    ReactDOM.render(
+        <App4/>,
+        document.getElementById('user')
     );
 
 });

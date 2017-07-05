@@ -20,7 +20,7 @@ class UserItem extends React.Component{
 
 class UserList extends React.Component {
     constructor(props){
-       super(props)
+       super(props);
         this.state = {
            user_infos:[]
         }
@@ -30,7 +30,7 @@ class UserList extends React.Component {
         fetch('/get_popular_user',{credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
-                console.log('data',data)
+                console.log('data',data);
                 this.setState({
                     user_infos:data,
                 })
@@ -39,7 +39,7 @@ class UserList extends React.Component {
     }
 
     render() {
-        console.log(this.props.items)
+        console.log(this.props.items);
         return (
             <div>
                 <Subheader>热门用户：</Subheader>
