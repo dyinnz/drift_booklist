@@ -12,7 +12,7 @@ from drift_app.db_interface.db_user import register_user
 mine_bp = Blueprint('mine_bp', __name__)
 
 
-def get_booklist_detail(booklist_id):
+def get_booklist_detail(booklist_id, page=1, per_page=10):
     booklistinfo = db_book.get_booklist_by_id(booklist_id)
     if booklistinfo is None:
         return dict()
@@ -43,7 +43,7 @@ def get_booklist_detail(booklist_id):
     jsondata['book_number'] = len(book_ids)
     jsondata['follower_number'] = db_user_remark.get_booklist_follower_num(booklist_id)
     jsondata['remark_number'] = db_user_remark.get_booklist_remark_num(booklist_id)
-    remarks = json.loads(db_user_remark.get_booklist_remark(booklist_id, 1, 10))
+    remarks = json.loads(db_user_remark.get_booklist_remark(booklist_id, page, per_page))
     for remark in remarks:
         remark_vote_number = json.loads(db_user_remark.get_booklist_remark_vote_num(remark['id']))
         remark['up_number'] = remark_vote_number['up']
@@ -159,10 +159,11 @@ def booklistdetail():
     if request.method == 'POST':
         data = request.get_json()
         print("json: ", data)
-        jsondata = get_booklist_detail(data['booklist_id'])
+        jsondata = get_booklist_detail(data['booklist_id'], data['page'])
         if jsondata is None:
             return None
         # logging.debug(jsondata)
+        jsondata['pages'] = int(db_user_remark.get_booklist_remark_num(data['booklist_id']) / 10 + 0.95)
         return jsonify(jsondata)
     else:
         return 'need post request'
