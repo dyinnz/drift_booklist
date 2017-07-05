@@ -48,12 +48,23 @@ def recommend_fetch():
 
     return jsonify(get_booklist_by_id(booklist_ids))
 
-@recommend_bp.route('/recommend/get_tags')
+@recommend_bp.route('/recommend/get_tag')
 def get_tags():
     if flask_login.current_user.is_anonymous:
         return flask.redirect(flask.url_for('login_bp.login'))
+
+    userTaglist=json.loads(db_user.get_user_interests(flask_login.current_user.id))
+    if len(userTaglist)==0:
+        islogin=0
     else:
-        return db_user.get_user_interests(flask_login.current_user.db_id)
+        islogin=1
+    jsondata={
+        'userTaglist':userTaglist,
+        'isLogin':islogin,
+        #'taglist':list(set(json.loads(db_user.get_all_tags()))-set(userTaglist))
+        'taglist':json.loads(db_user.get_all_tags())
+    }
+    return jsonify(jsondata)
 
 @recommend_bp.route('/recommend/booklist_by_tag',methods=['POST','GET'])
 def booklist_by_tag():
@@ -106,3 +117,13 @@ def get_recommend():
     result = [int(x) for x in result]
     logging.debug(result)
     return jsonify(result)
+
+@recommend_bp.route('/recommend/tags')
+def tags():
+    return current_app.send_static_file('react/personal.html')
+
+@recommend_bp.route('/tag/commit',methods=['POST','GET'])
+def tag_commit():
+    data=request.form.to_dict()
+    logging.info(data)
+    return ''
