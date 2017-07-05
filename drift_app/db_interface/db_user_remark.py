@@ -860,7 +860,8 @@ def get_recommend_booklists(user_id, K=10):
         n_booklists = booklists.count()
         booklists = booklists.all()
         booklist_dic = dict(zip([t.id for t in booklists], range(n_booklists)))
-        booklist_dic_rev = dict(zip(range(n_booklists, [t.id for t in booklists])))
+        logging.debug('fuck %s' % booklist_dic)
+        booklist_dic_rev = dict(zip(range(n_booklists), [t.id for t in booklists]))
         books = DB_Book.query.order_by(DB_Book.id)
         n_books = books.count()
         books = books.all()
@@ -889,7 +890,7 @@ def get_recommend_booklists(user_id, K=10):
                 user_tags[tag_dic[t.name]] = 1
 
             recommend_booklists = list(tag_recommender.topK_booklists(book_tags, user_tags, booklist_book, k=K))
-            logging.info(type(recommend_booklists))
+            logging.info(recommend_booklists)
             return [booklist_dic_rev[x] for x in recommend_booklists]
         else:
             logging.info("Using fm recommender")
@@ -912,7 +913,8 @@ def get_recommend_booklists(user_id, K=10):
             user_books = 1.0 / (1 + np.exp(-0.1 * user_books))
 
             fm_recommender.fit(user_books)
-            indices =  fm_recommender.topK_booklists(user_dic[user_id], booklist_book, 2, exclude=[1])
+            indices =  fm_recommender.topK_booklists(user_dic[user_id], booklist_book, K)
+            logging.debug(indices)
             return [booklist_dic_rev[x] for x in indices]
     except Exception as e:
         logging.error(e)
@@ -920,17 +922,17 @@ def get_recommend_booklists(user_id, K=10):
 
 
 
-def get_recommend_booklist_by_tags(user_id, K=10):
+def get_recommend_booklist_by_tags(user_id, tag_name, K=10):
     try:
         user = DB_user.query.filter_by(id=user_id).one()
         interests = user.interests
         d = {}
         candidates = []
-        for tag in interests:
-            for bl in tag.booklists:
-                candidates.append(bl.id)
-                up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=bl.id, vote='up').count()
-                d[bl.id] = get_booklist_follower_num(bl.id) + up_num
+        tag = DB_tags.query.filter_by(name=tag_name).one()
+        for bl in tag.booklists:
+            candidates.append(bl.id)
+            up_num = DB_user_booklist_opinion.query.filter_by(booklist_id=bl.id, vote='up').count()
+            d[bl.id] = get_booklist_follower_num(bl.id) + up_num
         return sorted(candidates, key=lambda x: d[x], reverse=True)[:K]
     except Exception as e:
         logging.error("error in get_recommend_booklist_by_tags()")
