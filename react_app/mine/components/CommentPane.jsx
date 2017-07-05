@@ -116,6 +116,8 @@ class CommentPane extends React.Component {
         this.state = {
             result: "",
             items: props.items,
+            pages: props.pages,
+            active: props.active,
         }
     }
 
@@ -123,6 +125,8 @@ class CommentPane extends React.Component {
         this.setState({
             result: "",
             items: next.items,
+            pages: next.pages,
+            active: next.active,
         })
     }
 
@@ -185,6 +189,7 @@ class CommentPane extends React.Component {
                 <CommentList items={this.state.items}/>
                 <CommentBox onReply={() => this.onReply()}
                             onCancelReply={() => this.onCancelReply()}/>
+                <Pagination page={this.state.pages} active={this.state.active} handle_touch={(i) => this.fetch_comment(i)} />
                 <div className="comment_result">
                     <p>{this.state.result}</p>
                 </div>

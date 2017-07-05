@@ -25,6 +25,7 @@ import update from 'immutability-helper'
 
 import CommentPane from 'mine/components/CommentPane'
 import BooklistPane from 'mine/components/BooklistPane'
+import Pagination from "./Pagination";
 
 
 function fetchPostJson(url, data) {
@@ -466,6 +467,8 @@ class Mine extends React.Component {
             favoriteListItems: [],
             currBooklist: {},
             favoriteBooksID: undefined,
+            pages: undefined,
+            active: 1,
         }
     }
 
@@ -548,9 +551,9 @@ class Mine extends React.Component {
     }
 
     touchBooklist(currListID, modifiable) {
-
         fetchPostJson("/booklist_detail", {
-            booklist_id: currListID
+            booklist_id: currListID,
+            page: 1,
         }).then(
             resp => resp.json()
         ).then((listData) => {
@@ -559,6 +562,7 @@ class Mine extends React.Component {
                 currBooklist: {$set: listData},
                 currListID: {$set: currListID},
                 modifiable: {$set: modifiable},
+                pages: {$set: listData.pages},
             }))
 
             console.log("touchBooklist() /booklist_detail :", listData);
@@ -586,7 +590,7 @@ class Mine extends React.Component {
                                modifiable={this.state.modifiable}
                 />
                 <BookGrid items={this.state.currBooklist.books}/>
-                <CommentPane items={this.state.currBooklist.remarks}
+                <CommentPane items={this.state.currBooklist.remarks} pages={this.state.pages} active={this.state.active}
                              currListID={this.state.currListID}/>
             </div>
         )

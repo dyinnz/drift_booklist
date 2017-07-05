@@ -159,11 +159,11 @@ def booklistdetail():
     if request.method == 'POST':
         data = request.get_json()
         print("json: ", data)
-        jsondata = get_booklist_detail(data['booklist_id'], data['page'])
+        jsondata = get_booklist_detail(data['booklist_id'])
         if jsondata is None:
             return None
         # logging.debug(jsondata)
-        jsondata['pages'] = int(db_user_remark.get_booklist_remark_num(data['booklist_id']) / 10 + 0.95)
+        jsondata['pages'] = int((db_user_remark.get_booklist_remark_num(data['booklist_id']) + 9) / 10)
         return jsonify(jsondata)
     else:
         return 'need post request'
