@@ -6,6 +6,8 @@ import React from 'react';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Search from 'search/components/Search';
 import Header from 'index/components/Login';
+import injectTapEventPlugin from 'react-tap-event-plugin'
+injectTapEventPlugin();
 
 const App = () => (
     <Search/>

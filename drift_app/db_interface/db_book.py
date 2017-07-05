@@ -443,7 +443,7 @@ def booklist_to_dict(booklist):
         author=db_user.get_account_by_id(booklist.user_id),
         introduction=booklist.introduction,
         cover=booklist.cover,
-        books=booklist.books,
+        books=[book_to_dict(b) for b in booklist.books],
         tags=[t.name for t in booklist.tags],
     )
 

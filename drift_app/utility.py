@@ -67,7 +67,7 @@ def upload_file():
 def search(keyword):
     if request.method == 'POST':
         ret = db_book.search_keyword(keyword)
-        print(ret)
+        logging.info('searcch:%s'%ret)
         return jsonify(ret)
     else:
         return current_app.send_static_file('react/search.html')
