@@ -879,8 +879,8 @@ def get_recommend_booklists(user_id, K=10):
             for t in user.interests:
                 user_tags[tag_dic[t.name]] = 1
 
-            recommend_booklists = tag_recommender.topK_booklists(book_tags, user_tags, booklist_book, k=2)
-            logging.info(recommend_booklists)
+            recommend_booklists = list(tag_recommender.topK_booklists(book_tags, user_tags, booklist_book, k=K))
+            logging.info(type(recommend_booklists))
             return recommend_booklists
         else:
             logging.info("Using fm recommender")

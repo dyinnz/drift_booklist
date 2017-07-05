@@ -156,8 +156,8 @@ class Item_CF_Recommender():
         pass
 
 
-fm_recommender = None
-tag_recommender = None
+fm_recommender = FM_Recommender(20)
+tag_recommender = Tag_Based_Recommender()
 
 
 def init_recommender():

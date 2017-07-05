@@ -99,3 +99,10 @@ def islogin():
     jsondata['user_name']=user_data['name']
     jsondata['user_account']=flask_login.current_user.id
     return jsonify(jsondata)
+
+@recommend_bp.route('/get_recommend')
+def get_recommend():
+    result = db_user_remark.get_recommend_booklists(flask_login.current_user.db_id, 10)
+    result = [int(x) for x in result]
+    logging.debug(result)
+    return jsonify(result)
