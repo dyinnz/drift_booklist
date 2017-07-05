@@ -291,6 +291,21 @@ def add_book_to_booklist(booklist_id, book_id):
         db.session.rollback()
         return False
 
+def delete_book(booklist_id,book_id):
+    try:
+        booklist = DB_booklist.query.filter_by(id=booklist_id).one()
+        if booklist is None:
+            return False
+        booklist.books.remove(DB_Book.query.filter_by(id=book_id).one())
+        db.session.commit()
+        return True
+    except Exception as e:
+        logging.error('%s, %s' % (booklist_id, book_id))
+        logging.error(e)
+        db.session.rollback()
+        return False
+
+
 
 def move_book_from_booklist(booklist_id, book_id):
     """

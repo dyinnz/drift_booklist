@@ -240,7 +240,6 @@ def add_book_remark():
     remarks = json.loads(db_user_remark.get_book_remark(data['book_id'], 1, 10))
     return jsonify({'OK': true, 'remarks': remarks})
 
-
 @mine_bp.route('/get_my_lists')
 def add_to():
     if flask_login.current_user.is_anonymous:
@@ -263,6 +262,14 @@ def add_to_list():
 
     return jsonify({'OK': true})
 
+
+@mine_bp.route('/delete_book' ,methods=['POST', 'GET'])
+def delete_book():
+    if request.method!='POST':
+        return jsonify(False)
+    data=request.get_json()
+    true = db_book.delete_book(data['booklist_id'],['book_id'])
+    return jsonify({'OK',true})
 
 @mine_bp.route('/vote_book', methods=['POST', 'GET'])
 def vote_book():
