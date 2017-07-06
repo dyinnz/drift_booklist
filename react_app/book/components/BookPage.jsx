@@ -360,6 +360,19 @@ class BookDetails extends React.Component {
             return <p>Waiting</p>
         }
 
+        const cardImgDivStyle = {
+            width: 240,
+            height: 320,
+            margin: 20,
+            marginLeft: 30,
+            marginBottom: 40,
+        };
+
+        const cardImgStyle = {
+            width: 240,
+            height: 320,
+        };
+
         return (
             <div>
                 <Card>
@@ -369,11 +382,11 @@ class BookDetails extends React.Component {
                     </div>
 
                     <div className="book_card">
-                        <CardMedia className="card_media">
+                        <div className={cardImgDivStyle}>
                             <img src={details.book_cover}
-                                 style={styleBookCover}
+                                 style={cardImgStyle}
                             />
-                        </CardMedia>
+                        </div>
 
                         <div>
                             <CardHeader
