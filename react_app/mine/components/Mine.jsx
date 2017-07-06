@@ -49,7 +49,7 @@ const cardMediaStyleEdit = {
 
 const cardImgStyle = {
     width: 240,
-    height: 280,
+    height: 240,
 };
 
 class BooklistEdit extends React.Component {

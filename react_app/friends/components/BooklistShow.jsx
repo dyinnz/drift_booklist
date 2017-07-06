@@ -46,7 +46,7 @@ class BookLists extends React.Component {
 class BooklistShow extends React.Component {
     render() {
         return (
-            <div>
+            <div className="booklist_show">
                 <BookLists
                     booklists={this.props.booklists.booklist_created}
                     booklists_name={this.props.name + "创建的书单："}
