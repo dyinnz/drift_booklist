@@ -8,6 +8,8 @@ from drift_app.recommend_page import recommend_bp
 
 from flask import Blueprint, request, jsonify, current_app
 
+from werkzeug.utils import secure_filename
+
 login_bp = Blueprint('login_bp', __name__)
 
 
@@ -55,6 +57,7 @@ def upload_avatar():
         <input type=submit value=Upload>
         </form>
         '''
+
 
 # ------------------------------------------------------------------------------
 
@@ -108,6 +111,18 @@ def start():
     return 'start as: ' + flask_login.current_user.account
 
 
+def save_avatar(file):
+    filename = secure_filename(file.filename)
+
+    dir = './uploads'
+    if not os.path.exists(dir):
+        os.makedirs(dir)
+
+    final_path = os.path.join(dir, filename)
+    file.save(final_path)
+    return final_path
+
+
 @login_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
@@ -126,8 +141,6 @@ def register():
 
     form = request.form
 
-    print(form)
-
     account = form['account']
     password = form['password']
     # name = form['name']
@@ -135,8 +148,11 @@ def register():
     birthday = form['birthday']
     introduction = form['introduction']
     gender = form['gender']
-    # pic_src = form['pic_src']
-    pic_src = '/static/react/default.png'
+
+    if 'pic_src' in request.files:
+        pic_src = save_avatar(request.files['pic_src'])
+    else:
+        pic_src = '/static/react/default.png'
 
     if db_user.check_duplicate_account(account):
         return jsonify({"ok": False,
