@@ -268,8 +268,8 @@ def delete_book():
     if request.method!='POST':
         return jsonify(False)
     data=request.get_json()
-    true = db_book.delete_book(data['booklist_id'],['book_id'])
-    return jsonify({'OK',true})
+    true = db_book.delete_book(data['booklist_id'],data['book_id'])
+    return jsonify({'OK':true})
 
 @mine_bp.route('/vote_book', methods=['POST', 'GET'])
 def vote_book():
@@ -462,4 +462,3 @@ def vote_remark():
             'up_number':vote['up'],
             'down_number':vote['down']
         })
-

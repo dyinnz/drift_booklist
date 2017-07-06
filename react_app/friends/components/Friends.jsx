@@ -77,9 +77,9 @@ class TopContainer extends React.Component {
                                 onTouchTap={event => this.props.click(this.props.detail.account, 'followers')}
                             >粉丝:{this.props.detail.followers_number}</FlatButton>
                         </CardActions>
-                        <label>生日:{new Date(this.props.detail.birthday).toISOString().substr(0, 10)}</label>
+                        <label className="label_xlm">生日:{new Date(this.props.detail.birthday).toISOString().substr(0, 10)}</label>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <label>性别:{this.props.detail.gender}</label>
+                        <label className="label_xlm">性别:{this.props.detail.gender}</label>
                         <br/>
                         <div className="tags">
                             {this.props.detail.tags.map((tag) => (
@@ -89,7 +89,7 @@ class TopContainer extends React.Component {
                             ))}
                         </div>
                         <br/>
-                        <label>个人简介:{this.props.detail.introduction}</label>
+                        <label className="label_xlm">个人简介:{this.props.detail.introduction}</label>
                     </div>
                 </div>
             </Card>
@@ -138,8 +138,8 @@ class FriendCard extends React.Component {
                                 href={"/user/"+this.props.friend.account}
                             />
                         </CardActions>
-                        <label className="label1">关注:{this.props.friend.following_number}</label>
-                        <label className="label2">粉丝:{this.props.friend.followers_number}</label>
+                        <label className="label1 label_xlm">关注:{this.props.friend.following_number}</label>
+                        <label className="label2 label_xlm">粉丝:{this.props.friend.followers_number}</label>
                     </div>
                 </div>
             </Card>

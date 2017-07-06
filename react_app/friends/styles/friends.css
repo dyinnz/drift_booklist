@@ -559,3 +559,7 @@ li {
     left: 5px;
     margin:5px;
 }
+
+.label_xlm{
+    font-weight: unset;
+}
