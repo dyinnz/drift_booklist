@@ -35,21 +35,18 @@ function fetchPostJson(url, data) {
     })
 }
 
-const cardMediaStyle = {
+
+const cardImgDivStyle = {
     width: 240,
-    height: 280,
-    padding: 20,
-    marginBottom: 60,
-};
-const cardMediaStyleEdit = {
-    width: 240,
-    height: 280,
-    padding: 20,
+    height: 320,
+    margin: 20,
+    marginLeft: 30,
+    marginBottom: 40,
 };
 
 const cardImgStyle = {
     width: 240,
-    height: 240,
+    height: 320,
 };
 
 class BooklistEdit extends React.Component {
@@ -168,9 +165,9 @@ class BooklistEdit extends React.Component {
 
                 <div className="flex_class">
                     <div>
-                        <CardMedia style={cardMediaStyleEdit}>
+                        <div style={cardImgDivStyle}>
                             <img style={cardImgStyle} src={this.state.cover}/>
-                        </CardMedia>
+                        </div>
                         <form id="upload_form" action="/upload" method="POST" encType="multipart/form-data">
                             <div className="update_avatar_div">
                                 <FlatButton
@@ -362,9 +359,9 @@ class ShowContainer extends React.Component {
             <Card>
                 {this.renderModify()}
                 <div className="flex_class">
-                    <CardMedia style={cardMediaStyle}>
+                    <div style={cardImgDivStyle}>
                         <img style={cardImgStyle} src={this.props.details.booklist_cover}/>
-                    </CardMedia>
+                    </div>
 
                     <div className="card_rhs">
                         <CardHeader

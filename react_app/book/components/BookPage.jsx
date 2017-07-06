@@ -384,7 +384,11 @@ class BookDetails extends React.Component {
                             <CardText>{details.introduction}</CardText>
 
                             <div style={styleTagWrapper}>
-                                <Chip>tag1</Chip>
+                                {details.tags.map((tag) => (
+                                    <Chip key={tag} >
+                                        {tag}
+                                    </Chip>
+                                ))}
                             </div>
 
                             <Badge badgeContent={this.state.upNumber}
