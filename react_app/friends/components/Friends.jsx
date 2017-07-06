@@ -52,7 +52,7 @@ class TopContainer extends React.Component {
                 <div className="clearfix">
                     <CardMedia className="card_media">
                         <a href={"/user/"+this.props.detail.account}>
-                        <img src={this.props.detail.pic_src}/>
+                        <img src={this.props.detail.pic_src} style={{height:"200px",width:"200px"}}/>
                         </a>
                     </CardMedia>
                     <div className="card_rhs">
