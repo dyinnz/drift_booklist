@@ -102,7 +102,7 @@ def get_recommend():
     return jsonify(result)
 
 @recommend_bp.route('/interest')
-def tags():
+def interest():
     return current_app.send_static_file('react/personal.html')
 
 @recommend_bp.route('/interest/get_tag')

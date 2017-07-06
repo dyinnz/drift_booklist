@@ -4,6 +4,8 @@ import flask
 import flask_login
 import drift_app.db_interface.db_user as db_user
 
+from drift_app.recommend_page import recommend_bp
+
 from flask import Blueprint, request, jsonify, current_app
 
 login_bp = Blueprint('login_bp', __name__)
@@ -124,13 +126,17 @@ def register():
 
     form = request.form
 
+    print(form)
+
     account = form['account']
     password = form['password']
-    name = form['name']
+    # name = form['name']
+    name = 'xlm'
     birthday = form['birthday']
     introduction = form['introduction']
     gender = form['gender']
-    pic_src = form['pic_src']
+    # pic_src = form['pic_src']
+    pic_src = '/static/react/default.png'
 
     if db_user.check_duplicate_account(account):
         return jsonify({"ok": False,
@@ -139,7 +145,7 @@ def register():
     db_user.register_user(name, account, password, birthday, gender, introduction, pic_src)
 
     flask_login.login_user(User(account))
-    return flask.redirect(flask.url_for('.start'))
+    return flask.redirect(flask.url_for('recommend_bp.interest'))
 
 
 @login_bp.route('/logout')

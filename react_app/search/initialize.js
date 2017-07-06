@@ -8,6 +8,8 @@ import Search from 'search/components/Search';
 import Header from 'index/components/Login';
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin();
+import UserList from "index/components/UserList";
+
 
 const App = () => (
     <Search/>
@@ -19,11 +21,19 @@ const HeaderWrapper = () => (
     </MuiThemeProvider>
 );
 
+const App4 = () => (
+    <UserList/>
+);
 
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <HeaderWrapper/>,
         document.getElementById('header')
+    );
+
+    ReactDOM.render(
+        <App4/>,
+        document.getElementById('user')
     );
 
 

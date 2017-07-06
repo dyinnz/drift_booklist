@@ -7,6 +7,7 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import Explore from 'explore/components/Explore'
 import Header from 'index/components/Login'
+import UserList from "index/components/UserList";
 
 injectTapEventPlugin();
 
@@ -20,6 +21,10 @@ const App = () => (
     <Explore/>
 );
 
+const App4 = () => (
+    <UserList/>
+);
+
 document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <HeaderWrapper/>,
@@ -29,5 +34,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ReactDOM.render(
         <App/>,
         document.getElementById('root')
+    );
+
+    ReactDOM.render(
+        <App4/>,
+        document.getElementById('user')
     );
 });
