@@ -111,7 +111,7 @@ class RecommandList extends React.Component {
                 </div>
                 <a className="am-badge am-badge-danger am-round">小清新</a>
                 <a className="am-badge am-badge-danger am-round">文艺范</a>
-                <a className="i-load-more-item-shadow" href="#"><i className="am-icon-refresh am-icon-fw"></i>换一组</a>
+
             </div>
         )
     }

@@ -115,7 +115,7 @@ class CategoryList extends React.Component {
                 {this.state.myTaglist.map(
                     (tag) => {return this.renderTagPanel(tag)}
                 )}
-                <a className="i-load-more-item-shadow" href="#"><i className="am-icon-refresh am-icon-fw"></i>换一组</a>
+
             </div>
 
         )

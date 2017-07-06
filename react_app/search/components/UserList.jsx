@@ -55,7 +55,6 @@ class UserList extends React.Component {
             <div className="tpl-left-nav tpl-left-nav-hover">
                 <div className="tpl-left-nav-title">
                     相关用户
-                    <a className="i-load-more-item-shadow" href="#"><i className="am-icon-refresh am-icon-fw"></i>更多</a>
                 </div>
                 <div className="tpl-left-nav-list">
                     <ul className="tpl-left-nav-menu">
