@@ -614,7 +614,7 @@ li {
     font-size: 18px;
     line-height: 18px;
     color: #666;
-    padding: 10px 0;
+    padding: 6px 0;
 }
 
 .tpl-block {
@@ -784,4 +784,9 @@ li {
 
 .am_list_thumb {
     width: 90px;
+}
+
+.follow{
+    float:right;
+    padding-top: 9px;
 }

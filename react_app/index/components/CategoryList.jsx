@@ -124,9 +124,9 @@ class CategoryList extends React.Component {
     listPanel () {
         return (
             <div className="s-content_1">
-                        <Booklist
-                            items={this.state.booklist}
-                        />
+                <Booklist
+                    items={this.state.booklist}
+                />
             </div>
         )
     }

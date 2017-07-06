@@ -89,7 +89,7 @@ class Tag extends React.Component {
             <div>
                 <div className="am-form tpl-form-line-form">
                     <div className="am-form-group">
-                        <div className="am-u-sm-4 am-u-md-2 am-text-right">类型</div>
+                        <div className="am-u-sm-4 am-u-md-2 am-text-right category">类型</div>
                         <div className="am-u-sm-8 am-u-md-10">
                             <AutoComplete
                                 id='tag_adder'

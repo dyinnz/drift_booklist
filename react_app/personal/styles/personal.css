@@ -499,3 +499,7 @@ li {
 .tags_wrapper {
     display: flex;
 }
+
+.category {
+    padding-top: 10px;
+}

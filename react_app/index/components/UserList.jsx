@@ -44,6 +44,7 @@ class UserList extends React.Component {
                 <a href={'/user/'+user.account} className="nav-link widget-user">
                     <img src={user.avatar} className="img-responsive img-circle" />
                     <span>{user.name}</span>
+                    <span className="follow">关注:{user.followNumber}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 </a>
             </li>
         )
@@ -54,8 +55,7 @@ class UserList extends React.Component {
         return (
             <div className="tpl-left-nav tpl-left-nav-hover">
                 <div className="tpl-left-nav-title">
-                    相关用户
-
+                    热门用户
                 </div>
                 <div className="tpl-left-nav-list">
                     <ul className="tpl-left-nav-menu">
