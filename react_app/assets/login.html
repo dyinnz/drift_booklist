@@ -8,9 +8,9 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="renderer" content="webkit">
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script src="/static/react/js/jquery.min.js"></script>
     <script src="/static/react/js/vendor.js"></script>
     <script src="/static/react/js/login.js"></script>
-    <script>require('login/initialize');</script>
     <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
     <link rel="stylesheet" href="/static/react/css/amazeui.min.css"/>
     <link rel="stylesheet" href="/static/react/css/login.css">
@@ -69,7 +69,7 @@
 
                 <div class="am-tabs-bd">
                     <div data-tab-panel-0 class="am-tab-panel am-active" id="panel0">
-                        <form action="/test" enctype="multipart/form-data" method="post" class="am-form" data-am-validator id="rp1">
+                        <form action="/register" enctype="multipart/form-data" method="post" class="am-form" data-am-validator id="rp1">
                             <fieldset >
                                 <div class="am-form-group" id="input_username">
                                     <label for="account">User Name</label>
@@ -160,7 +160,6 @@
 </div>
 <!--/div-->
 <!--[if (gte IE 9)|!(IE)]><!-->
-<script src="/static/react/js/jquery.min.js"></script>
 <!--<![endif]-->
 <!--[if lte IE 8 ]>
 <script src="http://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>

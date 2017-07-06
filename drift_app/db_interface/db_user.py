@@ -330,3 +330,24 @@ def update_user_tags(account,tags):
         logging.error("update tags for user false at %s"%account)
         logging.error(e)
         return None
+
+def get_popular_user(K=5):
+    try:
+        users=DB_user.query.all()
+        followers_list=[]
+        for user in users:
+            followers=len(get_followers(user.id))
+            followers_list.append(followers)
+        logging.info(followers_list)
+        accounts=[]
+        for i in range(0,K):
+            index=followers_list.index(max(followers_list))
+            accounts.append(users[index].account)
+            users.remove(users[index])
+            followers_list.remove(max(followers_list))
+
+        logging.info(accounts)
+        return accounts
+    except Exception as e:
+        logging.error(e)
+        return None
