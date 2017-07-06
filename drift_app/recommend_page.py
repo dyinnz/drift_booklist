@@ -79,6 +79,14 @@ def get_popular_user():
     logging.info("popular:%s"%user_infos)
     return jsonify(user_infos)
 
+@recommend_bp.route('/recommend/get_tags')
+def get_tags_index():
+    if not flask_login.current_user.is_anonymous:
+        return db_user.get_user_interests(flask_login.current_user.id)
+    else:
+        return flask.redirect(flask.url_for('login_bp.login'))
+
+
 @recommend_bp.route('/recommend/islogin')
 def islogin():
     jsondata={}

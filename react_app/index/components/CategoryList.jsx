@@ -84,7 +84,7 @@ class CategoryList extends React.Component {
     }
 
     fetchData() {
-        fetch('/get_tags', {credentials: 'same-origin'})
+        fetch('/recommend/get_tags', {credentials: 'same-origin'})
             .then(resp => resp.json())
             .then((data) => {
                 console.log("main data: ", data);
