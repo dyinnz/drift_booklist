@@ -11,6 +11,7 @@
     <script src="/static/react/js/jquery.min.js"></script>
     <script src="/static/react/js/vendor.js"></script>
     <script src="/static/react/js/login.js"></script>
+    <script>require('login/initialize');</script>
     <link rel="alternate icon" type="image/png" href="assets/i/favicon.png">
     <link rel="stylesheet" href="/static/react/css/amazeui.min.css"/>
     <link rel="stylesheet" href="/static/react/css/login.css">
@@ -38,6 +39,35 @@
             });
         });
     </script-->
+
+    <script type="text/javascript">
+        function imgPreview(fileDom){
+            //判断是否支持FileReader
+            if (window.FileReader) {
+                var reader = new FileReader();
+            } else {
+                alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
+            }
+
+            //获取文件
+            var file = fileDom.files[0];
+            var imageType = /^image\//;
+            //是否是图片
+            if (!imageType.test(file.type)) {
+                alert("请选择图片！");
+                return;
+            }
+            //读取完成
+            reader.onload = function(e) {
+                //获取图片dom
+                var img = document.getElementById("preview");
+                //图片路径设置为读取的图片
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    </script>
+
 </head>
 
 <body>
@@ -65,7 +95,7 @@
                 <div class="am-tabs-bd">
                     <div data-tab-panel-0 class="am-tab-panel am-active" id="panel0">
                         <form action="/register" enctype="multipart/form-data" method="post" class="am-form" data-am-validator id="rp1">
-                            <fieldset >
+                            <fieldset>
                                 <div class="am-form-group" id="input_username">
                                     <label for="account">User Name</label>
                                     <input type="text" id="account" name="account" minlength="3" placeholder="请输入3位以上用户名"
@@ -92,13 +122,13 @@
                                     <label for="doc-form-file" class="am-u-sm-3 am-form-label">头像</label>
                                         <div class="am-form-group am-form-file">
                                             <div class="" style="width: 50px; height: 50px;">
-                                                <img style="width:50px; height:50px;" src="/static/react/i/01.jpg" alt="">
+                                                <img id="preview" style="width:50px; height:50px;" src="/static/react/i/01.jpg" alt="">
                                             </div>
                                         </div>
                                     <div class="am-form-file">
                                         <button type="button" class="am-btn am-btn-danger am-btn-sm">
                                             <i class="am-icon-cloud-upload"></i> 添加头像</button>
-                                        <input name="pic_src" id="doc-form-file" type="file" multiple>
+                                        <input onchange="imgPreview(this)" name="pic_src" id="doc-form-file" type="file" multiple>
                                     </div>
 
                                 </div>
