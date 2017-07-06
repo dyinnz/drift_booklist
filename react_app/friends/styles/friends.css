@@ -501,6 +501,7 @@ li {
     width:100%;
     margin:auto
 }
+
 .card_media{
     width: 200px;
     height: 200px;
@@ -509,7 +510,7 @@ li {
 }
 
 .show_information{
-  width:750px;
+  width:700px;
 }
 .clearfix::after {
     content: " ";
@@ -565,6 +566,14 @@ li {
 }
 
 .booklist_show {
-    width: 750px;
+    width: 700px;
     padding-bottom: 20px;
+}
+
+.friends_grid {
+    width: 700px;
+}
+
+.friends_paper {
+    width: 700px;
 }
