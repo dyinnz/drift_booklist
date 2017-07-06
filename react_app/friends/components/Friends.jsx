@@ -154,9 +154,8 @@ class FriendsGrid extends React.Component {
         }
         console.log("friends grid: ", this.props.items)
         return (
-            <div >
+            <div className="friends_grid">
                 <GridHeader type={this.props.type}/>
-                <Paper>
                     <GridList cols={2} cellHeight={100}>
                         {this.props.items.map((friend) => (
                             <GridTile
@@ -169,7 +168,6 @@ class FriendsGrid extends React.Component {
                             </GridTile>
                         ))}
                     </GridList>
-                </Paper>
 
             </div>
         )
@@ -336,14 +334,16 @@ class Friends extends React.Component {
 
     render() {
         return (
-            <div id="home">
-                <TopContainer
-                    detail={this.state.userInfo}
-                    click={this.fetchFriendsListData.bind(this)}
-                    clickr={this.followe_user.bind(this)}
-                />
-                {this.renderBotton()}
-            </div>
+            <Paper className="friends_paper">
+                <div>
+                    <TopContainer
+                        detail={this.state.userInfo}
+                        click={this.fetchFriendsListData.bind(this)}
+                        clickr={this.followe_user.bind(this)}
+                    />
+                    {this.renderBotton()}
+                </div>
+            </Paper>
         )
     }
 }
