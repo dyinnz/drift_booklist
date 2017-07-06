@@ -516,6 +516,19 @@ class BookGrid extends React.Component {
   handleDeleteBook(index) {
     console.log("handleDeleteBook, ", index);
 
+    let book = this.state.items[index];
+
+    console.log(book.book_id, this.props.booklist_id)
+
+    fetchPostJson('/delete_book', {
+      book_id: book.book_id,
+      booklist_id: this.props.booklist_id,
+    }).then(
+      resp => resp.json()
+    ).then( (result) => {
+      console.log("handleDeleteBook(): ", result.OK)
+    })
+
     this.setState(update(this.state, {
       items: {$splice: [[index, 1]]},
     }))
@@ -709,7 +722,9 @@ class Mine extends React.Component {
                                deleteList={(i) => this.deleteList(i)}
                                modifiable={this.state.modifiable}
                 />
-                <BookGrid items={this.state.currBooklist.books}/>
+                <BookGrid items={this.state.currBooklist.books}
+                  booklist_id={this.state.currBooklist.booklist_id}
+                  />
                 <CommentPane items={this.state.remarks} pages={this.state.pages} active={this.state.active}
                              currListID={this.state.currListID} handleTouch={(p) => this.updateComment(p)}/>
             </div>
