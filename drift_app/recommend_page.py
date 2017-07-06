@@ -56,17 +56,15 @@ def booklist_by_tag():
         return jsonify("need post")
 
     tag=request.get_json()
-    logging.info(tag)
-    """get booklist by tag"""
-    booklist_ids = json.loads(db_book.get_user_created_booklist(flask_login.current_user.db_id))
+    logging.info("tag%s"%tag)
+    booklist_ids=db_user_remark.get_recommend_booklist_by_tags(flask_login.current_user.db_id,tag['tag'],8)
+    logging.info("booklist_ids:%s"%booklist_ids)
 
     return jsonify(get_booklist_by_id(booklist_ids))
 
 @recommend_bp.route('/get_popular_user')
 def get_popular_user():
-    accounts=[]
-    '''get popular user accounts'''
-    accounts=[follower[1] for follower in json.loads(db_user.get_followers(flask_login.current_user.db_id))]
+    accounts=db_user.get_popular_user(5)
 
     user_infos=[]
     for account in accounts:
@@ -78,6 +76,7 @@ def get_popular_user():
             'follower_number':len(json.loads(db_user.get_followers(db_user.get_id_by_account(account))))
         }
         user_infos.append(user_info)
+    logging.info("popular:%s"%user_infos)
     return jsonify(user_infos)
 
 @recommend_bp.route('/recommend/islogin')

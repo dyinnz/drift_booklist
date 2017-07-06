@@ -109,13 +109,7 @@ class Login extends React.Component {
         return (
             <div>
                 <div className="am-topbar-right">
-                    <button className="am-btn am-btn-secondary am-topbar-btn am-btn-sm">
-                        <span className="am-icon-pencil"></span> 注册
-                    </button>
-                </div>
-
-                <div className="am-topbar-right">
-                    <button className="am-btn am-btn-primary am-topbar-btn am-btn-sm">
+                    <button className="am-btn am-btn-primary am-topbar-btn am-btn-sm" href="/login">
                         <span className="am-icon-user"></span> 登录
                     </button>
                 </div>

@@ -92,7 +92,7 @@ class CategoryList extends React.Component {
                 this.setState({
                     myTaglist: data,
                 });
-                this.tagTouch(this.state.tag)
+                this.tagTouch(this.state.myTaglist[0])
             })
 
     }
