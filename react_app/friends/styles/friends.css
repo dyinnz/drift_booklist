@@ -563,3 +563,8 @@ li {
 .label_xlm{
     font-weight: unset;
 }
+
+.booklist_show {
+    width: 750px;
+    padding-bottom: 20px;
+}

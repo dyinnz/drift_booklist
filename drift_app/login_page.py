@@ -90,7 +90,9 @@ def login():
                         "brief": "Authenticate failed!"})
 
     flask_login.login_user(User(account))
-    return flask.redirect(flask.url_for('recommend_bp.recommend'))
+    # return flask.redirect(flask.url_for('recommend_bp.recommend'))
+    return jsonify({"ok": True,
+                    "brief": "Success!"})
 
 
 @login_bp.route('/start', methods=['GET', 'POST'])
