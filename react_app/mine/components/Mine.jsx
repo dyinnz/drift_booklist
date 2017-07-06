@@ -487,7 +487,7 @@ class BookItem extends React.Component {
         }
         >
         <a href={prefix + book.book_id}>
-          <img src={book.book_cover}/>
+          <img src={book.book_cover} style={{height:"100%",width:"100%"}}/>
         </a>
       </GridTile>
     )
