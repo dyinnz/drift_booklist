@@ -43,6 +43,13 @@ class RelationButton extends React.Component {
 }
 
 class TopContainer extends React.Component {
+    gender(gender){
+        if(gender==='male')
+            return '男'
+        else
+            return '女'
+    }
+
     renderfunction() {
         if (typeof (this.props.detail) === "undefined") {
             return (<p>Not Found</p>)
@@ -79,7 +86,7 @@ class TopContainer extends React.Component {
                         </CardActions>
                         <label className="label_xlm">生日:{new Date(this.props.detail.birthday).toISOString().substr(0, 10)}</label>
                         <span>&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                        <label className="label_xlm">性别:{this.props.detail.gender}</label>
+                        <label className="label_xlm">性别:{this.gender(this.props.detail.gender)}</label>
                         <br/>
                         <div className="tags">
                             {this.props.detail.tags.map((tag) => (

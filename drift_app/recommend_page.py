@@ -67,15 +67,16 @@ def get_popular_user():
     accounts=db_user.get_popular_user(5)
 
     user_infos=[]
-    for account in accounts:
-        user_info_temp=json.loads(db_user.get_user_infos(account))
-        user_info={
-            'account':account,
-            'name':user_info_temp['name'],
-            'avatar':user_info_temp['pic_src'],
-            'follower_number':len(json.loads(db_user.get_followers(db_user.get_id_by_account(account))))
-        }
-        user_infos.append(user_info)
+    if accounts!=None:
+        for account in accounts:
+            user_info_temp=json.loads(db_user.get_user_infos(account))
+            user_info={
+                'account':account,
+                'name':user_info_temp['name'],
+                'avatar':user_info_temp['pic_src'],
+                'follower_number':len(json.loads(db_user.get_followers(db_user.get_id_by_account(account))))
+            }
+            user_infos.append(user_info)
     logging.info("popular:%s"%user_infos)
     return jsonify(user_infos)
 

@@ -83,6 +83,7 @@ def login():
 
     account = flask.request.form['account']
     password = flask.request.form['password']
+    logging.info("get data %s %s" % (account, password))
 
     auth_result = db_user.authenticate(account, password)
     if not auth_result:

@@ -24,7 +24,7 @@ class IconMenuExampleSimple extends React.Component {
                         label={this.props.name}
                         primary={true}
                         labelPosition="before"
-                        style={{height: '50px',margin:'auto'}}
+                        style={{height: '50px', margin:'auto'}}
                         onTouchTap={(event) => {
                             // This prevents ghost click.
                             event.preventDefault();
@@ -35,7 +35,7 @@ class IconMenuExampleSimple extends React.Component {
                             })
                         }}
                     >
-                        <img src={this.props.avatar} style={{borderRadius: '50%', height: '40px'}}/>
+                        <img src={this.props.avatar} style={{borderRadius: '50%', height: '40px',width:'40px'}}/>
                     </FlatButton>
                     <Popover
                         open={this.state.open}

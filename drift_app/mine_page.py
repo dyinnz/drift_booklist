@@ -74,8 +74,8 @@ def get_my_booklists():
     if len(booklist_ids) == 0:
         new_booklist_id = db_book.add_my_favorite_booklist(user_id=flask_login.current_user.db_id,
                                                            booklist_name='my_favorite',
-                                                           introduction='this is my favorite books',
-                                                           cover='this is cover')
+                                                           introduction='there are my favorite books',
+                                                           cover='/static/react/default.png')
         # book_ids=json.loads(db_user_remark.get_books_user_followed(flask_login.current_user.db_id))
         # for book_id in book_ids:
         #    db_book.add_book_to_booklist(0,book_id)

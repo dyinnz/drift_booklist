@@ -69,17 +69,15 @@
 
         function validate(){
             console.log("click state");
-            var name = $("#account").val();
+            var name = $("#account2").val();
             var pwd = $("#password_l").val();
 
             $.post("/login", { account: name, password: pwd }, function (data) {
                 console.log(data);
 
-                if (data.ok === 'true') {
+                if (data.ok === true) {
                     alert("登录成功");
-                    $(function () {
-                        window.location.href = "/recommend";
-                    })
+                    window.location.href = "/recommend";
 
                 } else {
                     alert(data.brief);
@@ -178,8 +176,8 @@
                         <div class="am-form" id="rp2">
                             <fieldset>
                                 <div class="am-form-group">
-                                    <label for="account">User Name</label>
-                                    <input type="text" id="account" name="account" minlength="3" placeholder="请输入用户名"
+                                    <label for="account2">User Name</label>
+                                    <input type="text" id="account2" name="account" minlength="3" placeholder="请输入用户名"
                                            class="am-form-field" required/>
                                 </div>
                                 <div class="am-form-group">

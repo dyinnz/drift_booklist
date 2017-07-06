@@ -42,9 +42,9 @@ class UserList extends React.Component {
         return(
             <li className="tpl-left-nav-item">
                 <a href={'/user/'+user.account} className="nav-link widget-user">
-                    <img src={user.avatar} className="img-responsive img-circle" />
+                    <img src={user.avatar} className="img-responsive img-circle" style={{height:"40px",width:"40px"}}/>
                     <span>{user.name}</span>
-                    <span className="follow">关注:{user.followNumber}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                    <span className="follow">关注:{user.follower_number}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                 </a>
             </li>
         )

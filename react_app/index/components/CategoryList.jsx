@@ -19,7 +19,7 @@ class Booklist extends React.Component {
             <li className="li1">
             <div>
                 <div className="am-gallery-item am_list_block">
-                    <a href="###" className="am_img_bg">
+                    <a href={"/booklist/"+item.booklist_id} className="am_img_bg">
                         <img src={item.booklist_cover}/>
                     </a>
 

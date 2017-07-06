@@ -340,6 +340,8 @@ def get_popular_user(K=5):
             followers_list.append(followers)
         logging.info(followers_list)
         accounts=[]
+        if len(users)<5:
+            K=len(users)
         for i in range(0,K):
             index=followers_list.index(max(followers_list))
             accounts.append(users[index].account)

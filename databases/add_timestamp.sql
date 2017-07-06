@@ -9,5 +9,4 @@ ADD COLUMN `last_follow_time` DATETIME NULL AFTER `last_vote_time`;
 ALTER TABLE `shixun`.`user_booklist_remark_opinion`
 ADD COLUMN `last_vote_time` DATETIME NULL AFTER `vote`;
 
-ALTER TABLE `shixun`.`user_book_remark_opinion` 
-ADD COLUMN `last_vote_time` DATETIME NULL AFTER `vote`;
+ALTER TABLE `shixun`.`user_book_remark_opinion` ：ADD COLUMN `last_vote_time` DATETIME NULL AFTER `vote`;
