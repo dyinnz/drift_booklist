@@ -66,6 +66,26 @@
             };
             reader.readAsDataURL(file);
         }
+
+        function validate(){
+            console.log("click state");
+            var name = $("#account").val();
+            var pwd = $("#password_l").val();
+
+            $.post("/login", { account: name, password: pwd }, function (data) {
+                console.log(data);
+
+                if (data.ok === 'true') {
+                    alert("登录成功");
+                    $(function () {
+                        window.location.href = "/recommend";
+                    })
+
+                } else {
+                    alert(data.brief);
+                }
+            });
+        }
     </script>
 
 </head>
@@ -155,7 +175,7 @@
                     </div>
 
                     <div data-tab-panel-1 class="am-tab-panel" id="panel1">
-                        <form action="login" method="POST" class="am-form" id="rp2">
+                        <div class="am-form" id="rp2">
                             <fieldset>
                                 <div class="am-form-group">
                                     <label for="account">User Name</label>
@@ -171,11 +191,11 @@
                                 <!--div class="am-form-group myapp-login-treaty"><label class="am-form-label"></label><label class="am-checkbox-inline"> <input type="checkbox" value="橘子" name="docVlCb" minchecked="2" maxchecked="4" required="">已同意使用条约 </label></div-->
                                 <br/>
                                 <button class="myapp-login-button am-btn am-btn-secondary" id="login_button"
-                                         type="submit">SIGN IN
+                                onclick="validate()" >SIGN IN
                                 </button>
                             </fieldset>
                             <legend>Forgot Password?</legend>
-                        </form>
+                        </div>
                     </div>
 
                 </div>
