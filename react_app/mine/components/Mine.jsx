@@ -422,126 +422,127 @@ class ShowContainer extends React.Component {
 }
 
 class BookItem extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    this.state = {
-      moreOpen: false,
-      anchorEl: undefined,
-    }
-  }
-
-  handlePopoverOpen(e) {
-    e.preventDefault()
-
-    this.setState(update(this.state, {
-      moreOpen: {$set: true},
-      anchorEl: {$set: e.currentTarget}
-    }))
-  }
-
-  handlePopoverClose() {
-    this.setState(update(this.state, {
-      moreOpen: {$set: false}
-    }))
-  }
-
-  handleDelete() {
-    this.props.handleDeleteBook(this.props.index);
-    this.handlePopoverClose();
-  }
-
-  renderMoreButton() {
-    return (
-      <IconButton
-        onClick={this.handlePopoverOpen.bind(this)}
-        >
-        <Popover
-          open={this.state.moreOpen}
-          onRequestClose={this.handlePopoverClose.bind(this)}
-          anchorEl={this.state.anchorEl}
-          anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
-          targetOrigin={{horizontal: 'left', vertical: 'top'}}
-          >
-          <Menu>
-            <MenuItem primaryText="Delete"
-              onClick={() => this.handleDelete()}
-              />
-          </Menu>
-        </Popover>
-
-        <ActionViewHeadline color="white"/>
-      </IconButton>
-    )
-  }
-
-  render() {
-    const prefix = 'http://' + window.location.host + '/book/'
-    let book = this.props.book;
-
-    return (
-      <GridTile
-        title={book.book_name}
-        actionIcon={
-          this.renderMoreButton()
+        this.state = {
+            moreOpen: false,
+            anchorEl: undefined,
         }
-        >
-        <a href={prefix + book.book_id}>
-          <img src={book.book_cover}/>
-        </a>
-      </GridTile>
-    )
-  }
+    }
+
+    handlePopoverOpen(e) {
+        e.preventDefault()
+
+        this.setState(update(this.state, {
+            moreOpen: {$set: true},
+            anchorEl: {$set: e.currentTarget}
+        }))
+    }
+
+    handlePopoverClose() {
+        this.setState(update(this.state, {
+            moreOpen: {$set: false}
+        }))
+    }
+
+    handleDelete() {
+        this.props.handleDeleteBook(this.props.index);
+        this.handlePopoverClose();
+    }
+
+    renderMoreButton() {
+        return (
+            <IconButton
+                onClick={this.handlePopoverOpen.bind(this)}
+            >
+                <Popover
+                    open={this.state.moreOpen}
+                    onRequestClose={this.handlePopoverClose.bind(this)}
+                    anchorEl={this.state.anchorEl}
+                    anchorOrigin={{horizontal: 'left', vertical: 'bottom'}}
+                    targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                >
+                    <Menu>
+                        <MenuItem primaryText="Delete"
+                                  onClick={() => this.handleDelete()}
+                        />
+                    </Menu>
+                </Popover>
+
+                <ActionViewHeadline color="white"/>
+            </IconButton>
+        )
+    }
+
+    render() {
+        const prefix = 'http://' + window.location.host + '/book/'
+        let book = this.props.book;
+
+        return (
+            <GridTile
+                title={book.book_name}
+                actionIcon={
+                    this.renderMoreButton()
+                }
+            >
+                <a href={prefix + book.book_id}>
+                    <img src={book.book_cover}/>
+                </a>
+            </GridTile>
+        )
+    }
 }
 
 class BookGrid extends React.Component {
-  constructor(props) {
-    super(props);
+    constructor(props) {
+        super(props);
 
-    let items = props.items;
-    if ("undefined" == items) {
-      items = []
+        let items = props.items;
+        if ("undefined" == items) {
+            items = []
+        }
+        this.state = {
+            items: items,
+        }
     }
-    this.state = {
-      items: items,
+
+    componentWillReceiveProps(next) {
+        this.setState(update(this.state, {
+            items: {$set: next.items},
+        }))
     }
-  }
 
-  componentWillReceiveProps(next) {
-    this.setState(update(this.state, {
-      items: {$set: next.items},
-    }))
-  }
+    handleDeleteBook(index) {
+        console.log("handleDeleteBook, ", index);
 
-  handleDeleteBook(index) {
-    console.log("handleDeleteBook, ", index);
+        let book = this.state.items[index];
 
-    let book = this.state.items[index];
+        console.log(book.book_id, this.props.booklist_id)
 
-    console.log(book.book_id, this.props.booklist_id)
+        fetchPostJson('/delete_book', {
+            book_id: book.book_id,
+            booklist_id: this.props.booklist_id,
+        }).then(
+            resp => resp.json()
+        ).then((result) => {
+            console.log("handleDeleteBook(): ", result.OK)
+        })
 
-    fetchPostJson('/delete_book', {
-      book_id: book.book_id,
-      booklist_id: this.props.booklist_id,
-    }).then(
-      resp => resp.json()
-    ).then( (result) => {
-      console.log("handleDeleteBook(): ", result.OK)
-    })
+        this.setState(update(this.state, {
+            items: {$splice: [[index, 1]]},
+        }))
+    }
 
-    this.setState(update(this.state, {
-      items: {$splice: [[index, 1]]},
-    }))
-  }
+    renderNoBook() {
+        if (0 === this.state.items.length) {
+            return <p>No book yet</p>
+        } else {
+            return <p/>
+        }
+    }
 
     render() {
-        const newBookStyle = {
-            paddingLeft: 40,
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-        };
-
         const prefix = 'http://' + window.location.host + '/book/'
 
         if ("undefined" === typeof(this.props.items)) {
@@ -552,19 +553,14 @@ class BookGrid extends React.Component {
                 <Subheader> BOOKS </Subheader>
                 <GridList cols={4} className="grid_wrapper">
                     {this.state.items.map((book, index) => (
-                      <BookItem
-                        key={book.book_id}
-                        book={book}
-                        index={index}
-                        handleDeleteBook={this.handleDeleteBook.bind(this)}
+                        <BookItem
+                            key={book.book_id}
+                            book={book}
+                            index={index}
+                            handleDeleteBook={this.handleDeleteBook.bind(this)}
                         />
                     ))}
-                    <div style={newBookStyle}>
-                        <FloatingActionButton
-                        >
-                            <ContentAdd />
-                        </FloatingActionButton>
-                    </div>
+                    {this.renderNoBook()}
                 </GridList>
 
 
@@ -723,8 +719,9 @@ class Mine extends React.Component {
                                modifiable={this.state.modifiable}
                 />
                 <BookGrid items={this.state.currBooklist.books}
-                  booklist_id={this.state.currBooklist.booklist_id}
-                  />
+                          booklist_id={this.state.currBooklist.booklist_id}
+                          modifiable={this.state.modifiable}
+                />
                 <CommentPane items={this.state.remarks} pages={this.state.pages} active={this.state.active}
                              currListID={this.state.currListID} handleTouch={(p) => this.updateComment(p)}/>
             </div>
