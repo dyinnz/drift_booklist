@@ -509,7 +509,7 @@ li {
 }
 
 .show_information{
-// height:230px;
+  width:750px;
 }
 .clearfix::after {
     content: " ";
@@ -518,7 +518,7 @@ li {
     clear: both;
 }
 .card_rhs {
-    width: 60%;
+    width: 65%;
     margin: 10px;
     height: 180px;
     float: left;
