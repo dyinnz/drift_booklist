@@ -39,7 +39,7 @@ class Search extends React.Component {
         return(
             <div className="portlet-title">
                 <div className="caption font-green bold">
-                    根据您的搜索结果{this.state.search}: {this.state.numbers}条
+                    根据您的搜索结果{this.state.search}: {this.state.books.length + this.state.lists.length}条
                 </div>
             </div>
         )
@@ -51,16 +51,16 @@ class Search extends React.Component {
         return(
             <div className="am-g am-list-item-desced am-list-item-thumbed am-list-item-thumb-left am_list_li">
                 <div className="am-u-sm-3 am-list-thumb am_list_thumb">
-                    <a href="###" className="">
+                    <a href={"/book/"+item.id} className="">
                         <img src={item.cover} className="am_news_list_img"/>
                     </a>
                 </div>
                 <div className=" am-u-sm-9 am-list-main am_list_main">
                     <h3 className="am-list-item-hd am_list_title">
-                        <a href="###" className="">{item.name}</a>
+                        <a href={"/book/"+item.id} className="">{item.name}</a>
                     </h3>
                     <div className="am_list_author">
-                        <a href="###">
+                        <a href={"/user/"+item.author}>
                             <span className="name">作者: {item.author}  </span>
                         </a>
                     </div>
