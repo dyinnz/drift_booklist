@@ -35,7 +35,7 @@ class CommentList extends React.Component {
                     className="comment_person"
                     title={item.account}
                     // TODO:
-                    avatar="/static/react/zen.jpg"
+                    avatar={item.avatar}
                 />
 
                 <CardText className="comment_content">

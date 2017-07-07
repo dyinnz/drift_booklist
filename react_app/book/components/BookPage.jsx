@@ -44,7 +44,7 @@ class Comment extends React.Component {
         return (
             <div className="flex_class">
                 <CardHeader title={this.props.details.account}
-                            avatar="/static/react/zen.jpg"
+                            avatar={this.props.details.avatar}
                             className="comment_header"
                 />
                 <CardText>
@@ -346,6 +346,7 @@ class BookDetails extends React.Component {
         };
 
         const styleTagWrapper = {
+            display: "flex",
             marginLeft: 20,
         };
 
