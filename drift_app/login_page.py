@@ -146,8 +146,8 @@ def register():
 
     account = form['account']
     password = form['password']
-    # name = form['name']
-    name = 'xlm'
+    name = form['name']
+    #name = 'xlm'
     birthday = form['birthday']
     introduction = form['introduction']
     gender = form['gender']

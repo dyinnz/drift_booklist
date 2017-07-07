@@ -20,7 +20,7 @@
 /*.myapp-login .myapp-login-bg {background: rgba(10,10,25,.5); padding-top: 80px;  height: 100%;}*/
 
 .myapp-login .wrapper-page {
-    margin: 5% auto;
+    margin: 0 auto;
     position: relative;
     width: 350px; /* 420 */
 }
@@ -107,11 +107,11 @@
 /*同意使用条约*/
 .myapp-login .myapp-login-bg fieldset {
     padding: 0;
-    padding-top: 30px;
+    padding-top: 20px;
 }
 
 /*输入框*/
-.myapp-login .myapp-login-bg input#account, #account2, #password, #password_r1, #birthday, #password_l{
+.myapp-login .myapp-login-bg input#account, #name, #account2, #password, #password_r1, #birthday, #password_l{
     background: none;
     border-radius: 30px;
     border: 1px solid #9194a7;
